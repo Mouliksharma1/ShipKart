@@ -1,65 +1,175 @@
-import Image from "next/image";
+import React from "react";
+import Link from "next/link";
+import { Truck, Search, ShieldCheck, ArrowRight, CheckCircle, Package } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 transition-colors duration-300">
+      {/* HERO SECTION */}
+      <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-slate-200 dark:border-neutral-800/80 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.18),rgba(0,0,0,0))]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Left Content */}
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              <div className="inline-flex items-center space-x-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400">
+                <Truck className="h-4 w-4" />
+                <span>POOJA TRAVELS & CARGO • OFFICIAL LOGISTICS PLATFORM</span>
+              </div>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
+                Fast, Reliable <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-400 dark:via-amber-200 dark:to-amber-500">
+                  Parcel Logistics & Builty
+                </span>
+              </h1>
+              
+              <p className="text-sm sm:text-base text-slate-600 dark:text-neutral-400 max-w-2xl leading-relaxed">
+                Direct parcel dispatches across Rajasthan & Gujarat. Complete digitised LR generation, instant tracking, partner office collections, and zero-delay bus cargo management.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                <Link
+                  href="/booking"
+                  className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 rounded-xl bg-amber-500 px-6 py-3.5 text-sm font-extrabold text-amber-950 shadow-xl shadow-amber-500/20 hover:bg-amber-400 transition-transform active:scale-95"
+                >
+                  <Package className="h-5 w-5" />
+                  <span>Book Parcel Online</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+
+                <Link
+                  href="/login"
+                  className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 rounded-xl border border-slate-300 dark:border-neutral-800 bg-white dark:bg-neutral-900/80 px-6 py-3.5 text-sm font-bold text-slate-800 dark:text-neutral-200 hover:bg-slate-100 dark:hover:bg-neutral-800 transition-colors shadow-sm"
+                >
+                  <ShieldCheck className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  <span>Staff / Counter Portal</span>
+                </Link>
+              </div>
+
+              {/* Badges */}
+              <div className="pt-6 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs font-semibold text-slate-600 dark:text-neutral-400">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                  <span>No Home Delivery • Safe Station Pickup</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                  <span>Sequential LR Builty</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Card - Quick LR Tracker */}
+            <div className="lg:col-span-5">
+              <div className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white/90 dark:bg-neutral-900/90 p-6 sm:p-8 shadow-2xl backdrop-blur-xl space-y-6">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-neutral-800 pb-4">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                    <Search className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    <span>Instant Parcel Tracker</span>
+                  </h3>
+                  <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">LIVE</span>
+                </div>
+
+                <form className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1.5">
+                      Enter LR Number or Sender Mobile
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. LR-POOJA-2026-000001 or 6350603414"
+                      className="w-full rounded-xl border border-slate-300 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-3 px-4 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full flex items-center justify-center space-x-2 rounded-xl bg-amber-500 py-3 text-xs font-bold text-amber-950 shadow-md hover:bg-amber-400 transition-colors"
+                  >
+                    <span>Track Consignment Status</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </form>
+
+                <div className="rounded-xl bg-slate-100 dark:bg-neutral-950 p-4 border border-slate-200 dark:border-neutral-800/80 space-y-2 text-xs">
+                  <div className="flex justify-between text-slate-600 dark:text-neutral-400">
+                    <span>Head Office Helpline:</span>
+                    <a href="tel:6350603414" className="text-amber-600 dark:text-amber-400 font-bold">6350603414</a>
+                  </div>
+                  <div className="flex justify-between text-slate-600 dark:text-neutral-400">
+                    <span>Operating Hours:</span>
+                    <span className="text-slate-900 dark:text-neutral-200 font-semibold">04:00 AM - 11:00 PM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* QUICK RATE CARDS */}
+      <section className="py-16 bg-slate-100/60 dark:bg-neutral-900/50 border-b border-slate-200 dark:border-neutral-800/80">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center space-y-2 max-w-xl mx-auto">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Transparent Freight Pricing</h2>
+            <p className="text-xs text-slate-600 dark:text-neutral-400">Standardized rate card for Rajasthan and Outside destinations.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Rajasthan Tariff */}
+            <div className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-6 space-y-4 shadow-md">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-neutral-800 pb-3">
+                <h3 className="text-sm font-bold text-amber-600 dark:text-amber-400">Rajasthan Route Tariffs</h3>
+                <span className="text-[11px] text-slate-500 dark:text-neutral-400">Fixed Rate</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800">
+                  <span className="text-[11px] text-slate-500 dark:text-neutral-400 block">Envelope</span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-white">₹99</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800">
+                  <span className="text-[11px] text-slate-500 dark:text-neutral-400 block">Box</span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-white">₹149</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800">
+                  <span className="text-[11px] text-slate-500 dark:text-neutral-400 block">Medium</span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-white">₹199</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800">
+                  <span className="text-[11px] text-slate-500 dark:text-neutral-400 block">Large Bundle</span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-white">₹249</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Outside Rajasthan Tariff */}
+            <div className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-6 space-y-4 shadow-md">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-neutral-800 pb-3">
+                <h3 className="text-sm font-bold text-amber-600 dark:text-amber-400">Outside Rajasthan Tariffs</h3>
+                <span className="text-[11px] text-slate-500 dark:text-neutral-400">Gujarat / Interstate</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800">
+                  <span className="text-[11px] text-slate-500 dark:text-neutral-400 block">Envelope</span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-white">₹199</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800">
+                  <span className="text-[11px] text-slate-500 dark:text-neutral-400 block">Box</span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-white">₹399</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800">
+                  <span className="text-[11px] text-slate-500 dark:text-neutral-400 block">Medium</span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-white">₹499</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800">
+                  <span className="text-[11px] text-slate-500 dark:text-neutral-400 block">Large Bundle</span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-white">Configurable</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
+      </section>
     </div>
   );
 }

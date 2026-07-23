@@ -1,0 +1,378 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CUSTOMER
+  EMPLOYEE
+  PARTNER_OFFICE
+  ADMIN
+}
+
+enum BookingStatus {
+  DRAFT
+  BOOKED
+  PICKUP_REQUESTED
+  RECEIVED_AT_ORIGIN_OFFICE
+  LOADED
+  IN_TRANSIT
+  ARRIVED_AT_DESTINATION_OFFICE
+  READY_FOR_COLLECTION
+  COLLECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum PickupMethod {
+  SELF_DROP
+  TAXI_PICKUP
+}
+
+enum PaymentType {
+  PAID
+  TO_PAY
+}
+
+enum PaymentMode {
+  CASH
+  UPI
+}
+
+enum ParcelType {
+  ENVELOPE
+  BOX
+  MEDIUM_PARCEL
+  LARGE_BUNDLE
+}
+
+model CompanySettings {
+  id          String   @id @default("default")
+  companyName String   @default("POOJA TRAVELS & CARGO")
+  tagline     String   @default("Powered by POOJA TRAVELS & CARGO")
+  logo        String?
+  gst         String?
+  upiId       String?  @default("6350603414@upi")
+  upiQr       String?
+  helpline1   String   @default("6350603414")
+  helpline2   String   @default("7852091119")
+  helpline3   String   @default("0291-2651955")
+  address     String   @default("45, Jaswant Building, MG Hospital Rd, Sojati Gate, Rawaton Ka Bass, Jodhpur, Rajasthan 342001")
+  mapEmbed    String   @default("https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3577.2652977703!2d73.01826457502641!3d26.285498277026598!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39418da8481efa59%3A0x86303ce101608fd5!2sPooja%20Travels!5e0!3m2!1sen!2sin!4v1784796454580!5m2!1sen!2sin")
+  terms       String   @default("1. Receiver must show valid ID for parcel collection.\n2. Goods transported at owner's risk.\n3. Claims must be made within 24 hours of arrival.")
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id               String          @id @default(uuid())
+  supabaseAuthId   String?         @unique
+  name             String
+  phone            String          @unique
+  email            String?         @unique
+  role             Role            @default(CUSTOMER)
+  officeId         String?
+  office           OfficeMaster?   @relation(fields: [officeId], references: [id])
+  photo            String?
+  status           Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  createdBookings  Booking[]       @relation("CreatedBy")
+  trackingUpdates  TrackingHistory[]
+  activityLogs     ActivityLog[]
+  savedReceivers   SavedReceiver[]
+
+  @@index([officeId])
+  @@index([phone])
+  @@index([role])
+}
+
+model SavedReceiver {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  name       String
+  phone      String
+  city       String?
+  createdAt  DateTime @default(now())
+}
+
+model OfficeMaster {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  code          String?  @unique // e.g. JDH01, JPR01
+  address       String
+  city          String   @default("Jodhpur")
+  state         String   @default("Rajasthan")
+  pinCode       String   @default("342001")
+  country       String   @default("India")
+  phone         String
+  altPhone      String?
+  managerName   String?
+  managerPhone  String?
+  latitude      Float
+  longitude     Float
+  googleMapsUrl String?
+  openingTime   String   @default("04:00 AM")
+  closingTime   String   @default("11:00 PM")
+  officeTiming  String   @default("04:00 AM - 11:00 PM")
+  status        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  pricingGroupId String?
+  pricingGroup   PricingGroup? @relation("DestinationPricingGroup", fields: [pricingGroupId], references: [id])
+
+  users         User[]
+  originRoutes  RouteMaster[] @relation("OriginOffice")
+  destRoutes    RouteMaster[] @relation("DestinationOffice")
+  originBookings Booking[]    @relation("BookingOriginOffice")
+  destBookings   Booking[]    @relation("BookingDestOffice")
+  trackingHistories TrackingHistory[]
+
+  @@index([city])
+  @@index([state])
+  @@index([status])
+}
+
+model RouteMaster {
+  id                  String       @id @default(uuid())
+  originOfficeId      String
+  originOffice        OfficeMaster @relation("OriginOffice", fields: [originOfficeId], references: [id])
+  destinationOfficeId String
+  destinationOffice   OfficeMaster @relation("DestinationOffice", fields: [destinationOfficeId], references: [id])
+  etaHours            Float        @default(12.0)
+  distanceKm          Float        @default(100.0)
+  operatingDays       String       @default("Daily")
+  departureTime       String?      @default("08:00 PM")
+  arrivalTime         String?      @default("06:00 AM")
+  status              Boolean      @default(true)
+  routeStatus         String       @default("ACTIVE") // ACTIVE, INACTIVE, TEMPORARILY_CLOSED
+  pricingGroupId      String?
+  pricingGroup        PricingGroup? @relation(fields: [pricingGroupId], references: [id])
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  dispatches          Dispatch[]
+
+  @@unique([originOfficeId, destinationOfficeId])
+  @@index([originOfficeId])
+  @@index([destinationOfficeId])
+  @@index([status])
+}
+
+model PricingGroup {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  isRajasthan Boolean  @default(true)
+  status      Boolean  @default(true)
+
+  pricingRules PricingRule[]
+  routes       RouteMaster[]
+  destOffices  OfficeMaster[] @relation("DestinationPricingGroup")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isRajasthan])
+  @@index([status])
+}
+
+model PricingRule {
+  id             String       @id @default(uuid())
+  pricingGroupId String
+  pricingGroup   PricingGroup @relation(fields: [pricingGroupId], references: [id], onDelete: Cascade)
+
+  parcelType     ParcelType
+  selfPrice      Float
+  taxiPrice      Float?       // null indicates Taxi Pickup is unavailable for this parcel type (e.g. ENVELOPE)
+  displayOrder   Int          @default(1)
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([pricingGroupId, parcelType])
+  @@index([pricingGroupId])
+}
+
+model LRSequence {
+  id         Int      @id @default(1)
+  lastNumber Int      @default(0)
+  updatedAt  DateTime @updatedAt
+}
+
+model Booking {
+  id                  String          @id @default(uuid())
+  lrNumber            String          @unique // e.g. SK000000001 (Global Sequence)
+  senderName          String
+  senderPhone         String
+  senderEmail         String?
+  receiverName        String
+  receiverPhone       String
+  originOfficeId      String
+  originOffice        OfficeMaster    @relation("BookingOriginOffice", fields: [originOfficeId], references: [id])
+  destinationOfficeId String
+  destinationOffice   OfficeMaster    @relation("BookingDestOffice", fields: [destinationOfficeId], references: [id])
+  
+  pickupMethod        PickupMethod    @default(SELF_DROP)
+  pickupAddress       String?
+  latitude            Float?
+  longitude           Float?
+  locationAccuracy    Float?
+  
+  paymentType         PaymentType     @default(PAID)
+  paymentMode         PaymentMode     @default(CASH)
+  paymentStatus       Boolean         @default(true)
+  
+  subtotalAmount      Float           @default(0)
+  totalPickupCharge   Float           @default(0)
+  totalAmount         Float
+  specialNotes        String?
+  status              BookingStatus   @default(BOOKED)
+
+  createdById         String?
+  createdBy           User?           @relation("CreatedBy", fields: [createdById], references: [id])
+  
+  dispatchId          String?
+  dispatch            Dispatch?       @relation(fields: [dispatchId], references: [id])
+
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  items               ConsignmentItem[]
+  trackingHistory     TrackingHistory[]
+  notifications       NotificationQueue[]
+
+  @@index([lrNumber])
+  @@index([senderPhone])
+  @@index([receiverPhone])
+  @@index([status])
+  @@index([originOfficeId])
+  @@index([destinationOfficeId])
+  @@index([createdById])
+}
+
+model ConsignmentItem {
+  id               String     @id @default(uuid())
+  bookingId        String
+  booking          Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  parcelType       ParcelType @default(BOX)
+  quantity         Int        @default(1)
+  weightKg         Float?     @default(1.0)
+  dimensions       String?
+  photoUrl         String?
+  remarks          String?
+
+  // Price Snapshots (Immutable once booked)
+  unitPrice        Float      @default(0)
+  selfPrice        Float      @default(0)
+  taxiPrice        Float?
+  subtotal         Float      @default(0)
+  itemPickupCharge Float      @default(0)
+
+  createdAt        DateTime   @default(now())
+}
+
+enum NotificationChannel {
+  WHATSAPP
+  SMS
+  EMAIL
+  PUSH
+}
+
+enum NotificationRecipient {
+  SENDER
+  RECEIVER
+  OFFICE_MANAGER
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+model NotificationQueue {
+  id            String                @id @default(uuid())
+  bookingId     String
+  booking       Booking               @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  recipientType NotificationRecipient @default(SENDER)
+  phone         String
+  channel       NotificationChannel   @default(WHATSAPP)
+  message       String
+  status        NotificationStatus    @default(PENDING)
+  createdAt     DateTime              @default(now())
+
+  @@index([bookingId])
+  @@index([status])
+}
+
+model Dispatch {
+  id            String        @id @default(uuid())
+  vehicleNumber String
+  driverName    String?
+  driverPhone   String?
+  routeId       String?
+  route         RouteMaster?  @relation(fields: [routeId], references: [id])
+  departureTime DateTime?
+  arrivalTime   DateTime?
+  status        String        @default("SCHEDULED") // SCHEDULED, IN_TRANSIT, ARRIVED, COMPLETED
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  bookings      Booking[]
+}
+
+model TrackingHistory {
+  id         String        @id @default(uuid())
+  bookingId  String
+  booking    Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  status     BookingStatus
+  officeId   String?
+  office     OfficeMaster? @relation(fields: [officeId], references: [id])
+  userId     String?
+  user       User?         @relation(fields: [userId], references: [id])
+  notes      String?
+  createdAt  DateTime      @default(now())
+}
+
+model StatusMaster {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  order     Int
+  color     String
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  ip        String?
+  browser   String?
+  createdAt DateTime @default(now())
+}
+
+model DailyClosingReport {
+  id                 String   @id @default(uuid())
+  date               String   @unique // YYYY-MM-DD
+  totalBookings      Int      @default(0)
+  onlineBookings     Int      @default(0)
+  offlineBookings    Int      @default(0)
+  paidBookings       Int      @default(0)
+  toPayBookings      Int      @default(0)
+  cashRevenue        Float    @default(0)
+  upiRevenue         Float    @default(0)
+  totalRevenue       Float    @default(0)
+  taxiPickups        Int      @default(0)
+  selfDrops          Int      @default(0)
+  pendingCollections Int      @default(0)
+  completedDeliveries Int     @default(0)
+  topRoute           String?
+  createdAt          DateTime @default(now())
+}

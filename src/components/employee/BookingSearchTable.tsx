@@ -183,19 +183,28 @@ export function BookingSearchTable({ initialBookings }: BookingSearchTableProps)
                     <td className="py-3 px-3 text-[11px] text-slate-500">
                       {new Date(b.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="py-3 px-3 text-right space-x-2">
-                      <Link
-                        href={`/employee/bookings/${b.lrNumber}`}
-                        className="px-2.5 py-1 rounded bg-slate-100 dark:bg-neutral-800 font-semibold text-slate-700 dark:text-neutral-300 hover:bg-amber-500 hover:text-amber-950 transition-colors"
-                      >
-                        Details
-                      </Link>
-                      <Link
-                        href={`/employee/book?repeatLr=${b.lrNumber}`}
-                        className="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold hover:bg-emerald-500 hover:text-white transition-colors"
-                      >
-                        Repeat
-                      </Link>
+                    <td className="py-3 px-3 text-right">
+                      <div className="inline-flex items-center justify-end gap-1.5 whitespace-nowrap">
+                        <Link
+                          href={`/employee/bookings/${b.lrNumber}`}
+                          className="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-200 hover:bg-slate-200 dark:hover:bg-neutral-700 font-bold text-[11px] transition-colors"
+                        >
+                          Details
+                        </Link>
+                        <Link
+                          href={`/lr/${b.lrNumber}`}
+                          target="_blank"
+                          className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 hover:bg-blue-500 hover:text-white font-black text-[11px] transition-colors"
+                        >
+                          Digital LR
+                        </Link>
+                        <Link
+                          href={`/employee/book?repeatLr=${b.lrNumber}`}
+                          className="px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 hover:bg-amber-500 hover:text-amber-950 font-black text-[11px] transition-all"
+                        >
+                          Repeat
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))

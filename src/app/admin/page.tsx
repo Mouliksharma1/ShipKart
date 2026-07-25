@@ -18,15 +18,25 @@ export default async function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 space-y-8">
       {/* Welcome Banner */}
-      <div className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-gradient-to-r dark:from-neutral-900 dark:via-amber-950/40 dark:to-neutral-900 p-6 sm:p-8 shadow-xl">
-        <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 mb-2">
-          <ShieldAlert className="h-3.5 w-3.5" />
-          <span>Admin Command Center</span>
+      <div className="relative overflow-hidden rounded-2xl border border-amber-500/20 bg-gradient-to-br from-white via-amber-500/5 to-slate-50 dark:from-neutral-900 dark:via-neutral-900/90 dark:to-neutral-950 p-5 sm:p-6 shadow-xl shadow-amber-500/5">
+        {/* Subtle Ambient Radial Background Glow */}
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+        <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-2">
+          <div className="inline-flex items-center space-x-2 text-[11px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest bg-amber-500/10 dark:bg-amber-400/10 px-3 py-1 rounded-full border border-amber-500/30 dark:border-amber-400/30 backdrop-blur-md">
+            <ShieldAlert className="h-3 w-3 stroke-[2.5]" />
+            <span>Admin Command Center</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+            Ship<span className="text-amber-500">Kart</span> Master Control Center
+          </h1>
+
+          <p className="text-xs font-medium text-slate-600 dark:text-neutral-300 max-w-2xl leading-relaxed">
+            Configure station office networks, transport route pairings, tariff pricing groups, employee access, and live audit logs across the cargo logistics pipeline.
+          </p>
         </div>
-        <h1 className="text-3xl font-black text-slate-900 dark:text-white">ShipKart Master Control Center</h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-neutral-400 mt-1 max-w-2xl">
-          Configure station office networks, transport route pairings, tariff pricing groups, employee access, and audit logs.
-        </p>
       </div>
 
       {/* Quick Office & Route Stats */}

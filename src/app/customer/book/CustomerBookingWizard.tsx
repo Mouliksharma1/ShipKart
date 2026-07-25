@@ -265,22 +265,29 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-4 text-xs font-bold">
             <button
-              onClick={() => router.push(`/customer/booking/${successBooking.lrNumber}`)}
-              className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-amber-500 text-amber-950 hover:bg-amber-400"
+              onClick={() => router.push(`/lr/${successBooking.lrNumber}`)}
+              className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-500 shadow-md transition-colors"
             >
               <Download className="h-4 w-4" />
-              <span>Download Digital LR</span>
+              <span>View & Download Digital LR</span>
+            </button>
+            <button
+              onClick={() => router.push(`/customer/booking/${successBooking.lrNumber}`)}
+              className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-amber-500 text-amber-950 hover:bg-amber-400 shadow-md transition-colors"
+            >
+              <QrCode className="h-4 w-4" />
+              <span>Booking Receipt & QR</span>
             </button>
             <button
               onClick={() => router.push("/customer/history")}
-              className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-neutral-800 text-white hover:bg-neutral-700"
+              className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-neutral-800 text-white hover:bg-neutral-700 transition-colors"
             >
               <Truck className="h-4 w-4" />
               <span>Track Booking</span>
             </button>
             <button
               onClick={() => window.location.reload()}
-              className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-neutral-800 text-white hover:bg-neutral-700"
+              className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-neutral-800 text-white hover:bg-neutral-700 transition-colors"
             >
               <Plus className="h-4 w-4" />
               <span>Book Another Parcel</span>

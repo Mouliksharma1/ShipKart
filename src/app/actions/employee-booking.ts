@@ -253,7 +253,7 @@ export async function createEmployeeBookingAction(formData: unknown, employeeUse
       });
 
       return booking;
-    }, { timeout: 25000 });
+    }, { maxWait: 10000, timeout: 25000 });
 
     revalidatePath("/employee");
     revalidatePath("/employee/bookings");

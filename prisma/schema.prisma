@@ -17,14 +17,56 @@ enum BookingStatus {
   DRAFT
   BOOKED
   PICKUP_REQUESTED
+  RECEIVED_AT_ORIGIN
   RECEIVED_AT_ORIGIN_OFFICE
+  SORTED
   LOADED
   IN_TRANSIT
+  ARRIVED_AT_DESTINATION
   ARRIVED_AT_DESTINATION_OFFICE
+  UNLOADED
   READY_FOR_COLLECTION
   COLLECTED
   COMPLETED
   CANCELLED
+  DELAYED
+  HOLD
+  RETURN_REQUESTED
+  RETURN_IN_TRANSIT
+  RETURNED_TO_ORIGIN
+}
+
+enum DispatchStatus {
+  CREATED
+  READY
+  DEPARTED
+  ARRIVED
+  CLOSED
+  CANCELLED
+}
+
+enum DelayReason {
+  TRAFFIC
+  VEHICLE_BREAKDOWN
+  WEATHER
+  ROAD_BLOCK
+  STRIKE
+  OTHER
+}
+
+enum HoldReason {
+  DOCUMENT_PENDING
+  PAYMENT_PENDING
+  CUSTOMER_REQUEST
+  DAMAGED_PARCEL
+  OTHER
+}
+
+enum TrackingRemarkType {
+  SYSTEM
+  EMPLOYEE
+  PARTNER
+  CUSTOMER_SERVICE
 }
 
 enum PickupMethod {
@@ -126,11 +168,15 @@ model OfficeMaster {
   pricingGroupId String?
   pricingGroup   PricingGroup? @relation("DestinationPricingGroup", fields: [pricingGroupId], references: [id])
 
-  users         User[]
-  originRoutes  RouteMaster[] @relation("OriginOffice")
-  destRoutes    RouteMaster[] @relation("DestinationOffice")
-  originBookings Booking[]    @relation("BookingOriginOffice")
-  destBookings   Booking[]    @relation("BookingDestOffice")
+  users           User[]
+  originRoutes    RouteMaster[] @relation("OriginOffice")
+  destRoutes      RouteMaster[] @relation("DestinationOffice")
+  originBookings  Booking[]    @relation("BookingOriginOffice")
+  destBookings    Booking[]    @relation("BookingDestOffice")
+  currentBookings Booking[]    @relation("BookingCurrentOffice")
+  nextBookings    Booking[]    @relation("BookingNextOffice")
+  dispatchOrigins Dispatch[]   @relation("DispatchOriginOffice")
+  dispatchDests   Dispatch[]   @relation("DispatchDestOffice")
   trackingHistories TrackingHistory[]
 
   @@index([city])
@@ -205,6 +251,13 @@ model LRSequence {
   updatedAt  DateTime @updatedAt
 }
 
+model DispatchSequence {
+  id         Int      @id @default(1)
+  lastNumber Int      @default(0)
+  updatedAt  DateTime @updatedAt
+}
+
+
 model Booking {
   id                  String          @id @default(uuid())
   lrNumber            String          @unique // e.g. SK000000001 (Global Sequence)
@@ -217,6 +270,11 @@ model Booking {
   originOffice        OfficeMaster    @relation("BookingOriginOffice", fields: [originOfficeId], references: [id])
   destinationOfficeId String
   destinationOffice   OfficeMaster    @relation("BookingDestOffice", fields: [destinationOfficeId], references: [id])
+
+  currentOfficeId     String?
+  currentOffice       OfficeMaster?   @relation("BookingCurrentOffice", fields: [currentOfficeId], references: [id])
+  nextOfficeId        String?
+  nextOffice          OfficeMaster?   @relation("BookingNextOffice", fields: [nextOfficeId], references: [id])
   
   pickupMethod        PickupMethod    @default(SELF_DROP)
   pickupAddress       String?
@@ -234,6 +292,16 @@ model Booking {
   specialNotes        String?
   status              BookingStatus   @default(BOOKED)
 
+  estimatedArrival    DateTime?
+  actualArrival       DateTime?
+  collectedAt         DateTime?
+  lastUpdatedAt       DateTime?
+  lastUpdatedBy       String?
+
+  delayReason         DelayReason?
+  holdReason          HoldReason?
+  version             Int             @default(1)
+
   createdById         String?
   createdBy           User?           @relation("CreatedBy", fields: [createdById], references: [id])
   
@@ -246,6 +314,7 @@ model Booking {
   items               ConsignmentItem[]
   trackingHistory     TrackingHistory[]
   notifications       NotificationQueue[]
+  dispatchItems       DispatchItem[]
 
   @@index([lrNumber])
   @@index([senderPhone])
@@ -253,7 +322,9 @@ model Booking {
   @@index([status])
   @@index([originOfficeId])
   @@index([destinationOfficeId])
+  @@index([currentOfficeId])
   @@index([createdById])
+  @@index([createdAt])
 }
 
 model ConsignmentItem {
@@ -311,33 +382,72 @@ model NotificationQueue {
   @@index([status])
 }
 
-model Dispatch {
-  id            String        @id @default(uuid())
-  vehicleNumber String
-  driverName    String?
-  driverPhone   String?
-  routeId       String?
-  route         RouteMaster?  @relation(fields: [routeId], references: [id])
-  departureTime DateTime?
-  arrivalTime   DateTime?
-  status        String        @default("SCHEDULED") // SCHEDULED, IN_TRANSIT, ARRIVED, COMPLETED
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+model DispatchItem {
+  id         String   @id @default(uuid())
+  dispatchId String
+  bookingId  String
+  createdAt  DateTime @default(now())
 
-  bookings      Booking[]
+  dispatch Dispatch @relation(fields: [dispatchId], references: [id], onDelete: Cascade)
+  booking  Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@unique([dispatchId, bookingId])
+  @@index([dispatchId])
+  @@index([bookingId])
+}
+
+model Dispatch {
+  id                  String         @id @default(uuid())
+  dispatchNumber      String         @unique @default(uuid())
+  vehicleNumber       String
+  driverName          String?
+  driverPhone         String?
+  routeId             String?
+  route               RouteMaster?   @relation(fields: [routeId], references: [id])
+  originOfficeId      String?
+  originOffice        OfficeMaster?  @relation("DispatchOriginOffice", fields: [originOfficeId], references: [id])
+  destinationOfficeId String?
+  destinationOffice   OfficeMaster?  @relation("DispatchDestOffice", fields: [destinationOfficeId], references: [id])
+  departureTime       DateTime?
+  estimatedArrival    DateTime?
+  actualArrival       DateTime?
+  status              DispatchStatus @default(CREATED)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  bookings            Booking[]
+  dispatchItems       DispatchItem[]
+  trackingHistories   TrackingHistory[]
+
+  @@index([dispatchNumber])
+  @@index([status])
 }
 
 model TrackingHistory {
-  id         String        @id @default(uuid())
-  bookingId  String
-  booking    Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  status     BookingStatus
-  officeId   String?
-  office     OfficeMaster? @relation(fields: [officeId], references: [id])
-  userId     String?
-  user       User?         @relation(fields: [userId], references: [id])
-  notes      String?
-  createdAt  DateTime      @default(now())
+  id                   String             @id @default(uuid())
+  bookingId            String
+  booking              Booking            @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  dispatchId           String?
+  dispatch             Dispatch?          @relation(fields: [dispatchId], references: [id])
+  status               BookingStatus
+  title                String?
+  publicRemarks        String?
+  internalRemarks      String?
+  remarkType           TrackingRemarkType @default(EMPLOYEE)
+  receiverNameVerified String?
+  receiverPhoneVerified String?
+  officeId             String?
+  office               OfficeMaster?      @relation(fields: [officeId], references: [id])
+  userId               String?
+  user                 User?              @relation(fields: [userId], references: [id])
+  latitude             Float?
+  longitude            Float?
+  notes                String?
+  createdAt            DateTime           @default(now())
+
+  @@index([bookingId])
+  @@index([createdAt])
+  @@index([dispatchId])
 }
 
 model StatusMaster {

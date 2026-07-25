@@ -114,15 +114,24 @@ export function EmployeeDashboard({ metrics }: EmployeeDashboardProps) {
         </div>
 
         {/* Active Dispatches */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-sm space-y-2 opacity-75">
+        <Link
+          href="/employee/dispatches"
+          className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200/80 dark:border-neutral-800 shadow-sm block space-y-2 relative overflow-hidden"
+        >
           <div className="flex justify-between items-center text-slate-500 dark:text-neutral-400">
-            <span className="text-xs font-semibold">Active Dispatches</span>
-            <Truck className="h-4 w-4 text-indigo-500" />
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-neutral-400">Active Dispatches</span>
+            <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <Truck className="h-4 w-4" />
+            </div>
           </div>
-          <p className="text-2xl font-black text-slate-900 dark:text-white">Active</p>
-          <span className="text-[10px] text-slate-400 font-medium">(Milestone 8 Preview)</span>
-        </div>
+          <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Active Runs</p>
+          <div className="flex items-center space-x-1.5 text-amber-600 dark:text-amber-400 font-extrabold text-[11px]">
+            <span>Manage Vehicle Loading</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </div>
+        </Link>
       </div>
+
 
       {/* QUICK ACTIONS BAR */}
       <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-4">

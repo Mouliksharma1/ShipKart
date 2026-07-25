@@ -71,8 +71,17 @@ export default async function CustomerHistoryPage() {
                   </div>
 
                   <Link
+                    href={`/lr/${b.lrNumber}`}
+                    target="_blank"
+                    className="px-3 py-1.5 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 font-bold text-xs hover:bg-blue-600 hover:text-white transition-colors"
+                  >
+                    Digital LR
+                  </Link>
+
+                  <Link
                     href={`/customer/booking/${b.lrNumber}`}
                     className="p-2 rounded-xl bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300 hover:text-amber-500 transition-colors"
+                    title="View Details"
                   >
                     <ArrowRight className="h-4 w-4" />
                   </Link>

@@ -336,7 +336,7 @@ export function EmployeeBookingWizard({ offices, defaultOriginId }: EmployeeBook
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
           <button
             onClick={() => {
               setSuccessData(null);
@@ -348,18 +348,26 @@ export function EmployeeBookingWizard({ offices, defaultOriginId }: EmployeeBook
               setItems([{ parcelType: ParcelType.BOX, quantity: 1, weightKg: 1.0, remarks: "" }]);
               setCustomerLookupResult(null);
             }}
-            className="py-3.5 px-6 rounded-xl bg-amber-500 hover:bg-amber-400 font-bold text-amber-950 text-sm shadow-md transition-all flex items-center justify-center space-x-2"
+            className="py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 font-bold text-amber-950 text-xs shadow-md transition-all flex items-center justify-center space-x-2"
           >
             <Plus className="h-4 w-4" />
             <span>Create New Booking</span>
           </button>
 
           <Link
-            href={`/employee/bookings/${successData.lrNumber}`}
-            className="py-3.5 px-6 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:opacity-90 transition-all flex items-center justify-center space-x-2"
+            href={`/lr/${successData.lrNumber}`}
+            target="_blank"
+            className="py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2"
           >
             <FileText className="h-4 w-4" />
-            <span>View Booking Details</span>
+            <span>Digital LR (View/Print)</span>
+          </Link>
+
+          <Link
+            href={`/employee/bookings/${successData.lrNumber}`}
+            className="py-3 px-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs hover:opacity-90 transition-all flex items-center justify-center space-x-2"
+          >
+            <span>Full Details & History</span>
           </Link>
         </div>
       </div>

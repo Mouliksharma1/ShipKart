@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Truck, Search, ShieldCheck, ArrowRight, CheckCircle, Package } from "lucide-react";
 import { Typewriter } from "@/components/ui/typewriter";
+import { InstantTrackerForm } from "@/components/tracking/InstantTrackerForm";
 
 export default function Home() {
   return (
@@ -80,26 +81,7 @@ export default function Home() {
                   <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">LIVE</span>
                 </div>
 
-                <form className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1.5">
-                      Enter LR Number or Sender Mobile
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. LR-POOJA-2026-000001 or 6350603414"
-                      className="w-full rounded-xl border border-slate-300 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-3 px-4 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full flex items-center justify-center space-x-2 rounded-xl bg-amber-500 py-3 text-xs font-bold text-amber-950 shadow-md hover:bg-amber-400 transition-colors"
-                  >
-                    <span>Track Consignment Status</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </form>
+                <InstantTrackerForm />
 
                 <div className="rounded-xl bg-slate-100 dark:bg-neutral-950 p-4 border border-slate-200 dark:border-neutral-800/80 space-y-2 text-xs">
                   <div className="flex justify-between text-slate-600 dark:text-neutral-400">

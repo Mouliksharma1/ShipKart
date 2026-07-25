@@ -1,8 +1,12 @@
 import { z } from "zod";
-import { ParcelType, PickupMethod, PaymentType, PaymentMode } from "@prisma/client";
+
+export const PARCEL_TYPE_VALUES = ["ENVELOPE", "BOX", "MEDIUM_PARCEL", "LARGE_BUNDLE"] as const;
+export const PICKUP_METHOD_VALUES = ["SELF_DROP", "TAXI_PICKUP"] as const;
+export const PAYMENT_TYPE_VALUES = ["PAID", "TO_PAY"] as const;
+export const PAYMENT_MODE_VALUES = ["CASH", "UPI"] as const;
 
 export const ConsignmentItemInputSchema = z.object({
-  parcelType: z.nativeEnum(ParcelType),
+  parcelType: z.enum(PARCEL_TYPE_VALUES),
   quantity: z.number().int().positive("Quantity must be at least 1"),
   weightKg: z.number().positive("Weight must be greater than 0").optional().or(z.literal(1.0)),
   photoUrl: z.string().url("Invalid image URL").optional().or(z.literal("")),
@@ -28,12 +32,12 @@ export const CreateBookingSchema = z.object({
   destinationOfficeId: z.string().uuid("Invalid destination office selected"),
 
   // Pickup Method
-  pickupMethod: z.nativeEnum(PickupMethod).default(PickupMethod.SELF_DROP),
+  pickupMethod: z.enum(PICKUP_METHOD_VALUES).default("SELF_DROP"),
   pickupDistanceKm: z.number().nonnegative().optional().default(3.0),
 
   // Payment Options
-  paymentType: z.nativeEnum(PaymentType).default(PaymentType.PAID),
-  paymentMode: z.nativeEnum(PaymentMode).default(PaymentMode.CASH),
+  paymentType: z.enum(PAYMENT_TYPE_VALUES).default("PAID"),
+  paymentMode: z.enum(PAYMENT_MODE_VALUES).default("CASH"),
   customOverridePrice: z.number().nonnegative("Custom price cannot be negative").optional().nullable(),
   specialNotes: z.string().optional().or(z.literal("")),
 

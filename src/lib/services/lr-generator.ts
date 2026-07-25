@@ -34,5 +34,5 @@ export async function generateNextLRNumber(): Promise<string> {
     // 3. Format padded 9-digit LR Number (e.g. SK000000001)
     const padded = String(nextNumber).padStart(9, "0");
     return `SK${padded}`;
-  });
+  }, { maxWait: 10000, timeout: 20000 });
 }

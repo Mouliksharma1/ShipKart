@@ -42,7 +42,7 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-16">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>

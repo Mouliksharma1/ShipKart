@@ -198,7 +198,7 @@ export async function createBookingAction(formData: unknown): Promise<BookingAct
       });
 
       return booking;
-    });
+    }, { timeout: 25000 });
 
     revalidatePath("/customer");
     revalidatePath("/customer/history");

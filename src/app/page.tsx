@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Truck, Search, ShieldCheck, ArrowRight, CheckCircle, Package } from "lucide-react";
+import { Typewriter } from "@/components/ui/typewriter";
 
 export default function Home() {
   return (
@@ -16,10 +17,19 @@ export default function Home() {
                 <span>POOJA TRAVELS & CARGO • OFFICIAL LOGISTICS PLATFORM</span>
               </div>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                 Fast, Reliable <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-400 dark:via-amber-200 dark:to-amber-500">
-                  Parcel Logistics & Builty
+                <span className="inline-block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-400 dark:via-amber-200 dark:to-amber-500">
+                  <Typewriter 
+                    words={[
+                      "Parcel Logistics & Builty",
+                      "Bus Freight Management",
+                      "Rajasthan & Gujarat Routes",
+                      "Instant LR Tracking"
+                    ]} 
+                    speed={80} 
+                    delayBetweenWords={2000} 
+                  />
                 </span>
               </h1>
               

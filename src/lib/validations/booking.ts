@@ -34,6 +34,7 @@ export const CreateBookingSchema = z.object({
   // Payment Options
   paymentType: z.nativeEnum(PaymentType).default(PaymentType.PAID),
   paymentMode: z.nativeEnum(PaymentMode).default(PaymentMode.CASH),
+  customOverridePrice: z.number().nonnegative("Custom price cannot be negative").optional().nullable(),
   specialNotes: z.string().optional().or(z.literal("")),
 
   // Multi-Item Consignments

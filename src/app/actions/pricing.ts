@@ -1,38 +1,27 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { calculatePrice, CalculatePriceInput } from "@/lib/services/pricing";
+import { calculatePrice as calculatePriceService, CalculatePriceInput, PricingBreakdown } from "@/lib/services/pricing";
 import { PricingGroupSchema } from "@/lib/validations/pricing";
 import { revalidatePath } from "next/cache";
 
-export type ActionResponse<T = unknown> = {
-  success: boolean;
-  message?: string;
-  data?: T;
-  error?: string;
-};
+export async function calculatePriceAction(input: CalculatePriceInput): Promise<PricingBreakdown> {
+  return await calculatePriceService(input);
+}
 
-// ==================== PRICING GROUP SERVER ACTIONS ====================
-
-export async function getPricingGroupsAction(query?: string) {
+export async function getPricingGroupsAction() {
   try {
     const groups = await db.pricingGroup.findMany({
       include: {
         pricingRules: {
           orderBy: { displayOrder: "asc" },
         },
-        _count: {
-          select: { routes: true, destOffices: true },
-        },
+        destOffices: true,
+        routes: true,
       },
-      where: query ? {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { description: { contains: query, mode: "insensitive" } },
-        ],
-      } : {},
       orderBy: { createdAt: "desc" },
     });
+
     return { success: true, data: groups };
   } catch (err) {
     console.error("Get Pricing Groups Error:", err);
@@ -40,157 +29,170 @@ export async function getPricingGroupsAction(query?: string) {
   }
 }
 
-export async function createPricingGroupAction(formData: unknown): Promise<ActionResponse> {
+export async function createPricingGroupAction(formData: unknown) {
   const parseResult = PricingGroupSchema.safeParse(formData);
   if (!parseResult.success) {
-    return { success: false, error: parseResult.error.issues[0]?.message || "Invalid pricing data" };
+    return { success: false, error: parseResult.error.issues[0]?.message || "Invalid pricing group data" };
   }
 
-  const { name, description, isRajasthan, status, rules } = parseResult.data;
+  const data = parseResult.data;
 
   try {
-    const existing = await db.pricingGroup.findUnique({ where: { name } });
+    const existing = await db.pricingGroup.findUnique({
+      where: { name: data.name },
+    });
+
     if (existing) {
-      return { success: false, error: "A pricing group with this name already exists." };
+      return { success: false, error: `Pricing group with name "${data.name}" already exists.` };
     }
 
-    const newGroup = await db.pricingGroup.create({
-      data: {
-        name,
-        description: description || null,
-        isRajasthan,
-        status,
-        pricingRules: {
-          create: rules.map(r => ({
-            parcelType: r.parcelType,
-            selfPrice: r.selfPrice,
-            taxiPrice: r.taxiPrice ?? null,
-            displayOrder: r.displayOrder,
-          })),
+    const group = await db.$transaction(async (tx) => {
+      const created = await tx.pricingGroup.create({
+        data: {
+          name: data.name,
+          description: data.description || null,
+          isRajasthan: data.isRajasthan,
+          status: data.status,
         },
-      },
-      include: { pricingRules: true },
+      });
+
+      if (data.rules && data.rules.length > 0) {
+        await tx.pricingRule.createMany({
+          data: data.rules.map((rule) => ({
+            pricingGroupId: created.id,
+            parcelType: rule.parcelType,
+            selfPrice: rule.selfPrice,
+            taxiPrice: rule.taxiPrice ?? null,
+            displayOrder: rule.displayOrder || 1,
+          })),
+        });
+      }
+
+      return created;
     });
 
     revalidatePath("/admin/pricing");
-    return { success: true, message: "Pricing group created successfully!", data: newGroup };
-  } catch (err) {
+    return { success: true, message: "Pricing group created successfully!", data: group };
+  } catch (err: any) {
     console.error("Create Pricing Group Error:", err);
-    return { success: false, error: "Failed to create pricing group." };
+    return { success: false, error: err?.message || "Failed to create pricing group." };
   }
 }
 
-export async function updatePricingGroupAction(id: string, formData: unknown): Promise<ActionResponse> {
-  const parseResult = PricingGroupSchema.safeParse(formData);
+export async function updatePricingGroupAction(id: string, formData: unknown) {
+  const parseResult = PricingGroupSchema.partial().safeParse(formData);
   if (!parseResult.success) {
-    return { success: false, error: parseResult.error.issues[0]?.message || "Invalid pricing data" };
+    return { success: false, error: parseResult.error.issues[0]?.message || "Invalid update payload" };
   }
 
-  const { name, description, isRajasthan, status, rules } = parseResult.data;
+  const data = parseResult.data;
 
   try {
-    // Delete existing rules and re-create updated rules transactionally
-    const updatedGroup = await db.$transaction(async (tx) => {
-      await tx.pricingRule.deleteMany({ where: { pricingGroupId: id } });
-
-      return await tx.pricingGroup.update({
+    await db.$transaction(async (tx) => {
+      await tx.pricingGroup.update({
         where: { id },
         data: {
-          name,
-          description: description || null,
-          isRajasthan,
-          status,
-          pricingRules: {
-            create: rules.map(r => ({
-              parcelType: r.parcelType,
-              selfPrice: r.selfPrice,
-              taxiPrice: r.taxiPrice ?? null,
-              displayOrder: r.displayOrder,
-            })),
-          },
+          name: data.name,
+          description: data.description || null,
+          isRajasthan: data.isRajasthan,
+          status: data.status,
         },
-        include: { pricingRules: true },
       });
+
+      if (data.rules && data.rules.length > 0) {
+        await tx.pricingRule.deleteMany({
+          where: { pricingGroupId: id },
+        });
+
+        await tx.pricingRule.createMany({
+          data: data.rules.map((rule) => ({
+            pricingGroupId: id,
+            parcelType: rule.parcelType,
+            selfPrice: rule.selfPrice,
+            taxiPrice: rule.taxiPrice ?? null,
+            displayOrder: rule.displayOrder || 1,
+          })),
+        });
+      }
     });
 
     revalidatePath("/admin/pricing");
-    revalidatePath("/admin/routes");
-    return { success: true, message: "Pricing group updated successfully!", data: updatedGroup };
-  } catch (err) {
+    return { success: true, message: "Pricing group updated successfully!" };
+  } catch (err: any) {
     console.error("Update Pricing Group Error:", err);
-    return { success: false, error: "Failed to update pricing group." };
+    return { success: false, error: err?.message || "Failed to update pricing group." };
   }
 }
 
-export async function togglePricingGroupStatusAction(id: string, currentStatus: boolean): Promise<ActionResponse> {
+export async function togglePricingGroupStatusAction(id: string, currentStatus: boolean) {
   try {
     await db.pricingGroup.update({
       where: { id },
       data: { status: !currentStatus },
     });
+
     revalidatePath("/admin/pricing");
-    return { success: true, message: `Pricing group ${!currentStatus ? "enabled" : "disabled"} successfully!` };
+    return { success: true, message: `Pricing group ${!currentStatus ? "activated" : "deactivated"}!` };
   } catch (err) {
     console.error("Toggle Pricing Group Status Error:", err);
-    return { success: false, error: "Failed to update pricing status." };
+    return { success: false, error: "Failed to toggle status." };
   }
 }
 
-export async function duplicatePricingGroupAction(id: string): Promise<ActionResponse> {
+export async function duplicatePricingGroupAction(id: string) {
   try {
-    const existing = await db.pricingGroup.findUnique({
+    const original = await db.pricingGroup.findUnique({
       where: { id },
       include: { pricingRules: true },
     });
 
-    if (!existing) {
-      return { success: false, error: "Pricing group to duplicate was not found." };
+    if (!original) {
+      return { success: false, error: "Original pricing group not found." };
     }
 
-    const copyName = `${existing.name} (Copy ${Date.now().toString().slice(-4)})`;
+    const newName = `${original.name} (Copy ${Date.now().toString().slice(-4)})`;
 
-    const duplicated = await db.pricingGroup.create({
-      data: {
-        name: copyName,
-        description: existing.description ? `${existing.description} (Duplicate)` : "Cloned tariff group",
-        isRajasthan: existing.isRajasthan,
-        status: existing.status,
-        pricingRules: {
-          create: existing.pricingRules.map(r => ({
+    await db.$transaction(async (tx) => {
+      const created = await tx.pricingGroup.create({
+        data: {
+          name: newName,
+          description: original.description ? `Copy of ${original.description}` : "Cloned pricing group",
+          isRajasthan: original.isRajasthan,
+          status: true,
+        },
+      });
+
+      if (original.pricingRules.length > 0) {
+        await tx.pricingRule.createMany({
+          data: original.pricingRules.map((r) => ({
+            pricingGroupId: created.id,
             parcelType: r.parcelType,
             selfPrice: r.selfPrice,
             taxiPrice: r.taxiPrice,
             displayOrder: r.displayOrder,
           })),
-        },
-      },
-      include: { pricingRules: true },
+        });
+      }
     });
 
     revalidatePath("/admin/pricing");
-    return { success: true, message: "Pricing group duplicated successfully!", data: duplicated };
-  } catch (err) {
+    return { success: true, message: "Pricing group duplicated successfully!" };
+  } catch (err: any) {
     console.error("Duplicate Pricing Group Error:", err);
-    return { success: false, error: "Failed to duplicate pricing group." };
+    return { success: false, error: err?.message || "Failed to duplicate pricing group." };
   }
 }
 
-export async function deletePricingGroupAction(id: string): Promise<ActionResponse> {
+export async function deletePricingGroupAction(id: string) {
   try {
-    const count = await db.routeMaster.count({ where: { pricingGroupId: id } });
-    if (count > 0) {
-      return { success: false, error: `Cannot delete pricing group. It is assigned to ${count} active routes.` };
-    }
+    await db.pricingGroup.delete({
+      where: { id },
+    });
 
-    await db.pricingGroup.delete({ where: { id } });
     revalidatePath("/admin/pricing");
     return { success: true, message: "Pricing group deleted successfully!" };
-  } catch (err) {
+  } catch (err: any) {
     console.error("Delete Pricing Group Error:", err);
-    return { success: false, error: "Failed to delete pricing group." };
+    return { success: false, error: err?.message || "Failed to delete pricing group. It may be assigned to routes." };
   }
-}
-
-export async function calculatePriceAction(params: CalculatePriceInput) {
-  return await calculatePrice(params);
 }

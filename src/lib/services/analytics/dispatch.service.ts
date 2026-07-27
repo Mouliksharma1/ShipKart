@@ -42,8 +42,8 @@ export async function getDispatchAnalytics(filter?: DispatchFilter) {
     });
 
     const totalDispatches = dispatches.length;
-    const inTransitCount = dispatches.filter((d) => d.status === 'IN_TRANSIT' || d.status === 'DISPATCHED').length;
-    const completedCount = dispatches.filter((d) => d.status === 'RECEIVED' || d.status === 'CLOSED').length;
+    const inTransitCount = dispatches.filter((d) => d.status === 'DEPARTED' || d.status === 'READY').length;
+    const completedCount = dispatches.filter((d) => d.status === 'ARRIVED' || d.status === 'CLOSED').length;
 
     // Status breakdown
     const statusBreakdown: Record<string, number> = {};

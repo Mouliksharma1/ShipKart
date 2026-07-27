@@ -52,7 +52,7 @@ export async function getDashboardSummary(filter?: DashboardSummaryFilter) {
     const activeDispatchesCount = await prisma.dispatch.count({
       where: {
         ...whereDispatch,
-        status: { in: [DispatchStatus.DISPATCHED, DispatchStatus.IN_TRANSIT] },
+        status: { in: [DispatchStatus.DEPARTED, DispatchStatus.READY] },
       },
     });
 

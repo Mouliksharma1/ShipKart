@@ -19,6 +19,7 @@ export function CreateEmployeeForm({ offices }: CreateEmployeeFormProps) {
     name: '',
     phone: '',
     email: '',
+    password: '',
     role: 'EMPLOYEE',
     designation: 'Staff',
     officeId: offices[0]?.id || '',
@@ -110,6 +111,21 @@ export function CreateEmployeeForm({ offices }: CreateEmployeeFormProps) {
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             placeholder="e.g. ramesh@poojatravels.com"
             className="w-full p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 rounded-xl text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-medium"
+          />
+        </div>
+
+        {/* Custom Password (Optional) */}
+        <div className="space-y-1.5">
+          <label className="font-bold text-slate-700 dark:text-zinc-300 flex items-center justify-between">
+            <span className="flex items-center"><KeyRound className="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-zinc-500" /> Initial Password</span>
+            <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Default: Phone Number</span>
+          </label>
+          <input
+            type="text"
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            placeholder="Leave empty to use Phone Number"
+            className="w-full p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 rounded-xl text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-mono"
           />
         </div>
 

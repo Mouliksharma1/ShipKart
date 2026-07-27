@@ -62,6 +62,22 @@ export function EmployeeSecurityControls({ employee }: EmployeeSecurityControlsP
         </div>
       )}
 
+      {/* Login Credentials Callout */}
+      <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-xs space-y-1.5">
+        <div className="font-extrabold text-amber-900 dark:text-amber-200 flex items-center">
+          <KeyRound className="w-4 h-4 mr-1.5 text-amber-600 dark:text-amber-400" /> Default Login Credentials
+        </div>
+        <div className="text-slate-700 dark:text-zinc-300">
+          Username / Phone: <strong className="font-mono text-slate-900 dark:text-white">{employee.phone}</strong>
+        </div>
+        <div className="text-slate-700 dark:text-zinc-300">
+          Default Initial Password: <strong className="font-mono text-slate-900 dark:text-white">{employee.phone}</strong>
+        </div>
+        <div className="text-[11px] text-slate-500 dark:text-zinc-400 pt-1">
+          * New employees can sign in using their phone number as password and will be prompted to set a custom password.
+        </div>
+      </div>
+
       {/* Security Status Badges */}
       <div className="space-y-3 text-xs">
         <div className="p-3.5 bg-slate-50 dark:bg-zinc-800/40 rounded-2xl border border-slate-100 dark:border-zinc-800 flex items-center justify-between">

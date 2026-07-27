@@ -6,6 +6,7 @@ export interface CreateEmployeeInput {
   name: string;
   phone: string;
   email?: string;
+  password?: string;
   role?: Role;
   designation?: string;
   officeId?: string;
@@ -36,6 +37,7 @@ export async function createEmployee(input: CreateEmployeeInput) {
       aadhaarDoc: input.aadhaarDoc,
       panDoc: input.panDoc,
       drivingLicenseDoc: input.drivingLicenseDoc,
+      passwordResetRequired: true,
       joiningDate: new Date(),
       employeeStatus: EmployeeStatus.ACTIVE,
       status: true,

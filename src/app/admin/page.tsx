@@ -220,6 +220,40 @@ export default async function AdminDashboardPage() {
           )}
         </div>
       </div>
+
+      {/* ── BI Reports Hub Banner ── */}
+      <Link
+        href="/admin/reports"
+        className="relative group flex items-center justify-between overflow-hidden rounded-3xl p-6 lg:p-7 transition-all"
+        style={{ background: 'linear-gradient(135deg, #1c1008 0%, #2d1a04 40%, #1a1008 100%)' }}
+      >
+        {/* Ambient glow orbs */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/20 transition-colors" />
+        <div className="absolute bottom-0 left-1/3 w-48 h-48 bg-orange-600/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute inset-0 rounded-3xl border border-amber-500/20 group-hover:border-amber-500/40 transition-colors" />
+
+        <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="p-3 rounded-2xl bg-amber-500/20 border border-amber-500/30 shrink-0 group-hover:scale-110 transition-transform">
+            <TrendingUp className="w-6 h-6 text-amber-400" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-amber-500 border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 rounded-full">
+                Enterprise BI
+              </span>
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] text-emerald-400 font-semibold">Live Data</span>
+            </div>
+            <p className="text-base font-extrabold text-white">Business Intelligence & Operational Reports</p>
+            <p className="text-xs text-amber-200/60 mt-0.5">Revenue, dispatches, employee productivity, customer insights & branch analytics</p>
+          </div>
+        </div>
+
+        <div className="relative hidden sm:flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-amber-950 text-xs font-extrabold rounded-2xl shrink-0 transition-all shadow-lg shadow-amber-500/30 group-hover:shadow-amber-500/50">
+          Open Reports Hub
+          <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+        </div>
+      </Link>
     </div>
   );
 }

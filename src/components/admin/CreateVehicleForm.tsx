@@ -102,6 +102,7 @@ export function CreateVehicleForm({ drivers }: CreateVehicleFormProps) {
             className="w-full p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 rounded-xl text-slate-900 dark:text-white font-medium"
           >
             <option value="TRUCK">Heavy Cargo Truck</option>
+            <option value="BUS">Passenger & Cargo Bus</option>
             <option value="VAN">Delivery Van</option>
             <option value="CONTAINER">Container Semi-Trailer</option>
             <option value="TEMPO">Local Tempo Pickup</option>

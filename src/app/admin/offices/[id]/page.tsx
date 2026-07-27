@@ -17,7 +17,7 @@ export default async function OfficeDetailPage({ params }: OfficeDetailPageProps
     where: { id },
     include: {
       parentOffice: true,
-      childOffices: true,
+      subOffices: true,
       users: { select: { id: true, name: true, role: true, phone: true } },
     },
   });
@@ -114,7 +114,7 @@ export default async function OfficeDetailPage({ params }: OfficeDetailPageProps
             </div>
             <div className="p-3 bg-slate-50 dark:bg-zinc-800/40 rounded-xl border border-slate-100 dark:border-zinc-800">
               <div className="text-[10px] text-slate-400 dark:text-zinc-500 font-semibold">Child Branches</div>
-              <div className="font-bold text-slate-900 dark:text-white mt-0.5">{office.childOffices.length} Direct Sub-Offices</div>
+              <div className="font-bold text-slate-900 dark:text-white mt-0.5">{office.subOffices.length} Direct Sub-Offices</div>
             </div>
           </div>
         </div>

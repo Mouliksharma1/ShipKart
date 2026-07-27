@@ -63,18 +63,61 @@ export const LRPreview: React.FC<LRPreviewProps> = ({
 
   // WHATSAPP MESSAGE FORMATTER
   const generateWhatsAppMessage = () => {
+    const destOffice = booking.destinationOffice;
+    const systemTotal = booking.subtotalAmount + booking.totalPickupCharge;
+    const isCustomPrice = Math.abs(booking.totalAmount - systemTotal) > 0.01;
+    const priceLabel = isCustomPrice ? "(Custom Rate)" : "";
+
     return (
-      `*POOJA TRAVELS & CARGO*\n` +
-      `*Booking Successful*\n\n` +
-      `*LR Number:* ${booking.lrNumber}\n` +
-      `*Status:* ${booking.status.replace(/_/g, " ")}\n` +
-      `*Route:* ${booking.originOffice.name} → ${booking.destinationOffice.name}\n` +
-      `*Grand Total:* ₹${booking.totalAmount.toFixed(2)} (${booking.paymentType})\n\n` +
-      `*Track Parcel:* ${publicTrackingUrl}\n` +
-      `*Download Digital LR:* ${publicLrUrl}\n\n` +
-      `*Helpline:* 6350603414 | 7852091119 | 0291-2651955\n` +
-      `Thank You.`
+      `📦 *POOJA TRAVELS & CARGO*\n` +
+      `✅ *Booking Confirmed!*\n\n` +
+
+      `📄 *Digital Builty (LR):*\n` +
+      `${publicLrUrl}\n` +
+      `_(Tap to view or download your LR PDF)_\n\n` +
+
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `🔖 *LR Number:* ${booking.lrNumber}\n` +
+      `📌 *Status:* ${booking.status.replace(/_/g, " ")}\n` +
+      `🛣️ *Route:* ${booking.originOffice.name} → ${destOffice.name}\n` +
+      `💰 *Grand Total:* ₹${booking.totalAmount.toFixed(2)} ${priceLabel} _(${booking.paymentType} · ${booking.paymentMode})_\n\n` +
+
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `🏢 *Destination Office Details*\n` +
+      `📍 *Office:* ${destOffice.name}\n` +
+      `🏙️ *City:* ${destOffice.city}\n` +
+      `🗺️ *Address:* ${destOffice.address}\n` +
+      `📞 *Office Phone:* ${destOffice.phone}\n\n` +
+
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `🔍 *Live Tracking:*\n` +
+      `${publicTrackingUrl}\n\n` +
+
+      `📞 *Helpline:* 6350603414 | 7852091119 | 0291-2651955\n` +
+      `🙏 Thank You for choosing Pooja Travels & Cargo!`
     );
+  };
+
+  // DOWNLOAD PDF + OPEN WHATSAPP
+  const handleDownloadPDFAndShare = async (phone?: string) => {
+    try {
+      setIsGeneratingPdf(true);
+      const blob = await generateLRPDF(booking, companySettings);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `LR_${booking.lrNumber}_PoojaTravel.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("PDF Download Error:", err);
+    } finally {
+      setIsGeneratingPdf(false);
+      // After downloading PDF, open WhatsApp with the message
+      window.open(getWhatsAppShareLink(phone), "_blank");
+    }
   };
 
   const getWhatsAppShareLink = (phone?: string) => {
@@ -154,12 +197,12 @@ export const LRPreview: React.FC<LRPreviewProps> = ({
 
       {/* WHATSAPP MODAL */}
       {showWhatsAppModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 print:hidden">
+      <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 print:hidden">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 text-white shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b border-slate-800 pb-3">
               <h3 className="text-lg font-bold text-emerald-400 flex items-center gap-2">
                 <Share2 className="w-5 h-5" />
-                Share Digital LR via WhatsApp
+                Share via WhatsApp
               </h3>
               <button
                 onClick={() => setShowWhatsAppModal(false)}
@@ -170,55 +213,73 @@ export const LRPreview: React.FC<LRPreviewProps> = ({
             </div>
 
             <p className="text-xs text-slate-300">
-              Select recipient to send the pre-formatted LR receipt & live tracking link:
+              Select recipient — the PDF builty will be downloaded first, then WhatsApp will open with the full message:
             </p>
 
             <div className="space-y-2 pt-1">
-              {/* SENDER BUTTON */}
-              <a
-                href={getWhatsAppShareLink(booking.senderPhone)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-emerald-900/40 border border-slate-700 hover:border-emerald-500/50 transition group"
+              {/* SENDER — Download PDF + Open WA */}
+              <button
+                onClick={() => handleDownloadPDFAndShare(booking.senderPhone)}
+                disabled={isGeneratingPdf}
+                className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-emerald-900/40 border border-slate-700 hover:border-emerald-500/50 transition group disabled:opacity-50 cursor-pointer"
               >
-                <div>
+                <div className="text-left">
                   <div className="text-sm font-bold text-white group-hover:text-emerald-400">
-                    Send to Sender (Consignor)
+                    📤 Send to Sender (Consignor)
                   </div>
-                  <div className="text-xs text-slate-400">{booking.senderName} ({booking.senderPhone})</div>
+                  <div className="text-xs text-slate-400">{booking.senderName} · {booking.senderPhone}</div>
+                  <div className="text-[10px] text-emerald-500 mt-0.5">Downloads PDF then opens WhatsApp</div>
                 </div>
-                <ExternalLink className="w-4 h-4 text-emerald-400" />
-              </a>
+                <ExternalLink className="w-4 h-4 text-emerald-400 shrink-0" />
+              </button>
 
-              {/* RECEIVER BUTTON */}
-              <a
-                href={getWhatsAppShareLink(booking.receiverPhone)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-emerald-900/40 border border-slate-700 hover:border-emerald-500/50 transition group"
+              {/* RECEIVER — Download PDF + Open WA */}
+              <button
+                onClick={() => handleDownloadPDFAndShare(booking.receiverPhone)}
+                disabled={isGeneratingPdf}
+                className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-emerald-900/40 border border-slate-700 hover:border-emerald-500/50 transition group disabled:opacity-50 cursor-pointer"
               >
-                <div>
+                <div className="text-left">
                   <div className="text-sm font-bold text-white group-hover:text-emerald-400">
-                    Send to Receiver (Consignee)
+                    📦 Send to Receiver (Consignee)
                   </div>
-                  <div className="text-xs text-slate-400">{booking.receiverName} ({booking.receiverPhone})</div>
+                  <div className="text-xs text-slate-400">{booking.receiverName} · {booking.receiverPhone}</div>
+                  <div className="text-[10px] text-emerald-500 mt-0.5">Downloads PDF then opens WhatsApp</div>
                 </div>
-                <ExternalLink className="w-4 h-4 text-emerald-400" />
-              </a>
+                <ExternalLink className="w-4 h-4 text-emerald-400 shrink-0" />
+              </button>
 
-              {/* BOTH / ANY RECIPIENT */}
+              {/* CHOOSE CONTACT — Download PDF + Open WA */}
+              <button
+                onClick={() => handleDownloadPDFAndShare()}
+                disabled={isGeneratingPdf}
+                className="w-full flex items-center justify-between p-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 border border-emerald-600 transition group text-white font-semibold text-sm disabled:opacity-50 cursor-pointer"
+              >
+                <span>{isGeneratingPdf ? "Generating PDF…" : "📲 Choose Contact on WhatsApp"}</span>
+                <ExternalLink className="w-4 h-4 shrink-0" />
+              </button>
+
+              {/* DIVIDER */}
+              <div className="flex items-center gap-2 pt-1">
+                <div className="flex-1 h-px bg-slate-700" />
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider">or just text</span>
+                <div className="flex-1 h-px bg-slate-700" />
+              </div>
+
+              {/* MESSAGE ONLY — no PDF download */}
               <a
                 href={getWhatsAppShareLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 border border-emerald-600 transition group text-white font-semibold text-sm"
+                className="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 transition text-slate-300 text-xs"
               >
-                <span>Share via WhatsApp (Choose Contact)</span>
-                <ExternalLink className="w-4 h-4" />
+                <span>Send message only (no PDF)</span>
+                <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
 
-            <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 text-[11px] text-slate-400 font-mono whitespace-pre-line leading-relaxed max-h-40 overflow-y-auto">
+            {/* MESSAGE PREVIEW */}
+            <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 text-[10px] text-slate-400 font-mono whitespace-pre-line leading-relaxed max-h-52 overflow-y-auto">
               {generateWhatsAppMessage()}
             </div>
 

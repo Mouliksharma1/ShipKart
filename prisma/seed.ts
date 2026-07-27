@@ -66,8 +66,14 @@ async function main() {
 
   // 4. Seed Default Head Office & Regional Branches
   const headOffice = await prisma.officeMaster.upsert({
-    where: { name: 'Pooja Travels Jodhpur Head Office' },
-    update: {},
+    where: { code: 'JDH01' },
+    update: {
+      officeCode: 'OFF000001',
+      officeType: OfficeType.HEAD_OFFICE,
+      maximumStorageCapacity: 5000,
+      currentStorageCapacity: 120,
+      isActive: true,
+    },
     create: {
       officeCode: 'OFF000001',
       name: 'Pooja Travels Jodhpur Head Office',
@@ -95,8 +101,15 @@ async function main() {
   });
 
   const jaipurOffice = await prisma.officeMaster.upsert({
-    where: { name: 'Jaipur Regional Office' },
-    update: {},
+    where: { code: 'JPR01' },
+    update: {
+      officeCode: 'OFF000002',
+      officeType: OfficeType.REGIONAL_OFFICE,
+      parentOfficeId: headOffice.id,
+      maximumStorageCapacity: 3000,
+      currentStorageCapacity: 85,
+      isActive: true,
+    },
     create: {
       officeCode: 'OFF000002',
       name: 'Jaipur Regional Office',
@@ -124,8 +137,15 @@ async function main() {
   });
 
   const kotaOffice = await prisma.officeMaster.upsert({
-    where: { name: 'Kota Branch Office' },
-    update: {},
+    where: { code: 'KOTA01' },
+    update: {
+      officeCode: 'OFF000003',
+      officeType: OfficeType.BRANCH,
+      parentOfficeId: jaipurOffice.id,
+      maximumStorageCapacity: 1500,
+      currentStorageCapacity: 40,
+      isActive: true,
+    },
     create: {
       officeCode: 'OFF000003',
       name: 'Kota Branch Office',

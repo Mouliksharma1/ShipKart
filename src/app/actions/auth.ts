@@ -25,13 +25,13 @@ export async function loginAction(formData: unknown): Promise<AuthResponse> {
   const { email, password } = parseResult.data;
 
   try {
-    // Find user in Prisma database by email
+    // Find user in Prisma database by email or phone number
     const user = await db.user.findFirst({
       where: {
-        email: {
-          equals: email,
-          mode: "insensitive",
-        },
+        OR: [
+          { email: { equals: email, mode: "insensitive" } },
+          { phone: { equals: email, mode: "insensitive" } },
+        ],
       },
       include: {
         office: true,
@@ -54,17 +54,29 @@ export async function loginAction(formData: unknown): Promise<AuthResponse> {
 
     // Role-based redirection path mapping
     let redirectTo = "/customer";
-    if (user.role === "EMPLOYEE") redirectTo = "/employee";
-    else if (user.role === "PARTNER_OFFICE") redirectTo = "/partner";
-    else if (user.role === "ADMIN") redirectTo = "/admin";
+    if (["ADMIN", "SUPER_ADMIN", "MANAGER", "COUNTER_EMPLOYEE", "ACCOUNTANT"].includes(user.role)) {
+      redirectTo = "/admin";
+    } else if (user.role === "EMPLOYEE") {
+      redirectTo = "/employee";
+    } else if (user.role === "PARTNER_OFFICE") {
+      redirectTo = "/partner";
+    }
 
-    // Log login activity
-    await db.activityLog.create({
-      data: {
-        userId: user.id,
-        action: `User Logged In (${user.role})`,
-      },
-    });
+    // Log login activity safely
+    try {
+      await db.activityLog.create({
+        data: {
+          userId: user.id,
+          userRole: user.role,
+          module: "AUTH",
+          entity: "User",
+          entityId: user.id,
+          action: `User Logged In (${user.role})`,
+        },
+      });
+    } catch (logErr) {
+      console.warn("Failed to create login activity log:", logErr);
+    }
 
     return {
       success: true,

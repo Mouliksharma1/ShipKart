@@ -3,7 +3,8 @@
 import { db } from "@/lib/db";
 import { calculatePrice } from "@/lib/services/pricing";
 import { CreateBookingSchema } from "@/lib/validations/booking";
-import { PickupMethod, BookingStatus, NotificationRecipient, NotificationChannel, NotificationStatus, PaymentType, PaymentMode, Role } from "@prisma/client";
+import { PickupMethod, BookingStatus, NotificationEvent, NotificationRecipientType, PaymentType, PaymentMode, Role } from "@prisma/client";
+import { enqueueNotification } from "@/lib/services/notification";
 import { revalidatePath } from "next/cache";
 
 export type EmployeeBookingActionResult = {
@@ -222,27 +223,46 @@ export async function createEmployeeBookingAction(formData: unknown, employeeUse
         },
       });
 
-      // 7. Notification Queue
-      await tx.notificationQueue.createMany({
-        data: [
-          {
-            bookingId: booking.id,
-            recipientType: NotificationRecipient.SENDER,
-            phone: data.senderPhone,
-            channel: NotificationChannel.WHATSAPP,
-            message: `Pooja Travels & Cargo: Booking ${lrNumber} generated at Counter! Total: ₹${grandTotal} (${data.paymentType}).`,
-            status: NotificationStatus.PENDING,
-          },
-          {
-            bookingId: booking.id,
-            recipientType: NotificationRecipient.RECEIVER,
-            phone: data.receiverPhone,
-            channel: NotificationChannel.WHATSAPP,
-            message: `Pooja Travels & Cargo: Parcel ${lrNumber} booked for you by ${data.senderName}.`,
-            status: NotificationStatus.PENDING,
-          },
-        ],
-      });
+      // 7. Notification Queue via Central Notification Engine
+      try {
+        const originOffice = await tx.officeMaster.findUnique({ where: { id: data.originOfficeId } });
+        const destOffice = await tx.officeMaster.findUnique({ where: { id: data.destinationOfficeId } });
+
+        const commonVars = {
+          senderName: data.senderName,
+          receiverName: data.receiverName,
+          lrNumber,
+          origin: originOffice?.name || 'Origin Office',
+          destination: destOffice?.name || 'Destination Office',
+          trackingUrl: `https://shipkart.app/track/${lrNumber}`,
+        };
+
+        // Sender Notification
+        await enqueueNotification({
+          event: NotificationEvent.BOOKING_CREATED,
+          bookingId: booking.id,
+          lrNumber,
+          recipientType: NotificationRecipientType.SENDER,
+          recipientName: data.senderName,
+          recipientPhone: data.senderPhone,
+          variables: commonVars,
+          deduplicationKey: `employee_booking_created_sender_${booking.id}`,
+        });
+
+        // Receiver Notification
+        await enqueueNotification({
+          event: NotificationEvent.BOOKING_CREATED,
+          bookingId: booking.id,
+          lrNumber,
+          recipientType: NotificationRecipientType.RECEIVER,
+          recipientName: data.receiverName,
+          recipientPhone: data.receiverPhone,
+          variables: commonVars,
+          deduplicationKey: `employee_booking_created_receiver_${booking.id}`,
+        });
+      } catch (notifErr) {
+        console.error('Failed to enqueue employee booking notification:', notifErr);
+      }
 
       // 8. Activity Log
       await tx.activityLog.create({

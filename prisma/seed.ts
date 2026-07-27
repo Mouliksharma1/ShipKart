@@ -25,9 +25,9 @@ export async function seed() {
 
   // 1.5. Admin User Seed
   await db.user.upsert({
-    where: { phone: "6350603414" },
+    where: { email: "admin@shipKart.com" },
     update: {
-      email: "admin@shipKart.com",
+      phone: "7852091119",
       role: "ADMIN",
       name: "Pooja Travels Admin",
       status: true,
@@ -35,7 +35,7 @@ export async function seed() {
     create: {
       name: "Pooja Travels Admin",
       email: "admin@shipKart.com",
-      phone: "6350603414",
+      phone: "7852091119",
       role: "ADMIN",
       status: true,
     },
@@ -276,7 +276,100 @@ export async function seed() {
     });
   }
 
-  console.log("✅ ShipKart Milestone 4 Normalized Pricing Engine Seeding finished successfully!");
+  // 8. Default Notification Templates (Multi-Language: EN, HI, GU)
+  console.log("📨 Seeding Multi-Language Notification Templates...");
+  const defaultTemplates = [
+    {
+      name: "Booking Created - English",
+      event: "BOOKING_CREATED",
+      channel: "WHATSAPP",
+      languageCode: "en",
+      version: 1,
+      title: "Booking Confirmed",
+      messageTemplate: "Dear {{receiverName}}, your parcel (LR: {{lrNumber}}) from {{senderName}} ({{origin}} to {{destination}}) is confirmed! Track live: {{trackingUrl}} - Pooja Travels & Cargo",
+      variables: JSON.stringify(["receiverName", "lrNumber", "senderName", "origin", "destination", "trackingUrl"]),
+    },
+    {
+      name: "Booking Created - Hindi",
+      event: "BOOKING_CREATED",
+      channel: "WHATSAPP",
+      languageCode: "hi",
+      version: 1,
+      title: "बुकिंग की पुष्टि",
+      messageTemplate: "प्रिय {{receiverName}}, {{senderName}} द्वारा आपका पार्सल (LR: {{lrNumber}}) बुक कर लिया गया है ({{origin}} से {{destination}})। लाइव ट्रैक करें: {{trackingUrl}} - पूजा ट्रेवल्स एंड कार्गो",
+      variables: JSON.stringify(["receiverName", "lrNumber", "senderName", "origin", "destination", "trackingUrl"]),
+    },
+    {
+      name: "Ready For Collection - English",
+      event: "READY_FOR_COLLECTION",
+      channel: "WHATSAPP",
+      languageCode: "en",
+      version: 1,
+      title: "Parcel Ready for Collection",
+      messageTemplate: "Dear {{receiverName}}, your parcel (LR: {{lrNumber}}) has ARRIVED at {{collectionOffice}}! Please collect it using your LR number. Office address: {{officeAddress}}. Helpline: {{helpline}}. Track: {{trackingUrl}}",
+      variables: JSON.stringify(["receiverName", "lrNumber", "collectionOffice", "officeAddress", "helpline", "trackingUrl"]),
+    },
+    {
+      name: "Ready For Collection - Hindi",
+      event: "READY_FOR_COLLECTION",
+      channel: "WHATSAPP",
+      languageCode: "hi",
+      version: 1,
+      title: "पार्सल लेने के लिए तैयार है",
+      messageTemplate: "प्रिय {{receiverName}}, आपका पार्सल (LR: {{lrNumber}}) {{collectionOffice}} पहुंच गया है! कृपया अपना LR नंबर दिखाकर पार्सल प्राप्त करें। पता: {{officeAddress}}। हेल्पलाइन: {{helpline}}",
+      variables: JSON.stringify(["receiverName", "lrNumber", "collectionOffice", "officeAddress", "helpline"]),
+    },
+    {
+      name: "Dispatch Departed - English",
+      event: "DISPATCH_DEPARTED",
+      channel: "WHATSAPP",
+      languageCode: "en",
+      version: 1,
+      title: "Parcel In Transit",
+      messageTemplate: "Parcel LR {{lrNumber}} has departed from origin in vehicle {{vehicleNumber}} (Dispatch #{{dispatchNumber}}). Expected arrival: {{estimatedArrival}}. Pooja Travels",
+      variables: JSON.stringify(["lrNumber", "vehicleNumber", "dispatchNumber", "estimatedArrival"]),
+    },
+    {
+      name: "Parcel Collected - English",
+      event: "COLLECTED",
+      channel: "WHATSAPP",
+      languageCode: "en",
+      version: 1,
+      title: "Parcel Delivered",
+      messageTemplate: "Parcel LR {{lrNumber}} has been successfully collected by {{receiverName}} at {{collectedTime}} at {{officeName}}. Thank you for choosing Pooja Travels & Cargo!",
+      variables: JSON.stringify(["lrNumber", "receiverName", "collectedTime", "officeName"]),
+    },
+  ];
+
+  for (const t of defaultTemplates) {
+    await db.notificationTemplate.upsert({
+      where: {
+        event_channel_languageCode_version: {
+          event: t.event as any,
+          channel: t.channel as any,
+          languageCode: t.languageCode,
+          version: t.version,
+        },
+      },
+      update: {
+        messageTemplate: t.messageTemplate,
+        title: t.title,
+      },
+      create: {
+        name: t.name,
+        event: t.event as any,
+        channel: t.channel as any,
+        languageCode: t.languageCode,
+        version: t.version,
+        title: t.title,
+        messageTemplate: t.messageTemplate,
+        variables: t.variables,
+        isActive: true,
+      },
+    });
+  }
+
+  console.log("✅ ShipKart Milestone 9 Notification Engine & Seeding finished successfully!");
 }
 
 seed()

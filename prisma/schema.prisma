@@ -119,6 +119,11 @@ model User {
   office           OfficeMaster?   @relation(fields: [officeId], references: [id])
   photo            String?
   status           Boolean         @default(true)
+  allowSMS         Boolean         @default(true)
+  allowEmail       Boolean         @default(true)
+  allowMarketing   Boolean         @default(false)
+  allowPush        Boolean         @default(true)
+  preferredLanguage String         @default("en")
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
 
@@ -126,6 +131,7 @@ model User {
   trackingUpdates  TrackingHistory[]
   activityLogs     ActivityLog[]
   savedReceivers   SavedReceiver[]
+  broadcasts       BroadcastNotification[]
 
   @@index([officeId])
   @@index([phone])
@@ -348,6 +354,12 @@ model ConsignmentItem {
   createdAt        DateTime   @default(now())
 }
 
+model NotificationSequence {
+  id         Int      @id @default(1)
+  lastNumber Int      @default(0)
+  updatedAt  DateTime @updatedAt
+}
+
 enum NotificationChannel {
   WHATSAPP
   SMS
@@ -355,31 +367,162 @@ enum NotificationChannel {
   PUSH
 }
 
-enum NotificationRecipient {
+enum NotificationRecipientType {
   SENDER
   RECEIVER
-  OFFICE_MANAGER
+  EMPLOYEE
+  PARTNER_OFFICE
+  ADMIN
 }
 
 enum NotificationStatus {
   PENDING
+  PROCESSING
   SENT
   FAILED
+  CANCELLED
+  DEAD_LETTER
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum NotificationEvent {
+  BOOKING_CREATED
+  BOOKING_CANCELLED
+  PICKUP_REQUESTED
+  PARCEL_RECEIVED
+  PARCEL_SORTED
+  PARCEL_LOADED
+  DISPATCH_DEPARTED
+  IN_TRANSIT
+  ARRIVED_DESTINATION
+  READY_FOR_COLLECTION
+  COLLECTED
+  COMPLETED
+  RETURN_REQUESTED
+  RETURN_COMPLETED
+  BROADCAST_ANNOUNCEMENT
+}
+
+model NotificationTemplate {
+  id              String              @id @default(uuid())
+  name            String
+  event           NotificationEvent
+  channel         NotificationChannel
+  languageCode    String              @default("en")
+  version         Int                 @default(1)
+  title           String?
+  messageTemplate String
+  variables       String?             // JSON string of required variable names e.g. ["receiverName", "lrNumber"]
+  isActive        Boolean             @default(true)
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  notifications   NotificationQueue[]
+
+  @@unique([event, channel, languageCode, version])
+  @@index([event])
+  @@index([channel])
+  @@index([languageCode])
+  @@index([isActive])
 }
 
 model NotificationQueue {
-  id            String                @id @default(uuid())
-  bookingId     String
-  booking       Booking               @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  recipientType NotificationRecipient @default(SENDER)
-  phone         String
-  channel       NotificationChannel   @default(WHATSAPP)
-  message       String
-  status        NotificationStatus    @default(PENDING)
-  createdAt     DateTime              @default(now())
+  id                   String                    @id @default(uuid())
+  queueNumber          String                    @unique
+  deduplicationKey     String                    @unique
+  eventHash            String?
+  bookingId            String?
+  booking              Booking?                  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  lrNumber             String?
+  recipientType        NotificationRecipientType @default(SENDER)
+  recipientId          String?
+  recipientName        String
+  recipientPhone       String?
+  recipientEmail       String?
+  channel              NotificationChannel       @default(WHATSAPP)
+  fallbackChannels     String?                   // Comma-separated list e.g. "SMS,EMAIL"
+  priority             NotificationPriority      @default(NORMAL)
+  event                NotificationEvent
+  status               NotificationStatus        @default(PENDING)
+  message              String
+  templateId           String?
+  template             NotificationTemplate?     @relation(fields: [templateId], references: [id])
+  provider             String?
+  providerMessageId    String?
+  retryCount           Int                       @default(0)
+  maxRetries           Int                       @default(3)
+  scheduledAt          DateTime                  @default(now())
+  availableAt          DateTime                  @default(now())
+  expiresAt            DateTime?
+  processedAt          DateTime?
+  failureReason        String?
+  attachmentUrl        String?
+  attachmentType       String?
+  processingStartedAt  DateTime?
+  workerId             String?
+  lockedUntil          DateTime?
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+
+  history              NotificationHistory[]
+  audits               NotificationAudit[]
 
   @@index([bookingId])
-  @@index([status])
+  @@index([status, availableAt, priority])
+  @@index([deduplicationKey])
+  @@index([event])
+  @@index([channel])
+  @@index([createdAt])
+}
+
+model NotificationHistory {
+  id               String             @id @default(uuid())
+  queueId          String
+  queue            NotificationQueue  @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  status           NotificationStatus
+  channel          NotificationChannel
+  provider         String?
+  providerResponse String?
+  createdAt        DateTime           @default(now())
+
+  @@index([queueId])
+  @@index([createdAt])
+}
+
+model NotificationAudit {
+  id        String            @id @default(uuid())
+  queueId   String
+  queue     NotificationQueue @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  action    String
+  userId    String?
+  oldStatus NotificationStatus?
+  newStatus NotificationStatus?
+  timestamp DateTime          @default(now())
+
+  @@index([queueId])
+  @@index([timestamp])
+}
+
+model BroadcastNotification {
+  id             String              @id @default(uuid())
+  title          String
+  message        String
+  targetRole     Role?
+  channel        NotificationChannel @default(WHATSAPP)
+  createdById    String?
+  createdBy      User?               @relation(fields: [createdById], references: [id])
+  recipientCount Int                 @default(0)
+  createdAt      DateTime            @default(now())
+
+  @@index([createdAt])
 }
 
 model DispatchItem {

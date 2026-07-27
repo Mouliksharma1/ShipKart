@@ -2,7 +2,8 @@
 
 import { db } from "@/lib/db";
 import { generateNextDispatchNumber } from "@/lib/services/dispatch-number";
-import { BookingStatus, DispatchStatus, Role } from "@prisma/client";
+import { BookingStatus, DispatchStatus, Role, NotificationEvent, NotificationRecipientType } from "@prisma/client";
+import { enqueueNotification } from "@/lib/services/notification";
 import { revalidatePath } from "next/cache";
 
 export type DispatchActionResult = {
@@ -434,6 +435,29 @@ export async function updateDispatchStatusAction(data: {
               userId: userId || null,
             },
           });
+
+          // Enqueue Notification for Dispatch Departed
+          if (nextStatus === DispatchStatus.DEPARTED) {
+            try {
+              await enqueueNotification({
+                event: NotificationEvent.DISPATCH_DEPARTED,
+                bookingId: item.bookingId,
+                lrNumber: item.booking.lrNumber,
+                recipientType: NotificationRecipientType.SENDER,
+                recipientName: item.booking.senderName,
+                recipientPhone: item.booking.senderPhone,
+                variables: {
+                  lrNumber: item.booking.lrNumber,
+                  dispatchNumber: dispatch.dispatchNumber,
+                  vehicleNumber: dispatch.vehicleNumber,
+                  estimatedArrival: dispatch.estimatedArrival ? dispatch.estimatedArrival.toLocaleDateString() : 'Today evening',
+                },
+                deduplicationKey: `dispatch_departed_${dispatch.id}_${item.bookingId}`,
+              });
+            } catch (err) {
+              console.error('Failed to enqueue dispatch departed notification:', err);
+            }
+          }
         }
       }
 

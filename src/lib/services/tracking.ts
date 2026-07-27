@@ -5,11 +5,11 @@ import {
   DelayReason,
   HoldReason,
   TrackingRemarkType,
-  NotificationRecipient,
-  NotificationChannel,
-  NotificationStatus,
+  NotificationEvent,
+  NotificationRecipientType,
   Role,
 } from "@prisma/client";
+import { enqueueNotification } from "@/lib/services/notification";
 import { validateStatusTransition, UpdateTrackingInput } from "@/lib/validations/tracking";
 
 export type UpdateStatusParams = UpdateTrackingInput & {
@@ -151,19 +151,59 @@ export async function updateBookingStatus(params: UpdateStatusParams) {
       },
     });
 
-    // 6. Enqueue PENDING NotificationQueue record for Milestone 9 WhatsApp consumption
-    const notificationMsg = `Pooja Travels & Cargo: Parcel ${booking.lrNumber} status updated to ${params.status.replace(/_/g, " ")}. Track online at ${process.env.NEXT_PUBLIC_APP_URL || "https://shipkart.in"}/track/${booking.lrNumber}`;
+    // 6. Enqueue NotificationQueue record via Central Notification Engine
+    try {
+      let event: NotificationEvent = NotificationEvent.IN_TRANSIT;
+      if (params.status === BookingStatus.READY_FOR_COLLECTION) event = NotificationEvent.READY_FOR_COLLECTION;
+      else if (params.status === BookingStatus.COLLECTED) event = NotificationEvent.COLLECTED;
+      else if (params.status === BookingStatus.COMPLETED) event = NotificationEvent.COMPLETED;
+      else if (params.status === BookingStatus.ARRIVED_AT_DESTINATION || params.status === BookingStatus.ARRIVED_AT_DESTINATION_OFFICE) event = NotificationEvent.ARRIVED_DESTINATION;
+      else if (params.status === BookingStatus.CANCELLED) event = NotificationEvent.BOOKING_CANCELLED;
 
-    await tx.notificationQueue.create({
-      data: {
+      const collectionOffice = booking.destinationOffice?.name || "Destination Office";
+      const officeAddress = booking.destinationOffice?.address || "Branch Office";
+
+      const notifVars = {
+        receiverName: booking.receiverName,
+        senderName: booking.senderName,
+        lrNumber: booking.lrNumber,
+        collectionOffice,
+        officeAddress,
+        officeName: collectionOffice,
+        collectedTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        helpline: "6350603414",
+        trackingUrl: `https://shipkart.app/track/${booking.lrNumber}`,
+        status: params.status.replace(/_/g, " "),
+      };
+
+      // Enqueue Receiver alert for delivery/arrival events
+      await enqueueNotification({
+        event,
         bookingId: booking.id,
-        recipientType: NotificationRecipient.SENDER,
-        phone: booking.senderPhone,
-        channel: NotificationChannel.WHATSAPP,
-        message: notificationMsg,
-        status: NotificationStatus.PENDING,
-      },
-    });
+        lrNumber: booking.lrNumber,
+        recipientType: NotificationRecipientType.RECEIVER,
+        recipientName: booking.receiverName,
+        recipientPhone: booking.receiverPhone,
+        variables: notifVars,
+        deduplicationKey: `tracking_${params.status}_receiver_${booking.id}_v${booking.version}`,
+      });
+
+      // Enqueue Sender alert for collected/completed events
+      if (params.status === BookingStatus.COLLECTED || params.status === BookingStatus.COMPLETED) {
+        await enqueueNotification({
+          event,
+          bookingId: booking.id,
+          lrNumber: booking.lrNumber,
+          recipientType: NotificationRecipientType.SENDER,
+          recipientName: booking.senderName,
+          recipientPhone: booking.senderPhone,
+          variables: notifVars,
+          deduplicationKey: `tracking_${params.status}_sender_${booking.id}_v${booking.version}`,
+        });
+      }
+    } catch (notifErr) {
+      console.error("Failed to enqueue tracking notification:", notifErr);
+    }
 
     // 7. Write immutable ActivityLog entry for full audit trail
     await tx.activityLog.create({

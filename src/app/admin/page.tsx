@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { getOfficesAction, getRoutesAction } from "@/app/actions/offices-routes";
-import { ShieldAlert, Building2, Route as RouteIcon, ArrowRight, CheckCircle2, MapPin, DollarSign } from "lucide-react";
+import { ShieldAlert, Building2, Route as RouteIcon, ArrowRight, CheckCircle2, MapPin, DollarSign, Bell } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -83,7 +83,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Quick Action Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Link
           href="/admin/offices"
           className="group rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-lg hover:border-amber-500 transition-all space-y-3"
@@ -100,7 +100,7 @@ export default async function AdminDashboard() {
             <ArrowRight className="h-5 w-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
           </div>
           <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed">
-            Create, edit, search, and enable/disable branch offices. Set geo-coordinates, helpline contacts, and working hours (04:00 AM - 11:00 PM).
+            Create, edit, search, and enable/disable branch offices. Set geo-coordinates, helpline contacts, and working hours.
           </p>
         </Link>
 
@@ -120,7 +120,7 @@ export default async function AdminDashboard() {
             <ArrowRight className="h-5 w-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
           </div>
           <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed">
-            Configure origin to destination pairings, distance (KM), ETA hours, departure/arrival schedules, pricing bindings, and status.
+            Configure origin to destination pairings, distance (KM), ETA hours, departure/arrival schedules, and status.
           </p>
         </Link>
 
@@ -141,6 +141,26 @@ export default async function AdminDashboard() {
           </div>
           <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed">
             Manage normalized tariff groups, itemized parcel rules, taxi surcharges, and live price calculation sandbox.
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/notifications"
+          className="group rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-lg hover:border-amber-500 transition-all space-y-3"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <Bell className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
+                Notifications
+              </h3>
+            </div>
+            <ArrowRight className="h-5 w-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+          </div>
+          <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed">
+            Monitor real-time WhatsApp/SMS/Email queue, multi-language templates, system broadcasts, and Mailpit provider matrix.
           </p>
         </Link>
       </div>

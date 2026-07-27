@@ -77,7 +77,7 @@ export async function getDashboardSummary(filter?: DashboardSummaryFilter) {
     const completedTodayCount = await prisma.booking.count({
       where: {
         ...whereBooking,
-        status: BookingStatus.DELIVERED,
+        status: BookingStatus.COMPLETED,
         updatedAt: { gte: startOfToday },
       },
     });

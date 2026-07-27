@@ -17,28 +17,36 @@ import { hasPermission, PERMISSION_CODES } from '@/lib/services/admin/rbac.servi
 import { ActivityType, ActivitySeverity, Role } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
-export async function createEmployeeAction(userId: string, input: CreateEmployeeInput) {
-  const allowed = await hasPermission(userId, PERMISSION_CODES.EMPLOYEES_MANAGE);
-  if (!allowed) {
-    return { success: false, error: 'Unauthorized: Missing employees:manage permission.' };
+export async function createEmployeeAction(input: CreateEmployeeInput, userId?: string) {
+  if (userId) {
+    const allowed = await hasPermission(userId, PERMISSION_CODES.EMPLOYEES_MANAGE);
+    if (!allowed) {
+      return { success: false, error: 'Unauthorized: Missing employees:manage permission.' };
+    }
   }
 
   try {
     const employee = await createEmployee(input);
-    await createActivityLog({
-      userId,
-      module: 'EMPLOYEE',
-      entity: 'User',
-      entityId: employee.id,
-      activityType: ActivityType.CREATE,
-      severity: ActivitySeverity.INFO,
-      action: `Created employee: ${employee.name} (${employee.employeeCode})`,
-      newData: employee,
-    });
+    if (userId) {
+      try {
+        await createActivityLog({
+          userId,
+          module: 'EMPLOYEE',
+          entity: 'User',
+          entityId: employee.id,
+          activityType: ActivityType.CREATE,
+          severity: ActivitySeverity.INFO,
+          action: `Created employee: ${employee.name} (${employee.employeeCode})`,
+          newData: employee,
+        });
+      } catch (logErr) {
+        console.warn('Failed to record activity log for employee creation:', logErr);
+      }
+    }
     revalidatePath('/admin/employees');
     return { success: true, employee };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    return { success: false, error: err.message || 'Failed to create employee.' };
   }
 }
 

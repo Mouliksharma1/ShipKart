@@ -65,9 +65,9 @@ export function LRScannerWidget({ onStatusUpdated }: { onStatusUpdated?: () => v
             <input
               type="text"
               required
-              placeholder="e.g. SK000000001"
+              placeholder="e.g. 0001"
               value={lrNumber}
-              onChange={(e) => setLrNumber(e.target.value.toUpperCase())}
+              onChange={(e) => setLrNumber(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 text-slate-900 dark:text-white font-mono font-bold uppercase focus:border-amber-500 focus:outline-none"
             />
           </div>

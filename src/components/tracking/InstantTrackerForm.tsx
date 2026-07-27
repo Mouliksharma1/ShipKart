@@ -29,7 +29,7 @@ export function InstantTrackerForm() {
         <input
           type="text"
           required
-          placeholder="e.g. SK000000001 or 6350603414"
+          placeholder="e.g. 0001 or 6350603414"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="w-full rounded-xl border border-slate-300 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-3 px-4 text-xs font-mono font-bold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"

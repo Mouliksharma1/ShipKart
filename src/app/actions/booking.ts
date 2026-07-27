@@ -20,7 +20,7 @@ export type BookingActionResult = {
  * CREATE BOOKING SERVER ACTION
  * Executes single atomic Prisma $transaction:
  * 1. Server-side Price Recalculation Loop & Taxi Eligibility Check
- * 2. Generate Global LR Number (SK000000001)
+ * 2. Generate Global LR Number (0001, 0002, ... 9999, 10000, ...)
  * 3. Create Master Booking Record
  * 4. Create ConsignmentItems with Immutable Price Snapshots
  * 5. Create Initial TrackingHistory (BOOKED)
@@ -108,7 +108,7 @@ export async function createBookingAction(formData: unknown): Promise<BookingAct
 
     // EXECUTE SINGLE ATOMIC PRISMA TRANSACTION
     const createdBooking = await db.$transaction(async (tx) => {
-      // Step 1: Generate Monotonic Global LR Number (SK000000001)
+      // Step 1: Generate Monotonic Global LR Number (0001, 0002, ..., 9999, 10000, ...)
       let seq = await tx.lRSequence.findFirst({ where: { id: 1 } });
       if (!seq) {
         seq = await tx.lRSequence.create({ data: { id: 1, lastNumber: 0 } });
@@ -120,7 +120,11 @@ export async function createBookingAction(formData: unknown): Promise<BookingAct
         data: { lastNumber: nextNumber },
       });
 
-      const lrNumber = `SK${String(nextNumber).padStart(9, "0")}`;
+      // Pad to 4 digits up to 9999; natural number beyond (10000, 10001, ...)
+      const lrNumber =
+        nextNumber <= 9999
+          ? nextNumber.toString().padStart(4, "0")
+          : nextNumber.toString();
 
       // Step 2: Create Booking Master Record
       const booking = await tx.booking.create({

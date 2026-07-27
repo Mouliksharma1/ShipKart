@@ -231,7 +231,7 @@ export function EmployeeDashboard({ metrics }: EmployeeDashboardProps) {
                 type="text"
                 value={searchLr}
                 onChange={(e) => setSearchLr(e.target.value)}
-                placeholder="e.g. SK000000001 or 9829012345"
+                placeholder="e.g. 0001 or 9829012345"
                 className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 text-slate-900 dark:text-white text-sm focus:border-amber-500 focus:outline-none"
               />
             </div>

@@ -11,7 +11,7 @@ export type QRCodeOptions = {
 
 /**
  * QR CODE GENERATOR SERVICE
- * Generates QR Code for tracking links (e.g. /track/SK000000001)
+ * Generates QR Code for tracking links (e.g. /track/0001)
  * Supports Data URL (Base64 PNG), SVG String, and Buffer.
  */
 

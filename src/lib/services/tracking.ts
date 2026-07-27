@@ -11,6 +11,7 @@ import {
 } from "@prisma/client";
 import { enqueueNotification } from "@/lib/services/notification";
 import { validateStatusTransition, UpdateTrackingInput } from "@/lib/validations/tracking";
+import { normalizeLRNumber } from "@/lib/utils/normalize-lr";
 
 export type UpdateStatusParams = UpdateTrackingInput & {
   userId?: string;
@@ -63,9 +64,19 @@ export function calculateNextStep(status: BookingStatus, originOfficeName: strin
 export async function updateBookingStatus(params: UpdateStatusParams) {
   return await db.$transaction(
     async (tx) => {
-    // 1. Fetch existing booking with optimistic locking & office relations
-    const booking = await tx.booking.findUnique({
-      where: { lrNumber: params.lrNumber },
+    // 1. Normalize LR input so "1", "01", "001", "0001" all resolve the same booking
+    const normalizedLR = normalizeLRNumber(params.lrNumber);
+    const paddedLR = normalizedLR.padStart(4, "0");
+
+    // Fetch existing booking with optimistic locking & office relations
+    const booking = await tx.booking.findFirst({
+      where: {
+        OR: [
+          { lrNumber: normalizedLR },
+          { lrNumber: paddedLR },
+          { lrNumber: params.lrNumber }, // also try exact input (covers old SK... LRs)
+        ],
+      },
       include: {
         originOffice: true,
         destinationOffice: true,
@@ -221,8 +232,18 @@ export async function updateBookingStatus(params: UpdateStatusParams) {
  * GET TIMELINE (WITH PUBLIC MASKING FOR UNAUTHENTICATED USERS)
  */
 export async function getBookingTimeline(lrNumber: string, isStaff = false) {
-  const booking = await db.booking.findUnique({
-    where: { lrNumber },
+  // Normalize so "1", "01", "001", "0001" all resolve the same booking
+  const normalized = normalizeLRNumber(lrNumber);
+  const padded = normalized.padStart(4, "0");
+
+  const booking = await db.booking.findFirst({
+    where: {
+      OR: [
+        { lrNumber: normalized },
+        { lrNumber: padded },
+        { lrNumber }, // also try exact input (covers legacy SK... LRs)
+      ],
+    },
     include: {
       originOffice: true,
       destinationOffice: true,

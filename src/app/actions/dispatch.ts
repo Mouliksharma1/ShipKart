@@ -5,6 +5,7 @@ import { generateNextDispatchNumber } from "@/lib/services/dispatch-number";
 import { BookingStatus, DispatchStatus, Role, NotificationEvent, NotificationRecipientType } from "@prisma/client";
 import { enqueueNotification } from "@/lib/services/notification";
 import { revalidatePath } from "next/cache";
+import { normalizeLRNumber } from "@/lib/utils/normalize-lr";
 
 export type DispatchActionResult = {
   success: boolean;
@@ -63,11 +64,22 @@ export async function createDispatchAction(data: {
 
       // Initial LR Loading if provided
       if (data.initialLrNumbers && data.initialLrNumbers.length > 0) {
-        const cleanLrNumbers = Array.from(new Set(data.initialLrNumbers.map((lr) => lr.trim().toUpperCase())));
+        // Normalize inputs so "1", "01", "001", "0001" all resolve correctly
+        const normalized = Array.from(
+          new Set(data.initialLrNumbers.map((lr) => normalizeLRNumber(lr.trim())))
+        );
 
-        // Validate bookings
-        const bookings = await tx.booking.findMany({
-          where: { lrNumber: { in: cleanLrNumbers } },
+        // Build all zero-padded variants (up to 4 digits) to match both old SK and new numeric LRs
+        const cleanLrNumbers = normalized;
+
+        // Validate bookings — match by stripping leading zeros on the stored lrNumber
+        const allBookings = await tx.booking.findMany({
+          where: {
+            OR: [
+              { lrNumber: { in: cleanLrNumbers } },
+              { lrNumber: { in: normalized.map((n) => n.padStart(4, "0")) } },
+            ],
+          },
           include: {
             dispatchItems: {
               include: { dispatch: true },
@@ -75,9 +87,16 @@ export async function createDispatchAction(data: {
           },
         });
 
-        if (bookings.length !== cleanLrNumbers.length) {
-          const foundLrs = new Set(bookings.map((b) => b.lrNumber));
-          const missingLrs = cleanLrNumbers.filter((lr) => !foundLrs.has(lr));
+        // Deduplicate (a number like "0001" and "1" resolve to same booking)
+        const bookings = Array.from(
+          new Map(allBookings.map((b) => [b.id, b])).values()
+        );
+
+        if (bookings.length !== normalized.length) {
+          const foundNormalized = new Set(
+            bookings.map((b) => b.lrNumber.replace(/^0+/, "") || "0")
+          );
+          const missingLrs = normalized.filter((lr) => !foundNormalized.has(lr));
           throw new Error(`The following LR numbers were not found: ${missingLrs.join(", ")}`);
         }
 
@@ -171,7 +190,11 @@ export async function loadBookingsToDispatchAction(data: {
     return { success: false, error: "No LR numbers provided for loading." };
   }
 
-  const cleanLrNumbers = Array.from(new Set(data.lrNumbers.map((lr) => lr.trim().toUpperCase())));
+  const cleanLrNumbers = Array.from(
+    new Set(
+      data.lrNumbers.map((lr) => normalizeLRNumber(lr.trim()))
+    )
+  );
 
   try {
     const result = await db.$transaction(async (tx) => {
@@ -189,18 +212,27 @@ export async function loadBookingsToDispatchAction(data: {
         throw new Error(`Dispatch ${dispatch.dispatchNumber} is locked (${dispatch.status}). Loading is not permitted after departure.`);
       }
 
-      const bookings = await tx.booking.findMany({
-        where: { lrNumber: { in: cleanLrNumbers } },
+      // Find bookings by normalized LR — match both "0001" stored and "1" input
+      const allBookings = await tx.booking.findMany({
+        where: {
+          OR: [
+            { lrNumber: { in: cleanLrNumbers } },
+            { lrNumber: { in: cleanLrNumbers.map((n) => n.padStart(4, "0")) } },
+          ],
+        },
         include: {
           dispatchItems: {
             include: { dispatch: true },
           },
         },
       });
+      const bookings = Array.from(new Map(allBookings.map((b) => [b.id, b])).values());
 
       if (bookings.length !== cleanLrNumbers.length) {
-        const foundLrs = new Set(bookings.map((b) => b.lrNumber));
-        const missingLrs = cleanLrNumbers.filter((lr) => !foundLrs.has(lr));
+        const foundNormalized = new Set(
+          bookings.map((b) => b.lrNumber.replace(/^0+/, "") || "0")
+        );
+        const missingLrs = cleanLrNumbers.filter((lr) => !foundNormalized.has(lr));
         throw new Error(`The following LR numbers were not found: ${missingLrs.join(", ")}`);
       }
 
@@ -284,7 +316,9 @@ export async function unloadBookingFromDispatchAction(data: {
     return { success: false, error: "Unauthorized operation." };
   }
 
-  const cleanLr = data.lrNumber.trim().toUpperCase();
+  // Normalize so "0001", "001", "01", "1" all resolve to the same booking
+  const cleanLr = normalizeLRNumber(data.lrNumber);
+  const cleanLrPadded = cleanLr.padStart(4, "0");
 
   try {
     await db.$transaction(async (tx) => {
@@ -299,11 +333,16 @@ export async function unloadBookingFromDispatchAction(data: {
         throw new Error(`Dispatch ${dispatch.dispatchNumber} is locked (${dispatch.status}). Unloading is not permitted post-departure.`);
       }
 
-      const booking = await tx.booking.findUnique({
-        where: { lrNumber: cleanLr },
+      const booking = await tx.booking.findFirst({
+        where: {
+          OR: [
+            { lrNumber: cleanLr },
+            { lrNumber: cleanLrPadded },
+          ],
+        },
       });
 
-      if (!booking) throw new Error(`LR ${cleanLr} not found.`);
+      if (!booking) throw new Error(`LR ${data.lrNumber} not found.`);
 
       // Remove DispatchItem link
       await tx.dispatchItem.deleteMany({

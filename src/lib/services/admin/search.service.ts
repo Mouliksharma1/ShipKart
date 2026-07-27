@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db';
+import { normalizeLRNumber } from '@/lib/utils/normalize-lr';
 
 export interface GlobalSearchResult {
   category: 'BOOKING' | 'DISPATCH' | 'EMPLOYEE' | 'OFFICE' | 'VEHICLE' | 'ROUTE';
@@ -16,11 +17,12 @@ export async function globalAdminSearch(query: string): Promise<GlobalSearchResu
   const results: GlobalSearchResult[] = [];
 
   const [bookings, dispatches, employees, offices, vehicles, routes] = await Promise.all([
-    // Search Bookings
+    // Search Bookings (with LR normalization for leading-zero tolerance)
     prisma.booking.findMany({
       where: {
         OR: [
           { lrNumber: { contains: q, mode: 'insensitive' } },
+          { lrNumber: { contains: normalizeLRNumber(q).padStart(4, '0'), mode: 'insensitive' } },
           { senderPhone: { contains: q, mode: 'insensitive' } },
           { receiverPhone: { contains: q, mode: 'insensitive' } },
           { senderName: { contains: q, mode: 'insensitive' } },

@@ -33,7 +33,7 @@ export default function NewDispatchClient({ offices }: { offices: OfficeOption[]
 
     const extracted = text
       .split(/[\s,\n]+/)
-      .map((lr) => lr.trim().toUpperCase())
+      .map((lr) => lr.trim())
       .filter((lr) => lr.length > 0);
 
     if (extracted.length === 0) {
@@ -221,12 +221,12 @@ export default function NewDispatchClient({ offices }: { offices: OfficeOption[]
 
           <div className="space-y-2">
             <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300">
-              Scan QR or Paste Multiple SK LR Numbers (Space, Comma, or Line Separated)
+            Scan QR or Paste Multiple LR Numbers (Space, Comma, or Line Separated)
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
               <textarea
                 rows={3}
-                placeholder="Paste SK000000001 SK000000002..."
+                placeholder="Paste LR Numbers (e.g. 0001 0002 0003)"
                 value={lrInput}
                 onChange={(e) => setLrInput(e.target.value)}
                 className="flex-1 p-3 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-amber-500"

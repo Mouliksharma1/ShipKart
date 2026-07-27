@@ -2,12 +2,12 @@ import { db } from "@/lib/db";
 
 /**
  * ATOMIC GLOBAL LR GENERATOR SERVICE - generateNextLRNumber()
- * Pattern: SK000000001 (Global Sequence without annual resets)
+ * Format: 0001, 0002, ..., 9999, 10000, 10001 (company-wide sequential, no prefix)
  * Guarantees zero collisions, zero duplicates, and atomic increments.
  */
 export async function generateNextLRNumber(): Promise<string> {
   return await db.$transaction(async (tx) => {
-    // 1. Fetch or initialize LRSequence
+    // 1. Fetch or initialize LRSequence (single global row, id=1)
     let seq = await tx.lRSequence.findFirst({
       where: { id: 1 },
     });
@@ -31,8 +31,13 @@ export async function generateNextLRNumber(): Promise<string> {
       },
     });
 
-    // 3. Format padded 9-digit LR Number (e.g. SK000000001)
-    const padded = String(nextNumber).padStart(9, "0");
-    return `SK${padded}`;
+    // 3. Format: pad to 4 digits up to 9999, then natural number beyond
+    //    1 -> "0001", 9999 -> "9999", 10000 -> "10000"
+    const lrNumber =
+      nextNumber <= 9999
+        ? nextNumber.toString().padStart(4, "0")
+        : nextNumber.toString();
+
+    return lrNumber;
   }, { maxWait: 10000, timeout: 20000 });
 }

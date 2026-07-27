@@ -19,7 +19,7 @@ export type EmployeeBookingActionResult = {
  * CREATE EMPLOYEE COUNTER BOOKING SERVER ACTION
  * Executes atomic Prisma $transaction:
  * 1. Price calculation using central calculatePrice() service
- * 2. Monotonic global LR generation (SK000000001)
+ * 2. Monotonic global LR generation (0001, 0002, ..., 9999, 10000, ...)
  * 3. User Upsert / Saved Receivers update for Customer lookup & quick fill
  * 4. Booking, ConsignmentItems, TrackingHistory, NotificationQueue, ActivityLog creation
  */
@@ -117,7 +117,7 @@ export async function createEmployeeBookingAction(formData: unknown, employeeUse
     }
 
     const createdBooking = await db.$transaction(async (tx) => {
-      // 1. Monotonic LR Number
+      // 1. Monotonic LR Number (0001, 0002, ..., 9999, 10000, ...)
       let seq = await tx.lRSequence.findFirst({ where: { id: 1 } });
       if (!seq) {
         seq = await tx.lRSequence.create({ data: { id: 1, lastNumber: 0 } });
@@ -129,7 +129,11 @@ export async function createEmployeeBookingAction(formData: unknown, employeeUse
         data: { lastNumber: nextNumber },
       });
 
-      const lrNumber = `SK${String(nextNumber).padStart(9, "0")}`;
+      // Pad to 4 digits up to 9999; natural number beyond (10000, 10001, ...)
+      const lrNumber =
+        nextNumber <= 9999
+          ? nextNumber.toString().padStart(4, "0")
+          : nextNumber.toString();
 
       // 2. Lookup or create Sender User account if not exists
       let senderUser = await tx.user.findUnique({

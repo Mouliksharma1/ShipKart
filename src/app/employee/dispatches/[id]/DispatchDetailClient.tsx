@@ -59,11 +59,11 @@ export default function DispatchDetailClient({
 
     const extracted = bulkLrInput
       .split(/[\s,\n]+/)
-      .map((lr) => lr.trim().toUpperCase())
-      .filter((lr) => lr.startsWith("SK") && lr.length >= 5);
+      .map((lr) => lr.trim())
+      .filter((lr) => lr.length > 0);
 
     if (extracted.length === 0) {
-      setErrorMessage("No valid SK LR numbers found.");
+      setErrorMessage("No valid LR numbers found.");
       return;
     }
 
@@ -298,12 +298,12 @@ export default function DispatchDetailClient({
       {!isLocked && (
         <div className="bg-white dark:bg-neutral-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-neutral-800 shadow-sm space-y-4">
           <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">
-            Bulk Load Additional SK LRs
+            Bulk Load Additional LR Numbers
           </h3>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
-              placeholder="Paste or type SK LR Numbers (e.g. SK000000001 SK000000002)"
+              placeholder="Paste LR Numbers (e.g. 0001 0002 0003)"
               value={bulkLrInput}
               onChange={(e) => setBulkLrInput(e.target.value)}
               className="flex-1 px-4 py-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 transition-colors"

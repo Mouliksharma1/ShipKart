@@ -45,7 +45,13 @@ export async function loginAction(formData: unknown): Promise<AuthResponse> {
       };
     }
 
-    if (!user.status) {
+    if (user.status === false || user.isActive === false || user.accountLocked === true) {
+      if (user.accountLocked) {
+        return {
+          success: false,
+          error: "Your account is locked due to security policy. Please contact support.",
+        };
+      }
       return {
         success: false,
         error: "Your account has been deactivated. Please contact support.",

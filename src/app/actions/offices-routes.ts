@@ -237,7 +237,7 @@ export async function toggleRouteStatusAction(id: string, currentStatus: boolean
       where: { id },
       data: {
         status: !currentStatus,
-        routeStatus: !currentStatus ? "ACTIVE" : "INACTIVE",
+        routeStatus: !currentStatus ? "ACTIVE" : "CLOSED",
       },
     });
     revalidatePath("/admin/routes");

@@ -1,381 +1,266 @@
-import "dotenv/config";
-import { db } from "@/lib/db";
-import { ParcelType } from "@prisma/client";
+import { db as prisma } from '../src/lib/db';
+import { Role, OfficeType, VehicleStatus, RouteStatus } from '@prisma/client';
 
-export async function seed() {
-  console.log("🌱 Seeding ShipKart initial data & normalized pricing engine...");
+async function main() {
+  console.log('🌱 Seeding Milestone 10 Enterprise Administration Master Data...');
 
-  // 1. Company Settings
-  await db.companySettings.upsert({
-    where: { id: "default" },
-    update: {
-      address: "45, Jaswant Building, MG Hospital Rd, Sojati Gate, Rawaton Ka Bass, Jodhpur, Rajasthan 342001",
-    },
-    create: {
-      id: "default",
-      companyName: "POOJA TRAVELS & CARGO",
-      tagline: "Powered by POOJA TRAVELS & CARGO",
-      helpline1: "6350603414",
-      helpline2: "7852091119",
-      helpline3: "0291-2651955",
-      address: "45, Jaswant Building, MG Hospital Rd, Sojati Gate, Rawaton Ka Bass, Jodhpur, Rajasthan 342001",
-      upiId: "6350603414@upi",
-    },
-  });
+  // 1. Seed Permissions Catalog
+  const permissionsData = [
+    { module: 'OFFICE', action: 'read', code: 'offices:read', description: 'View office details and list' },
+    { module: 'OFFICE', action: 'manage', code: 'offices:manage', description: 'Create and edit branch offices' },
+    { module: 'OFFICE', action: 'delete', code: 'offices:delete', description: 'Archive and restore offices' },
 
-  // 1.5. Admin User Seed
-  await db.user.upsert({
-    where: { email: "admin@shipKart.com" },
-    update: {
-      phone: "7852091119",
-      role: "ADMIN",
-      name: "Pooja Travels Admin",
-      status: true,
-    },
-    create: {
-      name: "Pooja Travels Admin",
-      email: "admin@shipKart.com",
-      phone: "7852091119",
-      role: "ADMIN",
-      status: true,
-    },
-  });
+    { module: 'EMPLOYEE', action: 'read', code: 'employees:read', description: 'View employee profiles' },
+    { module: 'EMPLOYEE', action: 'manage', code: 'employees:manage', description: 'Create, update, and assign staff' },
+    { module: 'EMPLOYEE', action: 'security', code: 'employees:security', description: 'Lock/unlock accounts and force password reset' },
 
-  // 2. Head Office
-  const headOffice = await db.officeMaster.upsert({
-    where: { name: "Pooja Travels Head Office - Jodhpur" },
-    update: {
-      address: "45, Jaswant Building, MG Hospital Rd, Sojati Gate, Rawaton Ka Bass, Jodhpur, Rajasthan 342001",
-      openingTime: "04:00 AM",
-      closingTime: "11:00 PM",
-    },
-    create: {
-      name: "Pooja Travels Head Office - Jodhpur",
-      code: "JDH-HO",
-      address: "45, Jaswant Building, MG Hospital Rd, Sojati Gate, Rawaton Ka Bass, Jodhpur, Rajasthan 342001",
-      city: "Jodhpur",
-      state: "Rajasthan",
-      pinCode: "342001",
-      country: "India",
-      phone: "6350603414",
-      altPhone: "02912651955",
-      managerName: "Head Office Manager",
-      managerPhone: "7852091119",
-      latitude: 26.285498,
-      longitude: 73.018264,
-      googleMapsUrl: "https://maps.google.com/?q=26.285498,73.018264",
-      openingTime: "04:00 AM",
-      closingTime: "11:00 PM",
-      officeTiming: "04:00 AM - 11:00 PM",
-      status: true,
-    },
-  });
+    { module: 'VEHICLE', action: 'read', code: 'vehicles:read', description: 'View fleet registry and maintenance logs' },
+    { module: 'VEHICLE', action: 'manage', code: 'vehicles:manage', description: 'Register vehicles and add maintenance records' },
 
-  // 3. Initial Destination Branch Offices
-  const branchesData = [
-    // Inside Rajasthan
-    { name: "Jaipur Office", code: "JPR01", city: "Jaipur", state: "Rajasthan", pinCode: "302001", phone: "7852091119", lat: 26.92207, lng: 75.7946 },
-    { name: "Ajmer Office", code: "AJM01", city: "Ajmer", state: "Rajasthan", pinCode: "305001", phone: "6350603414", lat: 26.4499, lng: 74.6399 },
-    { name: "Beawar Office", code: "BWR01", city: "Beawar", state: "Rajasthan", pinCode: "305901", phone: "6350603414", lat: 26.1012, lng: 74.3174 },
-    { name: "Nasirabad Office", code: "NAS01", city: "Nasirabad", state: "Rajasthan", pinCode: "305601", phone: "6350603414", lat: 26.3023, lng: 74.7369 },
-    { name: "Kekri Office", code: "KKR01", city: "Kekri", state: "Rajasthan", pinCode: "305404", phone: "6350603414", lat: 25.9734, lng: 75.1528 },
-    { name: "Bundi Office", code: "BND01", city: "Bundi", state: "Rajasthan", pinCode: "323001", phone: "6350603414", lat: 25.4415, lng: 75.6456 },
-    { name: "Deoli Office", code: "DEO01", city: "Deoli", state: "Rajasthan", pinCode: "304804", phone: "6350603414", lat: 25.7601, lng: 75.3842 },
-    { name: "Nathdwara Office", code: "NTD01", city: "Nathdwara", state: "Rajasthan", pinCode: "313301", phone: "6350603414", lat: 24.9317, lng: 73.8188 },
-    { name: "Udaipur Office", code: "UDP01", city: "Udaipur", state: "Rajasthan", pinCode: "313001", phone: "6350603414", lat: 24.5854, lng: 73.7125 },
-    { name: "Bikaner Office", code: "BKN01", city: "Bikaner", state: "Rajasthan", pinCode: "334001", phone: "6350603414", lat: 28.0229, lng: 73.3119 },
-    { name: "Sri Ganganagar Office", code: "SGN01", city: "Sri Ganganagar", state: "Rajasthan", pinCode: "335001", phone: "6350603414", lat: 29.9038, lng: 73.8772 },
-    { name: "Churu Office", code: "CHU01", city: "Churu", state: "Rajasthan", pinCode: "331001", phone: "6350603414", lat: 28.29, lng: 74.9667 },
-    { name: "Sikar Office", code: "SKR01", city: "Sikar", state: "Rajasthan", pinCode: "332001", phone: "6350603414", lat: 27.6094, lng: 75.1398 },
-    { name: "Sarwar Office", code: "SRW01", city: "Sarwar", state: "Rajasthan", pinCode: "305403", phone: "6350603414", lat: 26.0645, lng: 75.0068 },
-    
-    // Outside Rajasthan
-    { name: "Delhi Office", code: "DEL-HQ", city: "Delhi", state: "Delhi", pinCode: "110006", phone: "6350603414", lat: 28.6562, lng: 77.241 },
-    { name: "Meerut Office", code: "MRT01", city: "Meerut", state: "Uttar Pradesh", pinCode: "250002", phone: "6350603414", lat: 28.9845, lng: 77.7064 },
-    { name: "Moradabad Office", code: "MDB01", city: "Moradabad", state: "Uttar Pradesh", pinCode: "244001", phone: "6350603414", lat: 28.8386, lng: 78.7733 },
-    { name: "Firozabad Office", code: "FZD01", city: "Firozabad", state: "Uttar Pradesh", pinCode: "283203", phone: "6350603414", lat: 27.1592, lng: 78.3957 },
-    { name: "Guna Office", code: "GNA01", city: "Guna", state: "Madhya Pradesh", pinCode: "473001", phone: "6350603414", lat: 24.6467, lng: 77.3114 },
+    { module: 'ROUTE', action: 'read', code: 'routes:read', description: 'View route network matrix' },
+    { module: 'ROUTE', action: 'manage', code: 'routes:manage', description: 'Configure routes and status toggles' },
+
+    { module: 'PRICING', action: 'read', code: 'pricing:read', description: 'View freight tariff rate matrix' },
+    { module: 'PRICING', action: 'manage', code: 'pricing:manage', description: 'Create and activate tariff versions' },
+
+    { module: 'SETTINGS', action: 'manage', code: 'settings:manage', description: 'Manage modular enterprise settings and feature flags' },
+    { module: 'SYSTEM', action: 'backup', code: 'system:backup', description: 'Export and restore configuration backups' },
   ];
 
-  const createdOfficesMap = new Map<string, string>();
-  createdOfficesMap.set(headOffice.name, headOffice.id);
-
-  for (const b of branchesData) {
-    const existingOffice = await db.officeMaster.findFirst({
-      where: {
-        OR: [{ name: b.name }, { code: b.code }],
-      },
+  for (const perm of permissionsData) {
+    await prisma.permission.upsert({
+      where: { code: perm.code },
+      update: perm,
+      create: perm,
     });
-
-    const office = existingOffice
-      ? await db.officeMaster.update({
-          where: { id: existingOffice.id },
-          data: { code: b.code, name: b.name },
-        })
-      : await db.officeMaster.create({
-          data: {
-            name: b.name,
-            code: b.code,
-            address: `${b.name} Center, ${b.city}, ${b.state} ${b.pinCode}`,
-            city: b.city,
-            state: b.state,
-            pinCode: b.pinCode,
-            country: "India",
-            phone: b.phone,
-            latitude: b.lat,
-            longitude: b.lng,
-            openingTime: "04:00 AM",
-            closingTime: "11:00 PM",
-            officeTiming: "04:00 AM - 11:00 PM",
-            status: true,
-          },
-        });
-    createdOfficesMap.set(b.name, office.id);
   }
 
-  // 4. Normalized Pricing Groups & Pricing Rules
-  const rajasthanPricing = await db.pricingGroup.upsert({
-    where: { name: "Rajasthan Standard Group" },
-    update: { isRajasthan: true, status: true },
+  // 2. Seed System Roles
+  const rolesData = [
+    { name: 'Super Admin', code: 'SUPER_ADMIN', description: 'Full unrestricted system governance', isSystem: true },
+    { name: 'Administrator', code: 'ADMIN', description: 'Enterprise administration rights', isSystem: true },
+    { name: 'Branch Manager', code: 'MANAGER', description: 'Branch operation & staff management', isSystem: true },
+    { name: 'Counter Staff', code: 'COUNTER_EMPLOYEE', description: 'Parcel booking and collection counter', isSystem: fontIsSystem(true) },
+    { name: 'Accountant', code: 'ACCOUNTANT', description: 'Financial ledger & closing reports', isSystem: true },
+  ];
+
+  function fontIsSystem(val: boolean) { return val; }
+
+  for (const r of rolesData) {
+    await prisma.roleModel.upsert({
+      where: { code: r.code },
+      update: r,
+      create: r,
+    });
+  }
+
+  // 3. Seed Sequence Counter
+  const sequenceKeys = ['OFF', 'EMP', 'VEH', 'ROUTE', 'PRICE', 'ACT'];
+  for (const key of sequenceKeys) {
+    await prisma.sequenceMaster.upsert({
+      where: { key },
+      update: {},
+      create: { key, lastNumber: 10 },
+    });
+  }
+
+  // 4. Seed Default Head Office & Regional Branches
+  const headOffice = await prisma.officeMaster.upsert({
+    where: { name: 'Pooja Travels Jodhpur Head Office' },
+    update: {},
     create: {
-      name: "Rajasthan Standard Group",
-      description: "Standard intra-state tariff for all stations inside Rajasthan",
+      officeCode: 'OFF000001',
+      name: 'Pooja Travels Jodhpur Head Office',
+      code: 'JDH01',
+      officeType: OfficeType.HEAD_OFFICE,
+      address: '45, Jaswant Building, MG Hospital Rd, Sojati Gate',
+      city: 'Jodhpur',
+      state: 'Rajasthan',
+      pinCode: '342001',
+      phone: '6350603414',
+      altPhone: '0291-2651955',
+      managerName: 'Moulik Sharma',
+      managerPhone: '6350603414',
+      managerEmail: 'admin@poojatravels.com',
+      latitude: 26.2855,
+      longitude: 73.0183,
+      openingTime: '04:00 AM',
+      closingTime: '11:00 PM',
+      workingDays: 'Mon-Sun',
+      maximumStorageCapacity: 5000,
+      currentStorageCapacity: 120,
+      status: true,
+      isActive: true,
+    },
+  });
+
+  const jaipurOffice = await prisma.officeMaster.upsert({
+    where: { name: 'Jaipur Regional Office' },
+    update: {},
+    create: {
+      officeCode: 'OFF000002',
+      name: 'Jaipur Regional Office',
+      code: 'JPR01',
+      officeType: OfficeType.REGIONAL_OFFICE,
+      parentOfficeId: headOffice.id,
+      address: '12, Transport Nagar, GT Road',
+      city: 'Jaipur',
+      state: 'Rajasthan',
+      pinCode: '302004',
+      phone: '7852091119',
+      managerName: 'Rajesh Verma',
+      managerPhone: '7852091119',
+      managerEmail: 'jaipur@poojatravels.com',
+      latitude: 26.9124,
+      longitude: 75.7873,
+      openingTime: '06:00 AM',
+      closingTime: '10:00 PM',
+      workingDays: 'Mon-Sat',
+      maximumStorageCapacity: 3000,
+      currentStorageCapacity: 85,
+      status: true,
+      isActive: true,
+    },
+  });
+
+  const kotaOffice = await prisma.officeMaster.upsert({
+    where: { name: 'Kota Branch Office' },
+    update: {},
+    create: {
+      officeCode: 'OFF000003',
+      name: 'Kota Branch Office',
+      code: 'KOTA01',
+      officeType: OfficeType.BRANCH,
+      parentOfficeId: jaipurOffice.id,
+      address: '88, Aerodrome Circle',
+      city: 'Kota',
+      state: 'Rajasthan',
+      pinCode: '324007',
+      phone: '9829012345',
+      managerName: 'Suresh Kumar',
+      managerPhone: '9829012345',
+      latitude: 25.18,
+      longitude: 75.83,
+      openingTime: '06:00 AM',
+      closingTime: '09:00 PM',
+      workingDays: 'Mon-Sat',
+      maximumStorageCapacity: 1500,
+      currentStorageCapacity: 40,
+      status: true,
+      isActive: true,
+    },
+  });
+
+  // 5. Seed Super Admin User
+  const adminUser = await prisma.user.upsert({
+    where: { phone: '6350603414' },
+    update: {
+      officeId: headOffice.id,
+      role: Role.SUPER_ADMIN,
+      employeeCode: 'EMP000001',
+    },
+    create: {
+      employeeCode: 'EMP000001',
+      name: 'Moulik Sharma',
+      phone: '6350603414',
+      email: 'mouliksharma618@gmail.com',
+      role: Role.SUPER_ADMIN,
+      designation: 'Managing Director & Enterprise Admin',
+      officeId: headOffice.id,
+      status: true,
+      isActive: true,
+    },
+  });
+
+  // 6. Seed Fleet Vehicles
+  await prisma.vehicleMaster.upsert({
+    where: { vehicleNumber: 'RJ19-GB-1234' },
+    update: {},
+    create: {
+      vehicleNumber: 'RJ19-GB-1234',
+      vehicleType: 'CONTAINER TRUCK (14FT)',
+      registrationNumber: 'RJ19GB1234',
+      capacityKg: 3500,
+      status: VehicleStatus.AVAILABLE,
+      driverEmployeeId: adminUser.id,
+      driverName: 'Ramesh Singh',
+      driverPhone: '9828098765',
+      insuranceExpiry: new Date('2027-03-31'),
+      permitExpiry: new Date('2027-05-15'),
+      fitnessExpiry: new Date('2026-12-31'),
+      pollutionExpiry: new Date('2026-10-15'),
+      odometer: 45200,
+      maintenanceCost: 12500,
+      isActive: true,
+    },
+  });
+
+  // 7. Seed Pricing Version 1
+  const pricingGroup = await prisma.pricingGroup.upsert({
+    where: { name: 'Rajasthan Standard Freight Tariff v1' },
+    update: { status: true, isActive: true },
+    create: {
+      pricingCode: 'PRICE000001',
+      name: 'Rajasthan Standard Freight Tariff v1',
+      description: 'Default intra-state freight pricing matrix for Rajasthan',
+      version: 1,
       isRajasthan: true,
       status: true,
+      isActive: true,
+      pricingRules: {
+        create: [
+          { parcelType: 'ENVELOPE', selfPrice: 40, taxiPrice: null, displayOrder: 1 },
+          { parcelType: 'BOX', selfPrice: 100, taxiPrice: 50, displayOrder: 2 },
+          { parcelType: 'MEDIUM_PARCEL', selfPrice: 180, taxiPrice: 70, displayOrder: 3 },
+          { parcelType: 'LARGE_BUNDLE', selfPrice: 350, taxiPrice: 120, displayOrder: 4 },
+        ],
+      },
     },
   });
 
-  const rajasthanRules = [
-    { parcelType: ParcelType.ENVELOPE, selfPrice: 99, taxiPrice: null, displayOrder: 1 },
-    { parcelType: ParcelType.BOX, selfPrice: 149, taxiPrice: 169, displayOrder: 2 },
-    { parcelType: ParcelType.MEDIUM_PARCEL, selfPrice: 199, taxiPrice: 219, displayOrder: 3 },
-    { parcelType: ParcelType.LARGE_BUNDLE, selfPrice: 249, taxiPrice: 269, displayOrder: 4 },
-  ];
-
-  for (const r of rajasthanRules) {
-    await db.pricingRule.upsert({
-      where: {
-        pricingGroupId_parcelType: {
-          pricingGroupId: rajasthanPricing.id,
-          parcelType: r.parcelType,
-        },
+  // 8. Seed Routes
+  await prisma.routeMaster.upsert({
+    where: {
+      originOfficeId_destinationOfficeId: {
+        originOfficeId: headOffice.id,
+        destinationOfficeId: jaipurOffice.id,
       },
-      update: {
-        selfPrice: r.selfPrice,
-        taxiPrice: r.taxiPrice,
-        displayOrder: r.displayOrder,
-      },
-      create: {
-        pricingGroupId: rajasthanPricing.id,
-        parcelType: r.parcelType,
-        selfPrice: r.selfPrice,
-        taxiPrice: r.taxiPrice,
-        displayOrder: r.displayOrder,
-      },
-    });
-  }
-
-  const outsidePricing = await db.pricingGroup.upsert({
-    where: { name: "Outside Rajasthan Standard Group" },
-    update: { isRajasthan: false, status: true },
+    },
+    update: {},
     create: {
-      name: "Outside Rajasthan Standard Group",
-      description: "Standard interstate tariff for Delhi, UP, MP, and Gujarat stations",
-      isRajasthan: false,
+      routeCode: 'ROUTE000001',
+      originOfficeId: headOffice.id,
+      destinationOfficeId: jaipurOffice.id,
+      etaHours: 6.5,
+      distanceKm: 335.0,
+      operatingDays: 'Daily',
+      departureTime: '09:00 PM',
+      arrivalTime: '03:30 AM',
+      isBidirectional: true,
       status: true,
+      routeStatus: RouteStatus.ACTIVE,
+      pricingGroupId: pricingGroup.id,
+      isActive: true,
     },
   });
 
-  const outsideRules = [
-    { parcelType: ParcelType.ENVELOPE, selfPrice: 199, taxiPrice: null, displayOrder: 1 },
-    { parcelType: ParcelType.BOX, selfPrice: 399, taxiPrice: 429, displayOrder: 2 },
-    { parcelType: ParcelType.MEDIUM_PARCEL, selfPrice: 499, taxiPrice: 519, displayOrder: 3 },
-    { parcelType: ParcelType.LARGE_BUNDLE, selfPrice: 599, taxiPrice: 619, displayOrder: 4 },
-  ];
+  // 9. Seed Modular Settings
+  await prisma.companySettings.upsert({ where: { id: 'default' }, update: {}, create: { id: 'default' } });
+  await prisma.bookingSettings.upsert({ where: { id: 'default' }, update: {}, create: { id: 'default' } });
+  await prisma.brandingSettings.upsert({ where: { id: 'default' }, update: {}, create: { id: 'default' } });
+  await prisma.notificationSettings.upsert({ where: { id: 'default' }, update: {}, create: { id: 'default' } });
+  await prisma.financeSettings.upsert({ where: { id: 'default' }, update: {}, create: { id: 'default' } });
+  await prisma.securitySettings.upsert({ where: { id: 'default' }, update: {}, create: { id: 'default' } });
+  await prisma.systemSettings.upsert({ where: { id: 'default' }, update: {}, create: { id: 'default' } });
 
-  for (const r of outsideRules) {
-    await db.pricingRule.upsert({
-      where: {
-        pricingGroupId_parcelType: {
-          pricingGroupId: outsidePricing.id,
-          parcelType: r.parcelType,
-        },
-      },
-      update: {
-        selfPrice: r.selfPrice,
-        taxiPrice: r.taxiPrice,
-        displayOrder: r.displayOrder,
-      },
-      create: {
-        pricingGroupId: outsidePricing.id,
-        parcelType: r.parcelType,
-        selfPrice: r.selfPrice,
-        taxiPrice: r.taxiPrice,
-        displayOrder: r.displayOrder,
-      },
-    });
-  }
-
-  // 5. Initial Routes Setup from Head Office (Jodhpur) to All Destination Offices
-  for (const b of branchesData) {
-    const destId = createdOfficesMap.get(b.name);
-    if (destId) {
-      const isRaj = b.state === "Rajasthan";
-      await db.routeMaster.upsert({
-        where: {
-          originOfficeId_destinationOfficeId: {
-            originOfficeId: headOffice.id,
-            destinationOfficeId: destId,
-          },
-        },
-        update: {},
-        create: {
-          originOfficeId: headOffice.id,
-          destinationOfficeId: destId,
-          etaHours: isRaj ? 6.0 : 12.0,
-          distanceKm: isRaj ? 300.0 : 650.0,
-          operatingDays: "Daily",
-          departureTime: "08:00 PM",
-          arrivalTime: "06:00 AM",
-          status: true,
-          routeStatus: "ACTIVE",
-          pricingGroupId: isRaj ? rajasthanPricing.id : outsidePricing.id,
-        },
-      });
-    }
-  }
-
-  // 6. Status Master
-  const statuses = [
-    { name: "Draft", order: 1, color: "#9ca3af" },
-    { name: "Booked", order: 2, color: "#3b82f6" },
-    { name: "Pickup Requested", order: 3, color: "#8b5cf6" },
-    { name: "Received At Origin Office", order: 4, color: "#0284c7" },
-    { name: "Loaded", order: 5, color: "#eab308" },
-    { name: "In Transit", order: 6, color: "#f97316" },
-    { name: "Arrived At Destination Office", order: 7, color: "#a855f7" },
-    { name: "Ready For Collection", order: 8, color: "#06b6d4" },
-    { name: "Collected", order: 9, color: "#22c55e" },
-    { name: "Completed", order: 10, color: "#16a34a" },
-    { name: "Cancelled", order: 11, color: "#ef4444" },
-  ];
-
-  for (const s of statuses) {
-    await db.statusMaster.upsert({
-      where: { name: s.name },
-      update: { order: s.order, color: s.color },
-      create: s,
-    });
-  }
-
-  // 7. LR Sequence Init (Global Monotonic Sequence)
-  const existingSeq = await db.lRSequence.findFirst();
-  if (!existingSeq) {
-    await db.lRSequence.create({
-      data: { id: 1, lastNumber: 0 },
-    });
-  }
-
-  // 8. Default Notification Templates (Multi-Language: EN, HI, GU)
-  console.log("📨 Seeding Multi-Language Notification Templates...");
-  const defaultTemplates = [
-    {
-      name: "Booking Created - English",
-      event: "BOOKING_CREATED",
-      channel: "WHATSAPP",
-      languageCode: "en",
-      version: 1,
-      title: "Booking Confirmed",
-      messageTemplate: "Dear {{receiverName}}, your parcel (LR: {{lrNumber}}) from {{senderName}} ({{origin}} to {{destination}}) is confirmed! Track live: {{trackingUrl}} - Pooja Travels & Cargo",
-      variables: JSON.stringify(["receiverName", "lrNumber", "senderName", "origin", "destination", "trackingUrl"]),
-    },
-    {
-      name: "Booking Created - Hindi",
-      event: "BOOKING_CREATED",
-      channel: "WHATSAPP",
-      languageCode: "hi",
-      version: 1,
-      title: "बुकिंग की पुष्टि",
-      messageTemplate: "प्रिय {{receiverName}}, {{senderName}} द्वारा आपका पार्सल (LR: {{lrNumber}}) बुक कर लिया गया है ({{origin}} से {{destination}})। लाइव ट्रैक करें: {{trackingUrl}} - पूजा ट्रेवल्स एंड कार्गो",
-      variables: JSON.stringify(["receiverName", "lrNumber", "senderName", "origin", "destination", "trackingUrl"]),
-    },
-    {
-      name: "Ready For Collection - English",
-      event: "READY_FOR_COLLECTION",
-      channel: "WHATSAPP",
-      languageCode: "en",
-      version: 1,
-      title: "Parcel Ready for Collection",
-      messageTemplate: "Dear {{receiverName}}, your parcel (LR: {{lrNumber}}) has ARRIVED at {{collectionOffice}}! Please collect it using your LR number. Office address: {{officeAddress}}. Helpline: {{helpline}}. Track: {{trackingUrl}}",
-      variables: JSON.stringify(["receiverName", "lrNumber", "collectionOffice", "officeAddress", "helpline", "trackingUrl"]),
-    },
-    {
-      name: "Ready For Collection - Hindi",
-      event: "READY_FOR_COLLECTION",
-      channel: "WHATSAPP",
-      languageCode: "hi",
-      version: 1,
-      title: "पार्सल लेने के लिए तैयार है",
-      messageTemplate: "प्रिय {{receiverName}}, आपका पार्सल (LR: {{lrNumber}}) {{collectionOffice}} पहुंच गया है! कृपया अपना LR नंबर दिखाकर पार्सल प्राप्त करें। पता: {{officeAddress}}। हेल्पलाइन: {{helpline}}",
-      variables: JSON.stringify(["receiverName", "lrNumber", "collectionOffice", "officeAddress", "helpline"]),
-    },
-    {
-      name: "Dispatch Departed - English",
-      event: "DISPATCH_DEPARTED",
-      channel: "WHATSAPP",
-      languageCode: "en",
-      version: 1,
-      title: "Parcel In Transit",
-      messageTemplate: "Parcel LR {{lrNumber}} has departed from origin in vehicle {{vehicleNumber}} (Dispatch #{{dispatchNumber}}). Expected arrival: {{estimatedArrival}}. Pooja Travels",
-      variables: JSON.stringify(["lrNumber", "vehicleNumber", "dispatchNumber", "estimatedArrival"]),
-    },
-    {
-      name: "Parcel Collected - English",
-      event: "COLLECTED",
-      channel: "WHATSAPP",
-      languageCode: "en",
-      version: 1,
-      title: "Parcel Delivered",
-      messageTemplate: "Parcel LR {{lrNumber}} has been successfully collected by {{receiverName}} at {{collectedTime}} at {{officeName}}. Thank you for choosing Pooja Travels & Cargo!",
-      variables: JSON.stringify(["lrNumber", "receiverName", "collectedTime", "officeName"]),
-    },
-  ];
-
-  for (const t of defaultTemplates) {
-    await db.notificationTemplate.upsert({
-      where: {
-        event_channel_languageCode_version: {
-          event: t.event as any,
-          channel: t.channel as any,
-          languageCode: t.languageCode,
-          version: t.version,
-        },
-      },
-      update: {
-        messageTemplate: t.messageTemplate,
-        title: t.title,
-      },
-      create: {
-        name: t.name,
-        event: t.event as any,
-        channel: t.channel as any,
-        languageCode: t.languageCode,
-        version: t.version,
-        title: t.title,
-        messageTemplate: t.messageTemplate,
-        variables: t.variables,
-        isActive: true,
-      },
-    });
-  }
-
-  console.log("✅ ShipKart Milestone 9 Notification Engine & Seeding finished successfully!");
+  console.log('✅ Milestone 10 Enterprise Administration Master Data Seeded Successfully!');
 }
 
-seed()
+main()
   .catch((e) => {
-    console.error("❌ Seeding failed:", e);
+    console.error('❌ Seeding failed:', e);
+    process.exit(1);
   })
   .finally(async () => {
-    await db.$disconnect();
+    await prisma.$disconnect();
   });

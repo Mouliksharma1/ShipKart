@@ -28,7 +28,7 @@ export const RouteSchema = z.object({
   operatingDays: z.string().default("Daily"),
   departureTime: z.string().default("08:00 PM"),
   arrivalTime: z.string().default("06:00 AM"),
-  routeStatus: z.enum(["ACTIVE", "INACTIVE", "TEMPORARILY_CLOSED"]).default("ACTIVE"),
+  routeStatus: z.enum(["ACTIVE", "SUSPENDED", "UNDER_MAINTENANCE", "CLOSED"]).default("ACTIVE"),
   pricingGroupId: z.string().uuid("Invalid pricing group selected").optional().or(z.literal("")),
   status: z.boolean().default(true),
 }).refine(data => data.originOfficeId !== data.destinationOfficeId, {

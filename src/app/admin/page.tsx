@@ -1,168 +1,204 @@
-import React from "react";
-import Link from "next/link";
-import { getOfficesAction, getRoutesAction } from "@/app/actions/offices-routes";
-import { ShieldAlert, Building2, Route as RouteIcon, ArrowRight, CheckCircle2, MapPin, DollarSign, Bell } from "lucide-react";
+import React from 'react';
+import { getDashboardStatsAction } from '@/app/actions/admin/dashboard';
+import { StatCard } from '@/components/admin/StatCard';
+import { GlobalSearch } from '@/components/admin/GlobalSearch';
+import {
+  Package,
+  TrendingUp,
+  Truck,
+  AlertTriangle,
+  Clock,
+  Building,
+  Users,
+  Bell,
+  ShieldCheck,
+  Wrench,
+  ChevronRight,
+  Activity,
+} from 'lucide-react';
+import Link from 'next/link';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-export default async function AdminDashboard() {
-  const officesRes = await getOfficesAction();
-  const routesRes = await getRoutesAction();
-
-  const offices = officesRes.data || [];
-  const routes = routesRes.data || [];
-
-  const activeOffices = offices.filter(o => o.status).length;
-  const activeRoutes = routes.filter(r => r.status).length;
+export default async function AdminDashboardPage() {
+  const stats = await getDashboardStatsAction();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 space-y-8">
-      {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-amber-500/20 bg-gradient-to-br from-white via-amber-500/5 to-slate-50 dark:from-neutral-900 dark:via-neutral-900/90 dark:to-neutral-950 p-5 sm:p-6 shadow-xl shadow-amber-500/5">
-        {/* Subtle Ambient Radial Background Glow */}
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 space-y-2">
-          <div className="inline-flex items-center space-x-2 text-[11px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest bg-amber-500/10 dark:bg-amber-400/10 px-3 py-1 rounded-full border border-amber-500/30 dark:border-amber-400/30 backdrop-blur-md">
-            <ShieldAlert className="h-3 w-3 stroke-[2.5]" />
-            <span>Admin Command Center</span>
+    <div className="min-h-screen bg-slate-50/50 p-6 lg:p-10 space-y-8">
+      {/* Header Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+        <div>
+          <div className="flex items-center space-x-2">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
+              POOJA TRAVELS & CARGO
+            </span>
+            <span className="text-xs text-slate-400">Enterprise Administration ERP</span>
           </div>
-
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-            Ship<span className="text-amber-500">Kart</span> Master Control Center
-          </h1>
-
-          <p className="text-xs font-medium text-slate-600 dark:text-neutral-300 max-w-2xl leading-relaxed">
-            Configure station office networks, transport route pairings, tariff pricing groups, employee access, and live audit logs across the cargo logistics pipeline.
-          </p>
+          <h1 className="text-2xl font-extrabold text-slate-900 mt-1">Operational Control Center</h1>
+        </div>
+        <div className="flex items-center space-x-4">
+          <GlobalSearch />
         </div>
       </div>
 
-      {/* Quick Office & Route Stats */}
+      {/* Alert Banner if any expiries or delayed items */}
+      {(stats.upcomingExpiriesAlerts > 0 || stats.delayedBookings > 0 || stats.notificationQueuePending > 10) && (
+        <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-4 flex items-center justify-between text-amber-900 text-xs font-semibold">
+          <div className="flex items-center space-x-3">
+            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+            <div>
+              <span>Attention required: </span>
+              {stats.upcomingExpiriesAlerts > 0 && <span className="underline mr-2">{stats.upcomingExpiriesAlerts} vehicle document expiries</span>}
+              {stats.delayedBookings > 0 && <span className="underline mr-2">{stats.delayedBookings} delayed parcels</span>}
+              {stats.notificationQueuePending > 10 && <span className="underline">{stats.notificationQueuePending} queued notifications</span>}
+            </div>
+          </div>
+          <Link href="/admin/vehicles" className="flex items-center text-amber-700 hover:text-amber-900 font-bold">
+            Review Alerts <ChevronRight className="w-4 h-4 ml-1" />
+          </Link>
+        </div>
+      )}
+
+      {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/60 p-5 space-y-2 shadow-md">
-          <div className="flex items-center justify-between text-slate-500 dark:text-neutral-400">
-            <span className="text-xs font-bold uppercase tracking-wider">Total Offices</span>
-            <Building2 className="h-5 w-5 text-amber-500" />
+        <StatCard
+          title="Today's Revenue"
+          value={`₹${stats.todayRevenue.toLocaleString('en-IN')}`}
+          subtitle={`Month: ₹${stats.monthRevenue.toLocaleString('en-IN')}`}
+          variant="orange"
+          icon={<TrendingUp className="w-5 h-5 text-orange-600" />}
+        />
+        <StatCard
+          title="Today's Bookings"
+          value={stats.todayBookings}
+          subtitle={`${stats.pendingCollections} pending collection`}
+          variant="indigo"
+          icon={<Package className="w-5 h-5 text-indigo-600" />}
+        />
+        <StatCard
+          title="Active Dispatches"
+          value={stats.dispatchesRunning}
+          subtitle={`${stats.runningVehicles} vehicles on route`}
+          variant="emerald"
+          icon={<Truck className="w-5 h-5 text-emerald-600" />}
+        />
+        <StatCard
+          title="Maintenance & Expiries"
+          value={stats.maintenanceVehicles}
+          subtitle={`${stats.upcomingExpiriesAlerts} expiries within 30 days`}
+          variant="amber"
+          icon={<Wrench className="w-5 h-5 text-amber-600" />}
+        />
+      </div>
+
+      {/* Operational Utilization Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
+              <Building className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-slate-500 uppercase">Active Offices</div>
+              <div className="text-xl font-bold text-slate-900">{stats.activeOffices} Network Branches</div>
+            </div>
           </div>
-          <p className="text-3xl font-black text-slate-900 dark:text-white">{offices.length}</p>
-          <span className="text-[11px] text-green-600 dark:text-green-400 font-semibold flex items-center space-x-1">
-            <CheckCircle2 className="h-3 w-3" />
-            <span>{activeOffices} Active Station Offices</span>
-          </span>
+          <Link href="/admin/offices" className="p-2 text-slate-400 hover:text-slate-600">
+            <ChevronRight className="w-5 h-5" />
+          </Link>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/60 p-5 space-y-2 shadow-md">
-          <div className="flex items-center justify-between text-slate-500 dark:text-neutral-400">
-            <span className="text-xs font-bold uppercase tracking-wider">Total Routes</span>
-            <RouteIcon className="h-5 w-5 text-amber-500" />
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 bg-teal-50 text-teal-600 rounded-xl">
+              <Users className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-slate-500 uppercase">Employee Attendance</div>
+              <div className="text-xl font-bold text-slate-900">{stats.employeesPresentToday} / {stats.activeEmployees} Present</div>
+            </div>
           </div>
-          <p className="text-3xl font-black text-slate-900 dark:text-white">{routes.length}</p>
-          <span className="text-[11px] text-green-600 dark:text-green-400 font-semibold flex items-center space-x-1">
-            <CheckCircle2 className="h-3 w-3" />
-            <span>{activeRoutes} Active Transport Routes</span>
-          </span>
+          <Link href="/admin/employees" className="p-2 text-slate-400 hover:text-slate-600">
+            <ChevronRight className="w-5 h-5" />
+          </Link>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/60 p-5 space-y-2 shadow-md">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-neutral-400">Rajasthan Offices</span>
-          <p className="text-3xl font-black text-slate-900 dark:text-white">
-            {offices.filter(o => o.state === "Rajasthan").length}
-          </p>
-          <span className="text-[11px] text-slate-400">Head Office & Rajasthan Branches</span>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/60 p-5 space-y-2 shadow-md">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-neutral-400">Outside Rajasthan</span>
-          <p className="text-3xl font-black text-amber-600 dark:text-amber-400">
-            {offices.filter(o => o.state !== "Rajasthan").length}
-          </p>
-          <span className="text-[11px] text-slate-400">Delhi, UP, MP, Gujarat Branches</span>
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+              <Bell className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-slate-500 uppercase">Notification Engine</div>
+              <div className="text-xl font-bold text-slate-900">{stats.notificationQueuePending} Messages Queued</div>
+            </div>
+          </div>
+          <Link href="/admin/notifications" className="p-2 text-slate-400 hover:text-slate-600">
+            <ChevronRight className="w-5 h-5" />
+          </Link>
         </div>
       </div>
 
-      {/* Quick Action Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Link
-          href="/admin/offices"
-          className="group rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-lg hover:border-amber-500 transition-all space-y-3"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <Building2 className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
-                Office Master
-              </h3>
+      {/* Quick Navigation Modules */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+        {[
+          { label: 'Offices', href: '/admin/offices', icon: Building, color: 'bg-purple-100 text-purple-700' },
+          { label: 'Employees', href: '/admin/employees', icon: Users, color: 'bg-emerald-100 text-emerald-700' },
+          { label: 'Vehicles', href: '/admin/vehicles', icon: Truck, color: 'bg-amber-100 text-amber-700' },
+          { label: 'Routes', href: '/admin/routes', icon: Clock, color: 'bg-rose-100 text-rose-700' },
+          { label: 'Pricing', href: '/admin/pricing', icon: TrendingUp, color: 'bg-blue-100 text-blue-700' },
+          { label: 'Settings', href: '/admin/settings', icon: ShieldCheck, color: 'bg-slate-100 text-slate-700' },
+          { label: 'Audit Trail', href: '/admin/activity', icon: Activity, color: 'bg-orange-100 text-orange-700' },
+        ].map((mod) => (
+          <Link
+            key={mod.label}
+            href={mod.href}
+            className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-slate-200/80 hover:border-orange-300 hover:shadow-md transition-all text-center group"
+          >
+            <div className={`p-3 rounded-xl ${mod.color} mb-2 group-hover:scale-110 transition-transform`}>
+              <mod.icon className="w-5 h-5" />
             </div>
-            <ArrowRight className="h-5 w-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-          </div>
-          <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed">
-            Create, edit, search, and enable/disable branch offices. Set geo-coordinates, helpline contacts, and working hours.
-          </p>
-        </Link>
+            <span className="text-xs font-bold text-slate-700 group-hover:text-orange-600">{mod.label}</span>
+          </Link>
+        ))}
+      </div>
 
-        <Link
-          href="/admin/routes"
-          className="group rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-lg hover:border-amber-500 transition-all space-y-3"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <RouteIcon className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
-                Route Master
-              </h3>
+      {/* Recent Activity Log Feed */}
+      <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-orange-100 text-orange-600 rounded-xl">
+              <Activity className="w-5 h-5" />
             </div>
-            <ArrowRight className="h-5 w-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+            <h2 className="text-lg font-bold text-slate-900">Recent Enterprise Audit Feed</h2>
           </div>
-          <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed">
-            Configure origin to destination pairings, distance (KM), ETA hours, departure/arrival schedules, and status.
-          </p>
-        </Link>
+          <Link href="/admin/activity" className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center">
+            View All Logs <ChevronRight className="w-4 h-4 ml-1" />
+          </Link>
+        </div>
 
-        <Link
-          href="/admin/pricing"
-          className="group rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-lg hover:border-amber-500 transition-all space-y-3"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <DollarSign className="h-6 w-6" />
+        <div className="space-y-4">
+          {stats.recentActivities.length === 0 ? (
+            <p className="text-xs text-slate-400 py-4 text-center">No recent activity recorded.</p>
+          ) : (
+            stats.recentActivities.map((act) => (
+              <div key={act.id} className="flex items-start justify-between p-3.5 bg-slate-50/70 rounded-xl border border-slate-100">
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 shrink-0" />
+                  <div>
+                    <div className="text-xs font-bold text-slate-900">{act.action}</div>
+                    <div className="text-[11px] text-slate-500 mt-0.5">
+                      Module: <span className="font-semibold text-slate-700">{act.module}</span> | User: {act.user?.name || 'System'}
+                    </div>
+                  </div>
+                </div>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  {new Date(act.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
-                Pricing Engine
-              </h3>
-            </div>
-            <ArrowRight className="h-5 w-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-          </div>
-          <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed">
-            Manage normalized tariff groups, itemized parcel rules, taxi surcharges, and live price calculation sandbox.
-          </p>
-        </Link>
-
-        <Link
-          href="/admin/notifications"
-          className="group rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-lg hover:border-amber-500 transition-all space-y-3"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <Bell className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
-                Notifications
-              </h3>
-            </div>
-            <ArrowRight className="h-5 w-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-          </div>
-          <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed">
-            Monitor real-time WhatsApp/SMS/Email queue, multi-language templates, system broadcasts, and Mailpit provider matrix.
-          </p>
-        </Link>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

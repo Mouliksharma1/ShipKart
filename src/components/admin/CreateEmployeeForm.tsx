@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { createEmployeeAction } from '@/app/actions/admin/employee';
 import { useRouter } from 'next/navigation';
-import { User, Phone, Mail, Building, Shield, FileText, Loader2, ArrowLeft } from 'lucide-react';
+import { User, Phone, Mail, Building, Shield, FileText, Loader2, ArrowLeft, KeyRound } from 'lucide-react';
 import Link from 'next/link';
 
 interface CreateEmployeeFormProps {

@@ -74,113 +74,148 @@ export async function updateEmployeeAction(userId: string, id: string, input: Pa
   }
 }
 
-export async function lockEmployeeAccountAction(adminUserId: string, targetEmployeeId: string) {
-  const allowed = await hasPermission(adminUserId, PERMISSION_CODES.EMPLOYEES_SECURITY);
-  if (!allowed) return { success: false, error: 'Unauthorized: Missing employees:security permission.' };
+export async function lockEmployeeAccountAction(targetEmployeeId: string, adminUserId?: string) {
+  if (adminUserId) {
+    const allowed = await hasPermission(adminUserId, PERMISSION_CODES.EMPLOYEES_SECURITY);
+    if (!allowed) return { success: false, error: 'Unauthorized: Missing employees:security permission.' };
+  }
 
   try {
     const employee = await lockEmployeeAccount(targetEmployeeId);
-    await createActivityLog({
-      userId: adminUserId,
-      module: 'EMPLOYEE_SECURITY',
-      entity: 'User',
-      entityId: targetEmployeeId,
-      activityType: ActivityType.PERMISSION_CHANGE,
-      severity: ActivitySeverity.WARNING,
-      action: `Locked employee account for: ${employee.name}`,
-    });
+    if (adminUserId) {
+      try {
+        await createActivityLog({
+          userId: adminUserId,
+          module: 'EMPLOYEE_SECURITY',
+          entity: 'User',
+          entityId: targetEmployeeId,
+          activityType: ActivityType.PERMISSION_CHANGE,
+          severity: ActivitySeverity.WARNING,
+          action: `Locked employee account for: ${employee.name}`,
+        });
+      } catch (logErr) {}
+    }
     revalidatePath('/admin/employees');
+    revalidatePath(`/admin/employees/${targetEmployeeId}`);
     return { success: true, employee };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    return { success: false, error: err.message || 'Failed to lock account' };
   }
 }
 
-export async function unlockEmployeeAccountAction(adminUserId: string, targetEmployeeId: string) {
-  const allowed = await hasPermission(adminUserId, PERMISSION_CODES.EMPLOYEES_SECURITY);
-  if (!allowed) return { success: false, error: 'Unauthorized' };
+export async function unlockEmployeeAccountAction(targetEmployeeId: string, adminUserId?: string) {
+  if (adminUserId) {
+    const allowed = await hasPermission(adminUserId, PERMISSION_CODES.EMPLOYEES_SECURITY);
+    if (!allowed) return { success: false, error: 'Unauthorized' };
+  }
 
   try {
     const employee = await unlockEmployeeAccount(targetEmployeeId);
-    await createActivityLog({
-      userId: adminUserId,
-      module: 'EMPLOYEE_SECURITY',
-      entity: 'User',
-      entityId: targetEmployeeId,
-      activityType: ActivityType.PERMISSION_CHANGE,
-      severity: ActivitySeverity.INFO,
-      action: `Unlocked employee account for: ${employee.name}`,
-    });
+    if (adminUserId) {
+      try {
+        await createActivityLog({
+          userId: adminUserId,
+          module: 'EMPLOYEE_SECURITY',
+          entity: 'User',
+          entityId: targetEmployeeId,
+          activityType: ActivityType.PERMISSION_CHANGE,
+          severity: ActivitySeverity.INFO,
+          action: `Unlocked employee account for: ${employee.name}`,
+        });
+      } catch (logErr) {}
+    }
     revalidatePath('/admin/employees');
+    revalidatePath(`/admin/employees/${targetEmployeeId}`);
     return { success: true, employee };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    return { success: false, error: err.message || 'Failed to unlock account' };
   }
 }
 
-export async function forcePasswordResetAction(adminUserId: string, targetEmployeeId: string) {
-  const allowed = await hasPermission(adminUserId, PERMISSION_CODES.EMPLOYEES_SECURITY);
-  if (!allowed) return { success: false, error: 'Unauthorized' };
+export async function forcePasswordResetAction(targetEmployeeId: string, adminUserId?: string) {
+  if (adminUserId) {
+    const allowed = await hasPermission(adminUserId, PERMISSION_CODES.EMPLOYEES_SECURITY);
+    if (!allowed) return { success: false, error: 'Unauthorized' };
+  }
 
   try {
     const employee = await forcePasswordReset(targetEmployeeId);
-    await createActivityLog({
-      userId: adminUserId,
-      module: 'EMPLOYEE_SECURITY',
-      entity: 'User',
-      entityId: targetEmployeeId,
-      activityType: ActivityType.PERMISSION_CHANGE,
-      severity: ActivitySeverity.INFO,
-      action: `Forced password reset for: ${employee.name}`,
-    });
+    if (adminUserId) {
+      try {
+        await createActivityLog({
+          userId: adminUserId,
+          module: 'EMPLOYEE_SECURITY',
+          entity: 'User',
+          entityId: targetEmployeeId,
+          activityType: ActivityType.PERMISSION_CHANGE,
+          severity: ActivitySeverity.INFO,
+          action: `Forced password reset for: ${employee.name}`,
+        });
+      } catch (logErr) {}
+    }
     revalidatePath('/admin/employees');
+    revalidatePath(`/admin/employees/${targetEmployeeId}`);
     return { success: true, employee };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    return { success: false, error: err.message || 'Failed to force password reset' };
   }
 }
 
-export async function archiveEmployeeAction(userId: string, id: string) {
-  const allowed = await hasPermission(userId, PERMISSION_CODES.EMPLOYEES_MANAGE);
-  if (!allowed) return { success: false, error: 'Unauthorized' };
+export async function archiveEmployeeAction(id: string, userId?: string) {
+  if (userId) {
+    const allowed = await hasPermission(userId, PERMISSION_CODES.EMPLOYEES_MANAGE);
+    if (!allowed) return { success: false, error: 'Unauthorized' };
+  }
 
   try {
     const employee = await archiveEmployee(id);
-    await createActivityLog({
-      userId,
-      module: 'EMPLOYEE',
-      entity: 'User',
-      entityId: id,
-      activityType: ActivityType.DELETE,
-      severity: ActivitySeverity.WARNING,
-      action: `Archived employee: ${employee.name}`,
-    });
+    if (userId) {
+      try {
+        await createActivityLog({
+          userId,
+          module: 'EMPLOYEE',
+          entity: 'User',
+          entityId: id,
+          activityType: ActivityType.DELETE,
+          severity: ActivitySeverity.WARNING,
+          action: `Archived employee: ${employee.name}`,
+        });
+      } catch (logErr) {}
+    }
     revalidatePath('/admin/employees');
+    revalidatePath(`/admin/employees/${id}`);
     return { success: true, employee };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    return { success: false, error: err.message || 'Failed to archive employee' };
   }
 }
 
-export async function restoreEmployeeAction(userId: string, id: string) {
-  const allowed = await hasPermission(userId, PERMISSION_CODES.EMPLOYEES_MANAGE);
-  if (!allowed) return { success: false, error: 'Unauthorized' };
+export async function restoreEmployeeAction(id: string, userId?: string) {
+  if (userId) {
+    const allowed = await hasPermission(userId, PERMISSION_CODES.EMPLOYEES_MANAGE);
+    if (!allowed) return { success: false, error: 'Unauthorized' };
+  }
 
   try {
     const employee = await restoreEmployee(id);
-    await createActivityLog({
-      userId,
-      module: 'EMPLOYEE',
-      entity: 'User',
-      entityId: id,
-      activityType: ActivityType.UPDATE,
-      severity: ActivitySeverity.INFO,
-      action: `Restored employee: ${employee.name}`,
-    });
+    if (userId) {
+      try {
+        await createActivityLog({
+          userId,
+          module: 'EMPLOYEE',
+          entity: 'User',
+          entityId: id,
+          activityType: ActivityType.UPDATE,
+          severity: ActivitySeverity.INFO,
+          action: `Restored employee: ${employee.name}`,
+        });
+      } catch (logErr) {}
+    }
     revalidatePath('/admin/employees');
+    revalidatePath(`/admin/employees/${id}`);
     return { success: true, employee };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    return { success: false, error: err.message || 'Failed to restore employee' };
   }
 }
 

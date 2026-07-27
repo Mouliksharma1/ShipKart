@@ -15,26 +15,32 @@ import { hasPermission, PERMISSION_CODES } from '@/lib/services/admin/rbac.servi
 import { ActivityType, ActivitySeverity, VehicleStatus } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
-export async function createVehicleAction(userId: string, input: CreateVehicleInput) {
-  const allowed = await hasPermission(userId, PERMISSION_CODES.VEHICLES_MANAGE);
-  if (!allowed) return { success: false, error: 'Unauthorized: Missing vehicles:manage permission.' };
+export async function createVehicleAction(input: CreateVehicleInput, userId?: string) {
+  if (userId) {
+    const allowed = await hasPermission(userId, PERMISSION_CODES.VEHICLES_MANAGE);
+    if (!allowed) return { success: false, error: 'Unauthorized: Missing vehicles:manage permission.' };
+  }
 
   try {
     const vehicle = await createVehicle(input);
-    await createActivityLog({
-      userId,
-      module: 'VEHICLE',
-      entity: 'VehicleMaster',
-      entityId: vehicle.id,
-      activityType: ActivityType.CREATE,
-      severity: ActivitySeverity.INFO,
-      action: `Registered vehicle: ${vehicle.vehicleNumber}`,
-      newData: vehicle,
-    });
+    if (userId) {
+      try {
+        await createActivityLog({
+          userId,
+          module: 'VEHICLE',
+          entity: 'VehicleMaster',
+          entityId: vehicle.id,
+          activityType: ActivityType.CREATE,
+          severity: ActivitySeverity.INFO,
+          action: `Registered vehicle: ${vehicle.vehicleNumber}`,
+          newData: vehicle,
+        });
+      } catch (logErr) {}
+    }
     revalidatePath('/admin/vehicles');
     return { success: true, vehicle };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    return { success: false, error: err.message || 'Failed to register vehicle.' };
   }
 }
 

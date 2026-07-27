@@ -17,7 +17,7 @@ export default async function VehicleDetailPage({ params }: VehicleDetailPagePro
     where: { id },
     include: {
       driverEmployee: true,
-      maintenanceRecords: {
+      maintenanceHistory: {
         take: 10,
         orderBy: { serviceDate: 'desc' },
       },

@@ -295,20 +295,52 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
           </div>
 
           <div className="space-y-1.5 text-xs text-slate-700">
-            <div className="flex justify-between items-center">
-              <span>Freight / Consignment Subtotal:</span>
-              <span className="font-mono font-semibold text-slate-900">
-                ₹{booking.subtotalAmount.toFixed(2)}
-              </span>
-            </div>
-            {booking.totalPickupCharge > 0 && (
-              <div className="flex justify-between items-center">
-                <span>Taxi Pickup Charge:</span>
-                <span className="font-mono font-semibold text-slate-900">
-                  + ₹{booking.totalPickupCharge.toFixed(2)}
-                </span>
-              </div>
-            )}
+            {(() => {
+              const systemTotal = booking.subtotalAmount + booking.totalPickupCharge;
+              const isCustomPrice = Math.abs(booking.totalAmount - systemTotal) > 0.01;
+
+              if (isCustomPrice) {
+                // Custom / negotiated price was applied — only show the final amount
+                return (
+                  <>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-500 italic">Freight Charges (Custom Rate):</span>
+                      <span className="font-mono font-semibold text-slate-900">
+                        ₹{booking.totalAmount.toFixed(2)}
+                      </span>
+                    </div>
+                    {booking.totalPickupCharge > 0 && (
+                      <div className="flex justify-between items-center">
+                        <span>Taxi Pickup Charge:</span>
+                        <span className="font-mono font-semibold text-slate-900">
+                          Included
+                        </span>
+                      </div>
+                    )}
+                  </>
+                );
+              }
+
+              // Standard pricing — show full breakdown
+              return (
+                <>
+                  <div className="flex justify-between items-center">
+                    <span>Freight / Consignment Subtotal:</span>
+                    <span className="font-mono font-semibold text-slate-900">
+                      ₹{booking.subtotalAmount.toFixed(2)}
+                    </span>
+                  </div>
+                  {booking.totalPickupCharge > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span>Taxi Pickup Charge:</span>
+                      <span className="font-mono font-semibold text-slate-900">
+                        + ₹{booking.totalPickupCharge.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
             <div className="border-t border-slate-300 pt-2 mt-2 flex justify-between items-center text-sm font-bold">
               <span className="text-slate-900 uppercase tracking-wider">Grand Total Amount:</span>
               <span className="font-mono text-base text-blue-900">
@@ -324,6 +356,7 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
               )}
             </div>
           </div>
+
 
           {booking.specialNotes && (
             <div className="mt-3 pt-2 border-t border-slate-200 text-xs text-slate-600">

@@ -26,7 +26,7 @@ export default async function NewVehiclePage() {
         </div>
       </div>
 
-      <div className="max-w-3xl bg-white dark:bg-zinc-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-zinc-800 shadow-xs">
+      <div className="max-w-3xl mx-auto bg-white dark:bg-zinc-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-zinc-800 shadow-xs">
         <CreateVehicleForm drivers={drivers} />
       </div>
     </div>

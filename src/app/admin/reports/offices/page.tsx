@@ -12,12 +12,12 @@ export default async function OfficesReportPage() {
     where: { isActive: true },
     include: {
       users: { select: { id: true } },
-      originBookings: { select: { grandTotal: true } },
+      originBookings: { select: { totalAmount: true } },
     },
   });
 
   const matrix = offices.map((off) => {
-    const revenue = off.originBookings.reduce((sum, b) => sum + (b.grandTotal || 0), 0);
+    const revenue = off.originBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
     const capacityUsed = Math.min(100, Math.round((off.currentStorageCapacity / off.maximumStorageCapacity) * 100));
     return {
       id: off.id,

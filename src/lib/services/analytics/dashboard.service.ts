@@ -32,19 +32,19 @@ export async function getDashboardSummary(filter?: DashboardSummaryFilter) {
         ...whereBooking,
         createdAt: { gte: startOfToday },
       },
-      select: { grandTotal: true, paymentStatus: true, paymentType: true },
+      select: { totalAmount: true, paymentStatus: true, paymentType: true },
     });
 
-    const todayRevenue = todayBookings.reduce((sum, b) => sum + (b.grandTotal || 0), 0);
+    const todayRevenue = todayBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
     const todayCount = todayBookings.length;
 
     // 2. Pending Collections Total
     const pendingBookings = await prisma.booking.aggregate({
       where: {
         ...whereBooking,
-        paymentStatus: 'PENDING',
+        paymentStatus: false,
       },
-      _sum: { grandTotal: true },
+      _sum: { totalAmount: true },
       _count: { id: true },
     });
 
@@ -85,7 +85,7 @@ export async function getDashboardSummary(filter?: DashboardSummaryFilter) {
     return {
       todayRevenue,
       todayCount,
-      pendingCollectionsTotal: pendingBookings._sum.grandTotal || 0,
+      pendingCollectionsTotal: pendingBookings._sum.totalAmount || 0,
       pendingCollectionsCount: pendingBookings._count.id || 0,
       activeDispatchesCount,
       inTransitShipmentsCount,

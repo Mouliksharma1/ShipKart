@@ -13,9 +13,9 @@ export default async function BookingsReportPage() {
   const exportHeaders = ['LR Number', 'Parcel Type', 'Status', 'Grand Total (₹)', 'Origin Office'];
   const exportData = data.bookings.map((b) => ({
     'LR Number': b.lrNumber,
-    'Parcel Type': b.parcelType,
+    'Parcel Type': b.items[0]?.parcelType || 'BOX',
     'Status': b.status,
-    'Grand Total (₹)': b.grandTotal,
+    'Grand Total (₹)': b.totalAmount,
     'Origin Office': b.originOffice?.name || 'Unassigned',
   }));
 
@@ -100,10 +100,10 @@ export default async function BookingsReportPage() {
                 {data.bookings.map((b) => (
                   <tr key={b.id} className="hover:bg-slate-50/50 dark:hover:bg-zinc-800/40 transition-colors">
                     <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">{b.lrNumber}</td>
-                    <td className="p-4 uppercase font-semibold text-slate-600 dark:text-zinc-400">{b.parcelType}</td>
+                    <td className="p-4 uppercase font-semibold text-slate-600 dark:text-zinc-400">{b.items[0]?.parcelType || 'BOX'}</td>
                     <td className="p-4 text-slate-700 dark:text-zinc-300">{b.originOffice?.name || 'Unassigned'}</td>
                     <td className="p-4 font-bold text-emerald-600 dark:text-emerald-400">{b.status}</td>
-                    <td className="p-4 text-right font-mono font-bold text-slate-900 dark:text-white">₹{b.grandTotal}</td>
+                    <td className="p-4 text-right font-mono font-bold text-slate-900 dark:text-white">₹{b.totalAmount}</td>
                   </tr>
                 ))}
               </tbody>

@@ -35,22 +35,22 @@ export async function getBookingAnalytics(filter?: BookingFilter) {
       select: {
         id: true,
         lrNumber: true,
-        parcelType: true,
         status: true,
-        grandTotal: true,
+        totalAmount: true,
         createdAt: true,
+        items: { select: { parcelType: true } },
         originOffice: { select: { name: true } },
       },
     });
 
     const totalBookings = bookings.length;
-    const totalValue = bookings.reduce((sum, b) => sum + (b.grandTotal || 0), 0);
+    const totalValue = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
     const averageValue = totalBookings > 0 ? Math.round(totalValue / totalBookings) : 0;
 
     // Parcel Type Breakdown
     const parcelTypeBreakdown: Record<string, number> = {};
     bookings.forEach((b) => {
-      const type = b.parcelType || 'BOX';
+      const type = b.items[0]?.parcelType || 'BOX';
       parcelTypeBreakdown[type] = (parcelTypeBreakdown[type] || 0) + 1;
     });
 

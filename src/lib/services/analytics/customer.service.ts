@@ -6,7 +6,7 @@ export async function getCustomerAnalytics() {
       select: {
         senderName: true,
         senderPhone: true,
-        grandTotal: true,
+        totalAmount: true,
         createdAt: true,
       },
     });
@@ -24,7 +24,7 @@ export async function getCustomerAnalytics() {
         };
       }
       customerMap[key].count += 1;
-      customerMap[key].totalSpent += b.grandTotal || 0;
+      customerMap[key].totalSpent += b.totalAmount || 0;
     });
 
     const topCustomers = Object.values(customerMap)

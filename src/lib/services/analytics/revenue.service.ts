@@ -30,7 +30,7 @@ export async function getRevenueSummary(filter?: RevenueFilter) {
       where: whereClause,
       select: {
         id: true,
-        grandTotal: true,
+        totalAmount: true,
         paymentType: true,
         paymentStatus: true,
         createdAt: true,
@@ -38,15 +38,15 @@ export async function getRevenueSummary(filter?: RevenueFilter) {
       },
     });
 
-    const totalRevenue = bookings.reduce((sum, b) => sum + (b.grandTotal || 0), 0);
-    const paidRevenue = bookings.filter((b) => b.paymentStatus === 'PAID').reduce((sum, b) => sum + (b.grandTotal || 0), 0);
-    const toPayRevenue = bookings.filter((b) => b.paymentStatus === 'PENDING').reduce((sum, b) => sum + (b.grandTotal || 0), 0);
+    const totalRevenue = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+    const paidRevenue = bookings.filter((b) => b.paymentStatus === true).reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+    const toPayRevenue = bookings.filter((b) => b.paymentStatus === false).reduce((sum, b) => sum + (b.totalAmount || 0), 0);
 
     // Group by Payment Type (CASH, UPI, TO_PAY, etc.)
     const paymentTypeSplit: Record<string, number> = {};
     bookings.forEach((b) => {
       const type = b.paymentType || 'CASH';
-      paymentTypeSplit[type] = (paymentTypeSplit[type] || 0) + (b.grandTotal || 0);
+      paymentTypeSplit[type] = (paymentTypeSplit[type] || 0) + (b.totalAmount || 0);
     });
 
     // Group by Office
@@ -56,7 +56,7 @@ export async function getRevenueSummary(filter?: RevenueFilter) {
       if (!officeRevenueMap[officeName]) {
         officeRevenueMap[officeName] = { officeName, total: 0, count: 0 };
       }
-      officeRevenueMap[officeName].total += b.grandTotal || 0;
+      officeRevenueMap[officeName].total += b.totalAmount || 0;
       officeRevenueMap[officeName].count += 1;
     });
 
@@ -64,7 +64,7 @@ export async function getRevenueSummary(filter?: RevenueFilter) {
     const dailyMap: Record<string, number> = {};
     bookings.forEach((b) => {
       const dateStr = new Date(b.createdAt).toISOString().split('T')[0];
-      dailyMap[dateStr] = (dailyMap[dateStr] || 0) + (b.grandTotal || 0);
+      dailyMap[dateStr] = (dailyMap[dateStr] || 0) + (b.totalAmount || 0);
     });
 
     const dailyTrend = Object.keys(dailyMap)

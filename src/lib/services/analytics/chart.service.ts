@@ -21,12 +21,12 @@ export async function getChartDatasets(officeId?: string) {
         ...whereBooking,
         createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
       },
-      select: { grandTotal: true, createdAt: true, parcelType: true, paymentType: true },
+      select: { totalAmount: true, createdAt: true, paymentType: true, items: { select: { parcelType: true } } },
     });
 
     const revenueTrend = days.map((day) => {
       const dayBookings = bookings.filter((b) => new Date(b.createdAt).toISOString().split('T')[0] === day);
-      const revenue = dayBookings.reduce((sum, b) => sum + (b.grandTotal || 0), 0);
+      const revenue = dayBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
       return { day, revenue, bookingsCount: dayBookings.length };
     });
 
@@ -38,7 +38,8 @@ export async function getChartDatasets(officeId?: string) {
       LARGE_BUNDLE: 0,
     };
     bookings.forEach((b) => {
-      if (b.parcelType) parcelTypeCounts[b.parcelType] = (parcelTypeCounts[b.parcelType] || 0) + 1;
+      const type = b.items[0]?.parcelType || 'BOX';
+      parcelTypeCounts[type] = (parcelTypeCounts[type] || 0) + 1;
     });
 
     // 3. Payment Type Pie Chart Split

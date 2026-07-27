@@ -6,7 +6,7 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
 export default async function NewEmployeePage() {
-  const officeRes = await getOfficesAction({ activeOnly: true });
+  const officeRes = await getOfficesAction();
   const offices = officeRes.offices || [];
 
   return (

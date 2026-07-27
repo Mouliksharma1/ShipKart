@@ -15,7 +15,7 @@ export default async function DispatchesReportPage() {
     'Dispatch Manifest No': d.dispatchNumber || d.id,
     'Origin Branch': d.originOffice?.name || 'N/A',
     'Destination Branch': d.destinationOffice?.name || 'N/A',
-    'Vehicle': d.vehicle?.vehicleNumber || 'Unassigned',
+    'Vehicle': d.vehicleNumber || 'Unassigned',
     'Status': d.status,
   }));
 
@@ -87,7 +87,7 @@ export default async function DispatchesReportPage() {
                     <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">{d.dispatchNumber || 'DISP-AUTO'}</td>
                     <td className="p-4 text-slate-700 dark:text-zinc-300">{d.originOffice?.name || 'N/A'}</td>
                     <td className="p-4 text-slate-700 dark:text-zinc-300">{d.destinationOffice?.name || 'N/A'}</td>
-                    <td className="p-4 font-mono font-bold text-amber-600 dark:text-amber-400">{d.vehicle?.vehicleNumber || 'Unassigned'}</td>
+                    <td className="p-4 font-mono font-bold text-amber-600 dark:text-amber-400">{d.vehicleNumber || 'Unassigned'}</td>
                     <td className="p-4 text-right font-bold text-emerald-600 dark:text-emerald-400">{d.status}</td>
                   </tr>
                 ))}

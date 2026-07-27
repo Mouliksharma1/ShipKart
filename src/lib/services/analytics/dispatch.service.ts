@@ -27,10 +27,15 @@ export async function getDispatchAnalytics(filter?: DispatchFilter) {
 
     const dispatches = await prisma.dispatch.findMany({
       where: whereClause,
-      include: {
+      select: {
+        id: true,
+        dispatchNumber: true,
+        vehicleNumber: true,
+        driverName: true,
+        status: true,
+        createdAt: true,
         originOffice: { select: { name: true } },
         destinationOffice: { select: { name: true } },
-        vehicle: { select: { vehicleNumber: true, capacityKg: true } },
       },
       orderBy: { createdAt: 'desc' },
       take: 100,

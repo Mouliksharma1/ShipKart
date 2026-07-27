@@ -36,7 +36,7 @@ export default async function ReportsOverviewPage() {
           subtitle={`${summary.todayCount} bookings created today`}
           trend="+12.4%"
           isPositive={true}
-          icon={DollarSign}
+          iconName="dollar"
         />
         <AnalyticsCard
           title="Pending Collections"
@@ -44,7 +44,7 @@ export default async function ReportsOverviewPage() {
           subtitle={`${summary.pendingCollectionsCount} pending payments`}
           trend="Action Required"
           isPositive={false}
-          icon={Package}
+          iconName="package"
         />
         <AnalyticsCard
           title="Active Dispatches"
@@ -52,7 +52,7 @@ export default async function ReportsOverviewPage() {
           subtitle={`${summary.inTransitShipmentsCount} parcels in transit`}
           trend="Live Fleet"
           isPositive={true}
-          icon={Truck}
+          iconName="truck"
         />
         <AnalyticsCard
           title="Delayed Shipments"
@@ -60,7 +60,7 @@ export default async function ReportsOverviewPage() {
           subtitle="Shipments pending >48 hrs"
           trend={summary.delayedShipmentsCount > 0 ? 'Review' : 'Optimal'}
           isPositive={summary.delayedShipmentsCount === 0}
-          icon={BarChart3}
+          iconName="chart"
         />
       </div>
 

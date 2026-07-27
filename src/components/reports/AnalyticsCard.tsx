@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Package, Truck, BarChart3, Building, Users, MapPin } from 'lucide-react';
+
+export type IconType = 'dollar' | 'package' | 'truck' | 'chart' | 'building' | 'users' | 'route';
 
 interface AnalyticsCardProps {
   title: string;
@@ -9,17 +11,29 @@ interface AnalyticsCardProps {
   subtitle?: string;
   trend?: string;
   isPositive?: boolean;
-  icon?: React.ElementType;
+  iconName?: IconType;
 }
 
-export function AnalyticsCard({ title, value, subtitle, trend, isPositive = true, icon: Icon }: AnalyticsCardProps) {
+const iconMap: Record<IconType, React.ElementType> = {
+  dollar: DollarSign,
+  package: Package,
+  truck: Truck,
+  chart: BarChart3,
+  building: Building,
+  users: Users,
+  route: MapPin,
+};
+
+export function AnalyticsCard({ title, value, subtitle, trend, isPositive = true, iconName }: AnalyticsCardProps) {
+  const IconComponent = iconName ? iconMap[iconName] : null;
+
   return (
     <div className="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-slate-200/80 dark:border-zinc-800 shadow-xs space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">{title}</span>
-        {Icon && (
+        {IconComponent && (
           <div className="p-2.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-2xl">
-            <Icon className="w-4 h-4" />
+            <IconComponent className="w-4 h-4" />
           </div>
         )}
       </div>

@@ -59,25 +59,47 @@ export default async function AdminDashboardPage() {
         </div>
       )}
 
-      {/* BI Reports & Analytics Hub Callout */}
-      <div className="bg-gradient-to-r from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-700 p-6 rounded-3xl text-amber-950 dark:text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center space-x-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-white/20 backdrop-blur-md">
-              NEW BI MODULE
-            </span>
-            <span className="text-xs font-semibold opacity-90">Enterprise Analytics & Intelligence</span>
+      {/* Operations Monitoring & Control Center Callout Banner */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-700 dark:from-emerald-700 dark:to-teal-800 p-6 rounded-3xl text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-white/20 backdrop-blur-md">
+                MILESTONE 12
+              </span>
+              <span className="text-xs font-semibold opacity-90">Real-Time Control Center</span>
+            </div>
+            <h2 className="text-xl font-extrabold">Enterprise Operations Monitoring</h2>
+            <p className="text-xs opacity-90">Live health score (0–100), SLA tracking, vehicle fleet monitoring & alerts.</p>
           </div>
-          <h2 className="text-xl font-extrabold">Business Intelligence & Operational Reports</h2>
-          <p className="text-xs opacity-90">Generate real-time revenue reports, branch comparisons, customer analytics, and CSV exports.</p>
+          <Link
+            href="/admin/monitoring"
+            className="flex items-center justify-center px-5 py-3 bg-white text-slate-900 font-extrabold rounded-2xl text-xs shadow-sm hover:bg-slate-100 transition-all shrink-0"
+          >
+            Live Operations Hub <ChevronRight className="w-4 h-4 ml-1.5" />
+          </Link>
         </div>
-        <Link
-          href="/admin/reports"
-          className="flex items-center justify-center px-5 py-3 bg-white text-slate-900 font-extrabold rounded-2xl text-xs shadow-sm hover:bg-slate-100 transition-all shrink-0"
-        >
-          Open BI Reports Hub <ChevronRight className="w-4 h-4 ml-1.5" />
-        </Link>
+
+        <div className="bg-gradient-to-r from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-700 p-6 rounded-3xl text-amber-950 dark:text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-white/20 backdrop-blur-md">
+                BI MODULE
+              </span>
+              <span className="text-xs font-semibold opacity-90">Historical Analytics</span>
+            </div>
+            <h2 className="text-xl font-extrabold">Business Intelligence & Reports</h2>
+            <p className="text-xs opacity-90">Generate revenue reports, branch comparisons & CSV exports.</p>
+          </div>
+          <Link
+            href="/admin/reports"
+            className="flex items-center justify-center px-5 py-3 bg-white text-slate-900 font-extrabold rounded-2xl text-xs shadow-sm hover:bg-slate-100 transition-all shrink-0"
+          >
+            Open BI Reports Hub <ChevronRight className="w-4 h-4 ml-1.5" />
+          </Link>
+        </div>
       </div>
+
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

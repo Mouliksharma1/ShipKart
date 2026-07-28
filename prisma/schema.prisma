@@ -998,3 +998,46 @@ model ReportCache {
   @@index([reportType])
   @@index([expiresAt])
 }
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AlertStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+model OperationalAlert {
+  id             String        @id @default(uuid())
+  alertNumber    String        @unique
+  severity       AlertSeverity
+  status         AlertStatus   @default(ACTIVE)
+  title          String
+  description    String
+  module         String
+
+  officeId       String?
+  bookingId      String?
+  dispatchId     String?
+  employeeId     String?
+
+  detectedAt     DateTime      @default(now())
+  acknowledgedAt DateTime?
+  resolvedAt     DateTime?
+
+  acknowledgedBy String?
+  resolvedBy     String?
+
+  createdAt      DateTime      @default(now())
+
+  @@index([status])
+  @@index([severity])
+  @@index([officeId])
+  @@index([createdAt])
+}
+

@@ -50,6 +50,14 @@ export function EmployeeDashboard({ metrics }: EmployeeDashboardProps) {
 
         <div className="flex items-center gap-3">
           <Link
+            href="/employee/finance"
+            className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold transition-all text-sm active:scale-95 shadow-md shadow-purple-600/20"
+          >
+            <IndianRupee className="h-5 w-5" />
+            <span>Financial Operations</span>
+          </Link>
+
+          <Link
             href="/employee/collections"
             className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:bg-slate-800 dark:hover:bg-slate-100 transition-all text-sm active:scale-95"
           >
@@ -65,6 +73,7 @@ export function EmployeeDashboard({ metrics }: EmployeeDashboardProps) {
             <span>New Counter Booking</span>
           </Link>
         </div>
+
 
       </div>
 
@@ -93,24 +102,35 @@ export function EmployeeDashboard({ metrics }: EmployeeDashboardProps) {
         </div>
 
         {/* Pending Payments */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-sm space-y-2">
+        <Link
+          href="/employee/finance/topay"
+          className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-sm space-y-2 hover:border-amber-500 transition-all block"
+        >
           <div className="flex justify-between items-center text-slate-500 dark:text-neutral-400">
             <span className="text-xs font-semibold">Pending Payments</span>
             <Clock className="h-4 w-4 text-amber-500" />
           </div>
           <p className="text-2xl font-black text-slate-900 dark:text-white">{metrics.pendingPaymentsCount}</p>
-          <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">TO PAY Consignments</span>
-        </div>
+          <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold flex items-center">
+            <span>TO PAY Clearances</span> <ArrowRight className="h-3 w-3 ml-1" />
+          </span>
+        </Link>
 
         {/* Pending Collections */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-sm space-y-2">
+        <Link
+          href="/employee/collections"
+          className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-sm space-y-2 hover:border-blue-500 transition-all block"
+        >
           <div className="flex justify-between items-center text-slate-500 dark:text-neutral-400">
             <span className="text-xs font-semibold">Pending Collections</span>
             <CheckCircle className="h-4 w-4 text-blue-500" />
           </div>
           <p className="text-2xl font-black text-slate-900 dark:text-white">{metrics.pendingCollectionsCount}</p>
-          <span className="text-[10px] text-slate-400 font-medium">Ready at Destination</span>
-        </div>
+          <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold flex items-center">
+            <span>OTP Handover Center</span> <ArrowRight className="h-3 w-3 ml-1" />
+          </span>
+        </Link>
+
 
         {/* Today's LR Generated */}
         <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-sm space-y-2">

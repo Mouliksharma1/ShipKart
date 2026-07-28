@@ -297,7 +297,14 @@ model User {
   officeId              String?
   office                OfficeMaster?   @relation(fields: [officeId], references: [id])
   photo                 String?
+  alternatePhone        String?
+  address               String?
+  city                  String?
+  state                 String?
+  pincode               String?
+  profilePhoto          String?
   status                Boolean         @default(true)
+
   allowSMS              Boolean         @default(true)
   allowEmail            Boolean         @default(true)
   allowMarketing        Boolean         @default(false)

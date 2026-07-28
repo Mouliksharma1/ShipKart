@@ -291,15 +291,16 @@ export const LRPDFDocument: React.FC<LRPDFData> = ({
           </View>
         </View>
 
-        {/* STATUS */}
+        {/* STATUS & BOOKED BY */}
         <View style={styles.statusRow}>
           <Text style={styles.statusText}>
             Status: {booking.status.replace(/_/g, " ")}
           </Text>
-          <Text style={styles.statusText}>
-            Pickup: {booking.pickupMethod.replace(/_/g, " ")}
+          <Text style={{ fontSize: 9, fontWeight: "bold", color: "#1e3a8a", textTransform: "uppercase" }}>
+            BOOKED BY :- {booking.createdBy?.name ? booking.createdBy.name.toUpperCase() : "COUNTER STAFF"}
           </Text>
         </View>
+
 
         {/* SENDER & RECEIVER */}
         <View style={styles.gridTwo}>

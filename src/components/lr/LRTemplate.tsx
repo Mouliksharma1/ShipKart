@@ -34,7 +34,13 @@ export type LRTemplateProps = {
     specialNotes?: string | null;
     status: string;
     createdAt: string | Date;
+    createdBy?: {
+      name?: string;
+      employeeCode?: string;
+      phone?: string;
+    } | null;
     items: Array<{
+
       id?: string;
       parcelType: string;
       quantity: number;
@@ -127,8 +133,8 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
         </div>
       </div>
 
-      {/* STATUS BADGE */}
-      <div className="flex items-center justify-between bg-blue-50 border border-blue-200 px-4 py-2 rounded-md mb-6 print:border-slate-300">
+      {/* STATUS & BOOKED BY BADGE */}
+      <div className="flex items-center justify-between bg-blue-50 border border-blue-200 px-4 py-2.5 rounded-md mb-6 print:border-slate-300">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
             Current Status:
@@ -137,9 +143,12 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
             {booking.status.replace(/_/g, " ")}
           </span>
         </div>
-        <div className="text-xs font-semibold text-slate-700">
-          Mode: <span className="font-bold text-slate-900">{booking.pickupMethod.replace(/_/g, " ")}</span>
+
+        {/* BOOKED BY DISPLAY */}
+        <div className="text-xs font-black uppercase text-blue-950 bg-blue-100 border border-blue-300 px-3.5 py-1 rounded-md tracking-wider shadow-xs">
+          BOOKED BY :- {booking.createdBy?.name || 'COUNTER STAFF'}
         </div>
+
       </div>
 
       {/* 2. SENDER & RECEIVER DETAILS */}

@@ -27,7 +27,15 @@ export async function getLRDetailsAction(lrNumber: string): Promise<LRDetailsRes
       include: {
         originOffice: true,
         destinationOffice: true,
+        createdBy: {
+          select: {
+            name: true,
+            employeeCode: true,
+            phone: true,
+          },
+        },
         items: true,
+
         trackingHistory: {
           include: { office: true },
           orderBy: { createdAt: "asc" },

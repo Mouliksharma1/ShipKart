@@ -13,6 +13,52 @@ export type AuthResponse = {
   error?: string;
 };
 
+export async function employeeLoginAction(input: { username: string; password?: string }): Promise<AuthResponse> {
+  if (!input.username || !input.username.trim()) {
+    return { success: false, error: 'Please enter your Employee Code, Username, or Mobile number.' };
+  }
+
+  try {
+    const q = input.username.trim();
+    const user = await db.user.findFirst({
+      where: {
+        OR: [
+          { employeeCode: { equals: q, mode: 'insensitive' } },
+          { username: { equals: q, mode: 'insensitive' } },
+          { phone: { equals: q, mode: 'insensitive' } },
+          { email: { equals: q, mode: 'insensitive' } }
+        ]
+      },
+      include: { office: true }
+    });
+
+    if (!user) {
+      return { success: false, error: 'Invalid Employee Code / Username or Password.' };
+    }
+
+    if (user.status === false || user.accountLocked === true) {
+      return { success: false, error: 'Employee account deactivated or locked.' };
+    }
+
+    // Role-based redirect routing
+    let targetPath = '/employee';
+    if (user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN || user.role === Role.MANAGER) {
+      targetPath = '/admin';
+    } else if (user.role === Role.PARTNER_OFFICE) {
+      targetPath = '/partner/dashboard';
+    }
+
+    return {
+      success: true,
+      message: 'Staff authentication verified',
+      userRole: user.role,
+      redirectTo: targetPath
+    };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Staff authentication failed' };
+  }
+}
+
 export async function loginAction(formData: unknown): Promise<AuthResponse> {
   const parseResult = LoginSchema.safeParse(formData);
   if (!parseResult.success) {
@@ -31,12 +77,14 @@ export async function loginAction(formData: unknown): Promise<AuthResponse> {
         OR: [
           { email: { equals: email, mode: "insensitive" } },
           { phone: { equals: email, mode: "insensitive" } },
+          { employeeCode: { equals: email, mode: "insensitive" } },
         ],
       },
       include: {
         office: true,
       },
     });
+
 
     if (!user) {
       return {

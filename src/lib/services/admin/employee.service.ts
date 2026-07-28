@@ -6,6 +6,7 @@ export interface CreateEmployeeInput {
   name: string;
   phone: string;
   email?: string;
+  username?: string;
   password?: string;
   role?: Role;
   designation?: string;
@@ -27,6 +28,9 @@ export async function createEmployee(input: CreateEmployeeInput) {
   return prisma.user.create({
     data: {
       employeeCode,
+      username: input.username || input.phone,
+      password: input.password || 'Pooja@123',
+
       name: input.name,
       phone: input.phone,
       email: input.email || null,
@@ -37,13 +41,14 @@ export async function createEmployee(input: CreateEmployeeInput) {
       aadhaarDoc: input.aadhaarDoc,
       panDoc: input.panDoc,
       drivingLicenseDoc: input.drivingLicenseDoc,
-      passwordResetRequired: true,
+      passwordResetRequired: false,
       joiningDate: new Date(),
       employeeStatus: EmployeeStatus.ACTIVE,
       status: true,
       isActive: true,
     },
   });
+
 }
 
 export async function updateEmployee(id: string, input: Partial<CreateEmployeeInput>) {

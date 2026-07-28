@@ -7,6 +7,7 @@ import {
   forcePasswordResetAction,
   archiveEmployeeAction,
   restoreEmployeeAction,
+  updateEmployeeCredentialsAction,
 } from '@/app/actions/admin/employee';
 import { useRouter } from 'next/navigation';
 import { Shield, Lock, Unlock, KeyRound, CheckCircle2, AlertOctagon, Archive, RefreshCw, Loader2 } from 'lucide-react';
@@ -19,6 +20,38 @@ export function EmployeeSecurityControls({ employee }: EmployeeSecurityControlsP
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [showCredForm, setShowCredForm] = useState(false);
+  const [newUsername, setNewUsername] = useState(employee.username || '');
+  const [newPassword, setNewPassword] = useState('');
+
+  const handleSaveCredentials = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUsername.trim() && !newPassword.trim()) {
+      setMessage({ type: 'error', text: 'Please enter a username or password to update.' });
+      return;
+    }
+    setLoading(true);
+    setMessage(null);
+    try {
+      const res = await updateEmployeeCredentialsAction(employee.id, {
+        username: newUsername,
+        password: newPassword
+      });
+      if (res.success) {
+        setMessage({ type: 'success', text: 'Staff credentials updated successfully!' });
+        setShowCredForm(false);
+        setNewPassword('');
+        router.refresh();
+      } else {
+        setMessage({ type: 'error', text: res.error || 'Failed to update credentials' });
+      }
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || 'An unexpected error occurred' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const handleAction = async (actionFn: () => Promise<{ success: boolean; error?: string }>, successText: string) => {
     setLoading(true);
@@ -62,21 +95,59 @@ export function EmployeeSecurityControls({ employee }: EmployeeSecurityControlsP
         </div>
       )}
 
-      {/* Login Credentials Callout */}
-      <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-xs space-y-1.5">
-        <div className="font-extrabold text-amber-900 dark:text-amber-200 flex items-center">
-          <KeyRound className="w-4 h-4 mr-1.5 text-amber-600 dark:text-amber-400" /> Default Login Credentials
+      {/* Login Credentials Callout & Change Controls */}
+      <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-xs space-y-3">
+        <div className="font-extrabold text-amber-900 dark:text-amber-200 flex items-center justify-between">
+          <span className="flex items-center"><KeyRound className="w-4 h-4 mr-1.5 text-amber-600 dark:text-amber-400" /> Active Staff Login Credentials</span>
+          <button
+            type="button"
+            onClick={() => setShowCredForm(!showCredForm)}
+            className="text-[11px] font-bold text-amber-600 dark:text-amber-400 underline"
+          >
+            {showCredForm ? 'Cancel Edit' : 'Edit Credentials'}
+          </button>
+        </div>
+
+        <div className="text-slate-700 dark:text-zinc-300">
+          Username: <strong className="font-mono text-slate-900 dark:text-white">{employee.username || employee.employeeCode || employee.phone}</strong>
         </div>
         <div className="text-slate-700 dark:text-zinc-300">
-          Username / Phone: <strong className="font-mono text-slate-900 dark:text-white">{employee.phone}</strong>
+          Mobile #: <strong className="font-mono text-slate-900 dark:text-white">{employee.phone}</strong>
         </div>
-        <div className="text-slate-700 dark:text-zinc-300">
-          Default Initial Password: <strong className="font-mono text-slate-900 dark:text-white">{employee.phone}</strong>
-        </div>
-        <div className="text-[11px] text-slate-500 dark:text-zinc-400 pt-1">
-          * New employees can sign in using their phone number as password and will be prompted to set a custom password.
-        </div>
+
+        {showCredForm && (
+          <form onSubmit={handleSaveCredentials} className="pt-2 border-t border-amber-500/20 space-y-2.5">
+            <div>
+              <label className="text-[10px] font-bold text-slate-600 dark:text-zinc-400 block mb-1">New Username / Handle</label>
+              <input
+                type="text"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                placeholder="e.g. ramesh.jodhpur"
+                className="w-full p-2 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-xs font-mono font-bold text-slate-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-slate-600 dark:text-zinc-400 block mb-1">New Staff Password</label>
+              <input
+                type="text"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="e.g. NewPooja@123"
+                className="w-full p-2 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-xs font-mono font-bold text-slate-900 dark:text-white"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-xl font-extrabold transition shadow-xs"
+            >
+              {loading ? 'Saving...' : 'Update Staff Credentials'}
+            </button>
+          </form>
+        )}
       </div>
+
 
       {/* Security Status Badges */}
       <div className="space-y-3 text-xs">

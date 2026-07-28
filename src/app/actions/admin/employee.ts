@@ -250,9 +250,36 @@ export async function recordClockOutAction(employeeId: string, breakMins: number
 
 export async function getDailyAttendanceAction(dateStr?: string) {
   try {
-    const attendanceList = await getDailyAttendance(dateStr);
-    return { success: true, attendanceList };
+    const attendances = await getDailyAttendance(dateStr);
+    return { success: true, attendances };
   } catch (err: any) {
-    return { success: false, error: err.message, attendanceList: [] };
+    return { success: false, error: err.message, attendances: [] };
+  }
+}
+
+
+export async function updateEmployeeCredentialsAction(targetEmployeeId: string, input: { username?: string; password?: string }) {
+  try {
+    const dataToUpdate: any = {};
+    if (input.username && input.username.trim()) {
+      dataToUpdate.username = input.username.trim();
+    }
+    if (input.password && input.password.trim()) {
+      dataToUpdate.password = input.password.trim();
+      dataToUpdate.passwordResetRequired = false;
+      dataToUpdate.passwordChangedAt = new Date();
+    }
+
+    const { prisma } = await import('@/lib/db');
+    const employee = await prisma.user.update({
+      where: { id: targetEmployeeId },
+      data: dataToUpdate
+    });
+
+    revalidatePath('/admin/employees');
+    revalidatePath(`/admin/employees/${targetEmployeeId}`);
+    return { success: true, employee };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to update credentials' };
   }
 }

@@ -89,18 +89,19 @@ function LoginFormContent() {
           {mode === "login" && (
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">Email Address</label>
+                <label className="block text-xs font-medium text-neutral-300 mb-1">Email Address or Mobile Number</label>
                 <div className="relative">
                   <input
-                    type="email"
+                    type="text"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="e.g. user@example.com"
+                    placeholder="Enter Email or 10-digit Mobile Number"
                     className="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-xs text-neutral-100 placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   />
                 </div>
               </div>
+
 
               <div>
                 <div className="flex items-center justify-between mb-1">

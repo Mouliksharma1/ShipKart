@@ -19,6 +19,7 @@ export function CreateEmployeeForm({ offices }: CreateEmployeeFormProps) {
     name: '',
     phone: '',
     email: '',
+    username: '',
     password: '',
     role: 'EMPLOYEE',
     designation: 'Staff',
@@ -39,6 +40,8 @@ export function CreateEmployeeForm({ offices }: CreateEmployeeFormProps) {
         name: formData.name,
         phone: formData.phone,
         email: formData.email || undefined,
+        username: formData.username || undefined,
+        password: formData.password || undefined,
         role: formData.role as any,
         designation: formData.designation,
         officeId: formData.officeId || undefined,
@@ -47,6 +50,8 @@ export function CreateEmployeeForm({ offices }: CreateEmployeeFormProps) {
         panDoc: formData.panDoc || undefined,
         drivingLicenseDoc: formData.drivingLicenseDoc || undefined,
       });
+
+
 
       if (res.success) {
         router.push('/admin/employees');
@@ -114,20 +119,36 @@ export function CreateEmployeeForm({ offices }: CreateEmployeeFormProps) {
           />
         </div>
 
-        {/* Custom Password (Optional) */}
+        {/* Username / Employee Handle */}
         <div className="space-y-1.5">
           <label className="font-bold text-slate-700 dark:text-zinc-300 flex items-center justify-between">
-            <span className="flex items-center"><KeyRound className="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-zinc-500" /> Initial Password</span>
+            <span className="flex items-center"><User className="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-zinc-500" /> Username / Handle</span>
             <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Default: Phone Number</span>
+          </label>
+          <input
+            type="text"
+            value={formData.username}
+            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            placeholder="e.g. ramesh.jodhpur or EMP-1004"
+            className="w-full p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 rounded-xl text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-mono"
+          />
+        </div>
+
+        {/* Custom Staff Password */}
+        <div className="space-y-1.5">
+          <label className="font-bold text-slate-700 dark:text-zinc-300 flex items-center justify-between">
+            <span className="flex items-center"><KeyRound className="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-zinc-500" /> Initial Staff Password</span>
+            <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Default: Pooja@123</span>
           </label>
           <input
             type="text"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            placeholder="Leave empty to use Phone Number"
+            placeholder="e.g. Pooja@123"
             className="w-full p-3 bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 rounded-xl text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-mono"
           />
         </div>
+
 
         {/* Assigned Branch Office */}
         <div className="space-y-1.5">

@@ -38,21 +38,28 @@ export function Header() {
           </Link>
         </nav>
 
-        {/* Action Button & Contact */}
-        <div className="flex items-center space-x-3">
+        {/* Action Buttons & Contact */}
+        <div className="flex items-center space-x-2 sm:space-x-3">
           <ThemeToggle />
-          <a href="tel:6350603414" className="hidden sm:flex items-center space-x-2 text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-500/20 hover:bg-amber-500/20 transition-colors">
+          <a href="tel:6350603414" className="hidden lg:flex items-center space-x-2 text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-500/20 hover:bg-amber-500/20 transition-colors">
             <Phone className="h-3.5 w-3.5" />
             <span>6350603414</span>
           </a>
           <Link
             href="/login"
-            className="flex items-center space-x-1.5 rounded-xl bg-amber-500 px-4 py-2 text-xs font-black text-amber-950 shadow-md hover:bg-amber-400 active:scale-95 transition-all"
+            className="flex items-center space-x-1 rounded-xl bg-slate-100 dark:bg-zinc-800 px-3 py-2 text-xs font-extrabold text-slate-700 dark:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-all border border-slate-200 dark:border-zinc-700"
+          >
+            <span>Customer Login</span>
+          </Link>
+          <Link
+            href="/employee/login"
+            className="flex items-center space-x-1.5 rounded-xl bg-amber-500 px-3.5 py-2 text-xs font-black text-amber-950 shadow-md hover:bg-amber-400 active:scale-95 transition-all"
           >
             <Shield className="h-3.5 w-3.5 stroke-[2.5]" />
-            <span>Staff / Portal</span>
+            <span>Staff Terminal</span>
           </Link>
         </div>
+
       </div>
     </header>
   );

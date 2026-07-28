@@ -40,7 +40,7 @@ export default function Home() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
                 <Link
-                  href="/booking"
+                  href="/customer/book"
                   className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 rounded-xl bg-amber-500 px-6 py-3.5 text-sm font-extrabold text-amber-950 shadow-xl shadow-amber-500/20 hover:bg-amber-400 transition-transform active:scale-95"
                 >
                   <Package className="h-5 w-5" />
@@ -49,13 +49,14 @@ export default function Home() {
                 </Link>
 
                 <Link
-                  href="/login"
+                  href="/employee/login"
                   className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 rounded-xl border border-slate-300 dark:border-neutral-800 bg-white dark:bg-neutral-900/80 px-6 py-3.5 text-sm font-bold text-slate-800 dark:text-neutral-200 hover:bg-slate-100 dark:hover:bg-neutral-800 transition-colors shadow-sm"
                 >
                   <ShieldCheck className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                  <span>Staff / Counter Portal</span>
+                  <span>Staff Terminal Login</span>
                 </Link>
               </div>
+
 
               {/* Badges */}
               <div className="pt-6 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs font-semibold text-slate-600 dark:text-neutral-400">

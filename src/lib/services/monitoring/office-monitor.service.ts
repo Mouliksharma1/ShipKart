@@ -19,9 +19,10 @@ export async function getOfficeMonitoring() {
           _sum: { totalAmount: true }
         }).catch(() => ({ _sum: { totalAmount: 0 } })),
 
-        prisma.booking.count({ where: { originOfficeId: off.id, paymentType: 'TO_PAY', paymentStatus: 'PENDING' } }).catch(() => 0),
-        prisma.dispatch.count({ where: { originOfficeId: off.id, status: { in: ['DEPARTED', 'IN_TRANSIT'] } } }).catch(() => 0),
-        prisma.booking.count({ where: { originOfficeId: off.id, status: 'DELAYED' } }).catch(() => 0),
+        prisma.booking.count({ where: { originOfficeId: off.id, paymentType: 'TO_PAY' as any, paymentStatus: 'PENDING' as any } }).catch(() => 0),
+        prisma.dispatch.count({ where: { originOfficeId: off.id, status: { in: ['DEPARTED', 'IN_TRANSIT'] as any[] } } }).catch(() => 0),
+        prisma.booking.count({ where: { originOfficeId: off.id, status: 'DELAYED' as any } }).catch(() => 0),
+
         prisma.user.count({ where: { officeId: off.id, isActive: true } }).catch(() => 0)
       ]);
 

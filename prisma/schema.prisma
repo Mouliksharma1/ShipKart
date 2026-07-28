@@ -405,6 +405,10 @@ model OfficeMaster {
   dispatchOrigins        Dispatch[]   @relation("DispatchOriginOffice")
   dispatchDests          Dispatch[]   @relation("DispatchDestOffice")
   trackingHistories      TrackingHistory[]
+  cashBookEntries        CashBook[]
+  officeClosings         OfficeClosing[]
+  expenses               Expense[]
+
 
   @@index([city])
   @@index([state])
@@ -613,13 +617,17 @@ model Booking {
 
   estimatedArrival    DateTime?
   actualArrival       DateTime?
-  collectedAt         DateTime?
   lastUpdatedAt       DateTime?
   lastUpdatedBy       String?
 
   delayReason         DelayReason?
   holdReason          HoldReason?
   version             Int             @default(1)
+
+  collectionStatus    CollectionStatus @default(PENDING)
+  arrivedAtOfficeAt   DateTime?
+  collectedAt         DateTime?
+  collectedBy         String?
 
   createdById         String?
   createdBy           User?           @relation("CreatedBy", fields: [createdById], references: [id])
@@ -634,6 +642,8 @@ model Booking {
   trackingHistory     TrackingHistory[]
   notifications       NotificationQueue[]
   dispatchItems       DispatchItem[]
+  collectionOtp       CollectionOTP?
+  cashBookEntries     CashBook[]
 
   @@index([lrNumber])
   @@index([senderPhone])
@@ -645,6 +655,90 @@ model Booking {
   @@index([createdById])
   @@index([createdAt])
 }
+
+enum CollectionStatus {
+  PENDING
+  READY
+  COLLECTED
+}
+
+model CollectionOTP {
+  id         String    @id @default(uuid())
+  bookingId  String    @unique
+  booking    Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  otp        String
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([bookingId])
+}
+
+enum CashTransactionType {
+  BOOKING_PAYMENT
+  TO_PAY_COLLECTION
+  EXPENSE
+  OPENING_BALANCE
+  CLOSING_BALANCE
+  ADJUSTMENT
+}
+
+enum ExpenseCategory {
+  DIESEL
+  SALARY
+  OFFICE
+  MAINTENANCE
+  FOOD
+  OTHER
+}
+
+model CashBook {
+  id              String              @id @default(uuid())
+  officeId        String
+  office          OfficeMaster        @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  transactionType CashTransactionType
+  bookingId       String?
+  booking         Booking?            @relation(fields: [bookingId], references: [id])
+  amount          Float
+  description     String?
+  createdBy       String
+  createdAt       DateTime            @default(now())
+
+  @@index([officeId])
+  @@index([createdAt])
+}
+
+model OfficeClosing {
+  id             String       @id @default(uuid())
+  officeId       String
+  office         OfficeMaster @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  openingCash    Float
+  bookingCash    Float
+  toPayCollected Float
+  expenses       Float
+  closingCash    Float
+  closedBy       String
+  closedAt       DateTime     @default(now())
+  remarks        String?
+
+  @@index([officeId])
+  @@index([closedAt])
+}
+
+model Expense {
+  id          String          @id @default(uuid())
+  officeId    String
+  office      OfficeMaster    @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  category    ExpenseCategory
+  amount      Float
+  description String?
+  createdBy   String
+  createdAt   DateTime        @default(now())
+
+  @@index([officeId])
+  @@index([createdAt])
+}
+
 
 model ConsignmentItem {
   id               String     @id @default(uuid())

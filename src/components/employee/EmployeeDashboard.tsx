@@ -50,6 +50,14 @@ export function EmployeeDashboard({ metrics }: EmployeeDashboardProps) {
 
         <div className="flex items-center gap-3">
           <Link
+            href="/employee/collections"
+            className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:bg-slate-800 dark:hover:bg-slate-100 transition-all text-sm active:scale-95"
+          >
+            <Package className="h-5 w-5" />
+            <span>Destination Collections</span>
+          </Link>
+
+          <Link
             href="/employee/book"
             className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 font-bold text-amber-950 shadow-lg shadow-amber-500/20 transition-all text-sm active:scale-95"
           >
@@ -57,6 +65,7 @@ export function EmployeeDashboard({ metrics }: EmployeeDashboardProps) {
             <span>New Counter Booking</span>
           </Link>
         </div>
+
       </div>
 
       {/* DASHBOARD METRIC CARDS */}

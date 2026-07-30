@@ -16,14 +16,22 @@ export type LRDetailsResponse = {
  * GET FULL DIGITAL LR DETAILS
  * Returns complete booking, items, offices, company settings, and generated QR Code.
  */
-export async function getLRDetailsAction(lrNumber: string): Promise<LRDetailsResponse> {
+export async function getLRDetailsAction(lrParam: string): Promise<LRDetailsResponse> {
   try {
-    if (!lrNumber) {
-      return { success: false, error: "LR Number is required" };
+    if (!lrParam) {
+      return { success: false, error: "LR Identifier is required" };
     }
 
-    const booking = await db.booking.findUnique({
-      where: { lrNumber },
+    const term = lrParam.trim();
+
+    // Find booking either by unique UUID id or by sequential lrNumber
+    const booking = await db.booking.findFirst({
+      where: {
+        OR: [
+          { id: term },
+          { lrNumber: { equals: term, mode: "insensitive" } }
+        ]
+      },
       include: {
         originOffice: true,
         destinationOffice: true,
@@ -35,7 +43,6 @@ export async function getLRDetailsAction(lrNumber: string): Promise<LRDetailsRes
           },
         },
         items: true,
-
         trackingHistory: {
           include: { office: true },
           orderBy: { createdAt: "asc" },
@@ -44,7 +51,20 @@ export async function getLRDetailsAction(lrNumber: string): Promise<LRDetailsRes
     });
 
     if (!booking) {
-      return { success: false, error: `LR Document ${lrNumber} was not found.` };
+      return { success: false, error: `Digital LR document "${term}" was not found.` };
+    }
+
+    // Security Check: If accessed via plain sequential number (e.g. 0004 or SK0004), verify staff session
+    const isSequentialAccess = term.toLowerCase() === booking.lrNumber.toLowerCase();
+    if (isSequentialAccess) {
+      const cookieStore = await cookies();
+      const staffId = cookieStore.get("shipkart_staff_id")?.value;
+      if (!staffId) {
+        return { 
+          success: false, 
+          error: `Access Restricted. Sequential LR lookup ("${term}") is only permitted for staff on the Employee Terminal. Customers must use the secure alphanumeric LR Link.` 
+        };
+      }
     }
 
     // Company Settings

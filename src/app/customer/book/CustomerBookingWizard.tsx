@@ -265,7 +265,7 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-4 text-xs font-bold">
             <button
-              onClick={() => router.push(`/lr/${successBooking.lrNumber}`)}
+              onClick={() => router.push(`/lr/${successBooking.id}`)}
               className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-500 shadow-md transition-colors"
             >
               <Download className="h-4 w-4" />

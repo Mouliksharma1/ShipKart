@@ -25,7 +25,7 @@ export const LRPreview: React.FC<LRPreviewProps> = ({
       ? window.location.origin
       : process.env.NEXT_PUBLIC_APP_URL || "https://shipkart.in";
 
-  const publicLrUrl = `${baseUrl}/lr/${booking.lrNumber}`;
+  const publicLrUrl = `${baseUrl}/lr/${booking.id}`;
   const publicTrackingUrl = `${baseUrl}/track/${booking.lrNumber}`;
 
   // PRINT HANDLER

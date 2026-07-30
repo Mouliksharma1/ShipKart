@@ -192,7 +192,7 @@ export function BookingSearchTable({ initialBookings }: BookingSearchTableProps)
                           Details
                         </Link>
                         <Link
-                          href={`/lr/${b.lrNumber}`}
+                          href={`/lr/${b.id}`}
                           target="_blank"
                           className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 hover:bg-blue-500 hover:text-white font-black text-[11px] transition-colors"
                         >

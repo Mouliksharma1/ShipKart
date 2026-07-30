@@ -199,7 +199,7 @@ export default function CustomerDashboardPage() {
                     </td>
                     <td className="p-4 text-right space-x-2">
                       <Link
-                        href={`/lr/${b.lrNumber}`}
+                        href={`/lr/${b.id}`}
                         target="_blank"
                         className="px-3 py-1.5 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 text-slate-700 dark:text-zinc-300 rounded-xl text-xs font-bold transition inline-flex items-center"
                       >

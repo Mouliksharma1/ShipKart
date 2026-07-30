@@ -355,7 +355,7 @@ export function EmployeeBookingWizard({ offices, defaultOriginId }: EmployeeBook
           </button>
 
           <Link
-            href={`/lr/${successData.lrNumber}`}
+            href={`/lr/${successData.bookingId}`}
             target="_blank"
             className="py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2"
           >

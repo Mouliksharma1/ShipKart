@@ -19,7 +19,28 @@ export default async function EmployeeBookingDetailPage({
   const res = await getLRDetailsAction(lr);
 
   if (!res.success || !res.data) {
-    notFound();
+    return (
+      <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-4 shadow-2xl">
+          <div className="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-full flex items-center justify-center mx-auto font-bold text-xl">
+            !
+          </div>
+          <h1 className="text-xl font-bold text-slate-100">Consignment Lookup Failed</h1>
+          <p className="text-sm text-slate-400">
+            {res.error || `LR record "${lr}" could not be retrieved.`}
+          </p>
+          <div className="pt-2">
+            <Link
+              href="/employee"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-amber-950 text-xs font-bold transition"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Return to Staff Terminal
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   const booking = res.data;

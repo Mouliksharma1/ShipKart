@@ -87,31 +87,31 @@ function LoginFormContent() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.18),rgba(255,255,255,0))]">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-slate-50 dark:bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.15),rgba(255,255,255,0))] transition-colors duration-300">
       <div className="w-full max-w-md space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white p-1 shadow-xl shadow-amber-500/20">
+          <div className="inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white p-1 shadow-xl shadow-amber-500/20 border border-slate-200 dark:border-neutral-800">
             <img src="/logo.png" alt="ShipKart Logo" className="h-full w-full object-contain" />
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-white">
-            Ship<span className="text-amber-400">Kart</span>
+          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+            Ship<span className="text-amber-500 dark:text-amber-400">Kart</span>
           </h1>
-          <p className="text-xs font-semibold text-amber-300 uppercase tracking-widest">
+          <p className="text-xs font-semibold text-amber-600 dark:text-amber-300 uppercase tracking-widest">
             CUSTOMER PORTAL & EXPRESS LOGISTICS
           </p>
         </div>
 
         {/* Auth Mode Tab Switcher */}
         {mode !== "forgot" && (
-          <div className="grid grid-cols-2 p-1.5 bg-neutral-900 border border-neutral-800 rounded-2xl">
+          <div className="grid grid-cols-2 p-1.5 bg-slate-200/80 dark:bg-neutral-900 border border-slate-300 dark:border-neutral-800 rounded-2xl">
             <button
               type="button"
               onClick={() => { setMode("login"); setError(null); setSuccessMsg(null); }}
               className={`flex items-center justify-center space-x-2 py-2.5 rounded-xl text-xs font-extrabold transition-all ${
                 mode === "login"
-                  ? "bg-amber-500 text-amber-950 shadow-lg shadow-amber-500/20"
-                  : "text-neutral-400 hover:text-white"
+                  ? "bg-amber-500 text-amber-950 shadow-md shadow-amber-500/20"
+                  : "text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               <LogIn className="h-3.5 w-3.5" />
@@ -122,8 +122,8 @@ function LoginFormContent() {
               onClick={() => { setMode("register"); setError(null); setSuccessMsg(null); }}
               className={`flex items-center justify-center space-x-2 py-2.5 rounded-xl text-xs font-extrabold transition-all ${
                 mode === "register"
-                  ? "bg-amber-500 text-amber-950 shadow-lg shadow-amber-500/20"
-                  : "text-neutral-400 hover:text-white"
+                  ? "bg-amber-500 text-amber-950 shadow-md shadow-amber-500/20"
+                  : "text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               <UserPlus className="h-3.5 w-3.5" />
@@ -133,10 +133,10 @@ function LoginFormContent() {
         )}
 
         {/* Portal Container */}
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-900/90 p-6 sm:p-8 shadow-2xl backdrop-blur-xl space-y-6">
-          <div className="border-b border-neutral-800 pb-4 text-center space-y-1">
-            <h2 className="text-base font-bold text-white flex items-center justify-center space-x-2">
-              <Sparkles className="h-4 w-4 text-amber-400" />
+        <div className="rounded-2xl border border-slate-200/80 dark:border-neutral-800 bg-white/90 dark:bg-neutral-900/90 p-6 sm:p-8 shadow-2xl backdrop-blur-xl space-y-6 transition-colors">
+          <div className="border-b border-slate-100 dark:border-neutral-800 pb-4 text-center space-y-1">
+            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center justify-center space-x-2">
+              <Sparkles className="h-4 w-4 text-amber-500 dark:text-amber-400" />
               <span>
                 {mode === "login"
                   ? "Customer Sign In"
@@ -145,7 +145,7 @@ function LoginFormContent() {
                   : "Reset Password"}
               </span>
             </h2>
-            <p className="text-xs text-neutral-400">
+            <p className="text-xs text-slate-500 dark:text-neutral-400">
               {mode === "login"
                 ? "Enter your mobile or email to track & manage parcel bookings"
                 : mode === "register"
@@ -156,14 +156,14 @@ function LoginFormContent() {
 
           {/* Feedback Alerts */}
           {error && (
-            <div className="flex items-center space-x-2 rounded-xl bg-red-500/10 border border-red-500/20 p-3.5 text-xs text-red-400 animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-center space-x-2 rounded-xl bg-red-500/10 border border-red-500/20 p-3.5 text-xs text-red-600 dark:text-red-400 animate-in fade-in slide-in-from-top-2">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="flex items-center space-x-2 rounded-xl bg-green-500/10 border border-green-500/20 p-3.5 text-xs text-green-400 animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-center space-x-2 rounded-xl bg-green-500/10 border border-green-500/20 p-3.5 text-xs text-green-600 dark:text-green-400 animate-in fade-in slide-in-from-top-2">
               <CheckCircle2 className="h-4 w-4 shrink-0" />
               <span>{successMsg}</span>
             </div>
@@ -173,9 +173,9 @@ function LoginFormContent() {
           {mode === "login" && (
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">Email Address or Mobile Number</label>
+                <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1">Email Address or Mobile Number</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-neutral-500">
                     <Phone className="h-4 w-4" />
                   </span>
                   <input
@@ -184,24 +184,24 @@ function LoginFormContent() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter 10-digit Mobile or Email"
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-neutral-100 placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                    className="w-full rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-slate-900 dark:text-neutral-100 placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono transition-colors"
                   />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-medium text-neutral-300">Password</label>
+                  <label className="text-xs font-medium text-slate-700 dark:text-neutral-300">Password</label>
                   <button
                     type="button"
                     onClick={() => { setMode("forgot"); setError(null); setSuccessMsg(null); }}
-                    className="text-[11px] text-amber-400 hover:underline"
+                    className="text-[11px] text-amber-600 dark:text-amber-400 hover:underline font-semibold"
                   >
                     Forgot Password?
                   </button>
                 </div>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-neutral-500">
                     <Lock className="h-4 w-4" />
                   </span>
                   <input
@@ -210,7 +210,7 @@ function LoginFormContent() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-neutral-100 placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                    className="w-full rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-slate-900 dark:text-neutral-100 placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono transition-colors"
                   />
                 </div>
               </div>
@@ -230,9 +230,9 @@ function LoginFormContent() {
           {mode === "register" && (
             <form onSubmit={handleRegisterSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">Full Name</label>
+                <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1">Full Name</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-neutral-500">
                     <User className="h-4 w-4" />
                   </span>
                   <input
@@ -241,15 +241,15 @@ function LoginFormContent() {
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
                     placeholder="e.g. Ramesh Kumar"
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-neutral-100 placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    className="w-full rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-slate-900 dark:text-neutral-100 placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">Mobile Number (Primary Login ID)</label>
+                <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1">Mobile Number (Primary Login ID)</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-neutral-500">
                     <Phone className="h-4 w-4" />
                   </span>
                   <input
@@ -259,15 +259,15 @@ function LoginFormContent() {
                     value={regPhone}
                     onChange={(e) => setRegPhone(e.target.value.replace(/\D/g, ""))}
                     placeholder="e.g. 9829012345"
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-neutral-100 placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                    className="w-full rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-slate-900 dark:text-neutral-100 placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">Email Address (Optional)</label>
+                <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1">Email Address (Optional)</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-neutral-500">
                     <Mail className="h-4 w-4" />
                   </span>
                   <input
@@ -275,14 +275,14 @@ function LoginFormContent() {
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
                     placeholder="ramesh@gmail.com"
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-neutral-100 placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    className="w-full rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2.5 pl-10 pr-4 text-xs text-slate-900 dark:text-neutral-100 placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">Password</label>
+                  <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1">Password</label>
                   <div className="relative">
                     <input
                       type="password"
@@ -291,13 +291,13 @@ function LoginFormContent() {
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-3 text-xs text-neutral-100 placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                      className="w-full rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2.5 px-3 text-xs text-slate-900 dark:text-neutral-100 placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono transition-colors"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">Confirm Password</label>
+                  <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1">Confirm Password</label>
                   <div className="relative">
                     <input
                       type="password"
@@ -306,7 +306,7 @@ function LoginFormContent() {
                       value={regConfirmPassword}
                       onChange={(e) => setRegConfirmPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-3 text-xs text-neutral-100 placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                      className="w-full rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2.5 px-3 text-xs text-slate-900 dark:text-neutral-100 placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono transition-colors"
                     />
                   </div>
                 </div>
@@ -326,16 +326,16 @@ function LoginFormContent() {
           {/* FORGOT PASSWORD FORM */}
           {mode === "forgot" && (
             <form onSubmit={handleForgotSubmit} className="space-y-4">
-              <p className="text-xs text-neutral-400 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-neutral-400 leading-relaxed">
                 Enter your registered mobile number or email address to contact your Admin for credential resets.
               </p>
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">Mobile or Email Address</label>
+                <label className="block text-xs font-medium text-slate-700 dark:text-neutral-300 mb-1">Mobile or Email Address</label>
                 <input
                   type="text"
                   required
                   placeholder="Enter phone or email"
-                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950 py-2.5 px-4 text-xs text-neutral-100 placeholder-neutral-500 focus:border-amber-500 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2.5 px-4 text-xs text-slate-900 dark:text-neutral-100 placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none"
                 />
               </div>
               <button
@@ -348,7 +348,7 @@ function LoginFormContent() {
                 <button
                   type="button"
                   onClick={() => { setMode("login"); setError(null); setSuccessMsg(null); }}
-                  className="text-xs text-neutral-400 hover:text-amber-400 font-medium"
+                  className="text-xs text-slate-500 dark:text-neutral-400 hover:text-amber-500 dark:hover:text-amber-400 font-medium"
                 >
                   &larr; Back to Sign In
                 </button>
@@ -357,12 +357,12 @@ function LoginFormContent() {
           )}
 
           {/* Footer note */}
-          <div className="pt-2 border-t border-neutral-800 text-center">
-            <p className="text-[11px] text-neutral-500">
+          <div className="pt-2 border-t border-slate-100 dark:border-neutral-800 text-center">
+            <p className="text-[11px] text-slate-500 dark:text-neutral-500">
               {mode === "register" ? (
-                <>Already have an account? <button type="button" onClick={() => setMode("login")} className="text-amber-400 font-bold hover:underline">Sign In here</button></>
+                <>Already have an account? <button type="button" onClick={() => setMode("login")} className="text-amber-600 dark:text-amber-400 font-bold hover:underline">Sign In here</button></>
               ) : (
-                <>Need an account? <button type="button" onClick={() => setMode("register")} className="text-amber-400 font-bold hover:underline">Register now</button></>
+                <>Need an account? <button type="button" onClick={() => setMode("register")} className="text-amber-600 dark:text-amber-400 font-bold hover:underline">Register now</button></>
               )}
             </p>
           </div>

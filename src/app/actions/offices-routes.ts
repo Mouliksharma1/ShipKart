@@ -94,6 +94,18 @@ export async function updateOfficeAction(id: string, formData: unknown): Promise
   try {
     const officeTiming = `${data.openingTime} - ${data.closingTime}`;
 
+    // Check if another office with the exact same name already exists
+    const existingOffice = await db.officeMaster.findFirst({
+      where: {
+        name: { equals: data.name, mode: "insensitive" },
+        id: { not: id }
+      }
+    });
+
+    if (existingOffice) {
+      return { success: false, error: `An office with the name "${data.name}" already exists.` };
+    }
+
     const updatedOffice = await db.officeMaster.update({
       where: { id },
       data: {
@@ -110,9 +122,13 @@ export async function updateOfficeAction(id: string, formData: unknown): Promise
     revalidatePath("/admin/offices");
     revalidatePath("/offices");
     return { success: true, message: "Office updated successfully!", data: updatedOffice };
-  } catch (err) {
+  } catch (err: any) {
     console.error("Update Office Error:", err);
-    return { success: false, error: "Failed to update office." };
+    if (err?.code === 'P2002') {
+      const field = err?.meta?.target ? err.meta.target.join(', ') : 'name or code';
+      return { success: false, error: `An office with this ${field} already exists.` };
+    }
+    return { success: false, error: err?.message || "Failed to update office." };
   }
 }
 

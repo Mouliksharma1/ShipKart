@@ -77,10 +77,6 @@ export function Footer() {
                 <Link href="/partner" className="text-slate-600 dark:text-neutral-400 hover:text-amber-600 dark:hover:text-amber-400 flex items-center space-x-1">
                   <span>Partner Office</span>
                 </Link>
-                <span className="text-slate-400 dark:text-neutral-700">•</span>
-                <Link href="/admin" className="text-slate-600 dark:text-neutral-400 hover:text-amber-600 dark:hover:text-amber-400 flex items-center space-x-1">
-                  <span>Admin</span>
-                </Link>
               </div>
             </div>
           </div>

@@ -36,15 +36,18 @@ export async function employeeLoginAction(input: { username: string; password?: 
       return { success: false, error: 'Invalid Employee Code / Username or Password.' };
     }
 
+    // Strictly reject customers from logging in via staff terminal
+    if (user.role === Role.CUSTOMER) {
+      return { success: false, error: 'Access Denied. Customer accounts cannot access the Staff Terminal.' };
+    }
+
     if (user.status === false || user.accountLocked === true) {
       return { success: false, error: 'Employee account deactivated or locked.' };
     }
 
-    // Role-based redirect routing
+    // Direct all staff (including Admin logging in through employee portal) strictly to /employee dashboard
     let targetPath = '/employee';
-    if (user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN || user.role === Role.MANAGER) {
-      targetPath = '/admin';
-    } else if (user.role === Role.PARTNER_OFFICE) {
+    if (user.role === Role.PARTNER_OFFICE) {
       targetPath = '/partner/dashboard';
     }
 
@@ -56,6 +59,42 @@ export async function employeeLoginAction(input: { username: string; password?: 
     };
   } catch (err: any) {
     return { success: false, error: err.message || 'Staff authentication failed' };
+  }
+}
+
+export async function adminLoginAction(input: { email: string; password?: string }): Promise<AuthResponse> {
+  if (!input.email || !input.email.trim()) {
+    return { success: false, error: 'Please enter your Admin Email address.' };
+  }
+
+  try {
+    const emailTrimmed = input.email.trim();
+    const user = await db.user.findFirst({
+      where: {
+        email: { equals: emailTrimmed, mode: 'insensitive' }
+      }
+    });
+
+    if (!user) {
+      return { success: false, error: 'Invalid Admin credentials.' };
+    }
+
+    if (user.role !== Role.ADMIN && user.role !== Role.SUPER_ADMIN) {
+      return { success: false, error: 'Access denied. Master Admin privileges required.' };
+    }
+
+    if (user.status === false || user.accountLocked === true) {
+      return { success: false, error: 'Admin account deactivated or locked.' };
+    }
+
+    return {
+      success: true,
+      message: 'Admin authentication verified',
+      userRole: user.role,
+      redirectTo: '/admin'
+    };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Admin authentication failed' };
   }
 }
 
@@ -108,9 +147,7 @@ export async function loginAction(formData: unknown): Promise<AuthResponse> {
 
     // Role-based redirection path mapping
     let redirectTo = "/customer";
-    if (["ADMIN", "SUPER_ADMIN", "MANAGER", "COUNTER_EMPLOYEE", "ACCOUNTANT"].includes(user.role)) {
-      redirectTo = "/admin";
-    } else if (user.role === "EMPLOYEE") {
+    if (["COUNTER_EMPLOYEE", "ACCOUNTANT", "EMPLOYEE", "ADMIN", "SUPER_ADMIN", "MANAGER"].includes(user.role)) {
       redirectTo = "/employee";
     } else if (user.role === "PARTNER_OFFICE") {
       redirectTo = "/partner";

@@ -195,7 +195,7 @@ export async function createEmployeeBookingAction(formData: unknown, employeeUse
           totalAmount: grandTotal,
           specialNotes: data.specialNotes || null,
           status: BookingStatus.BOOKED,
-          createdById: employeeUserId || senderUser?.id || null,
+          createdById: employeeUserId || null,
         },
       });
 

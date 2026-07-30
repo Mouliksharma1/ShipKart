@@ -41,9 +41,14 @@ export default async function OfficeDetailPage({ params }: OfficeDetailPageProps
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">{office.name}</h1>
         </div>
-        <Link href="/admin/offices" className="flex items-center px-4 py-2 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 rounded-xl text-xs font-bold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors w-fit">
-          <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Offices
-        </Link>
+        <div className="flex items-center space-x-3">
+          <Link href="/admin/offices" className="flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-xl text-xs font-bold transition-colors">
+            Edit Office Details &rarr;
+          </Link>
+          <Link href="/admin/offices" className="flex items-center px-4 py-2 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 rounded-xl text-xs font-bold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors w-fit">
+            <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Offices
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

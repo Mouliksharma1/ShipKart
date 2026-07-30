@@ -69,32 +69,32 @@ export const LRPreview: React.FC<LRPreviewProps> = ({
     const priceLabel = isCustomPrice ? "(Custom Rate)" : "";
 
     return (
-      `📦 *POOJA TRAVELS & CARGO*\n` +
-      `✅ *Booking Confirmed!*\n\n` +
+      `*POOJA TRAVELS & CARGO*\n` +
+      `*Booking Confirmed!*\n\n` +
 
-      `📄 *Digital Builty (LR):*\n` +
+      `*Digital Builty (LR):*\n` +
       `${publicLrUrl}\n` +
       `_(Tap to view or download your LR PDF)_\n\n` +
 
-      `━━━━━━━━━━━━━━━━━━━━\n` +
-      `🔖 *LR Number:* ${booking.lrNumber}\n` +
-      `📌 *Status:* ${booking.status.replace(/_/g, " ")}\n` +
-      `🛣️ *Route:* ${booking.originOffice.name} → ${destOffice.name}\n` +
-      `💰 *Grand Total:* ₹${booking.totalAmount.toFixed(2)} ${priceLabel} _(${booking.paymentType} · ${booking.paymentMode})_\n\n` +
+      `----------------------------------------\n` +
+      `*LR Number:* ${booking.lrNumber}\n` +
+      `*Status:* ${booking.status.replace(/_/g, " ")}\n` +
+      `*Route:* ${booking.originOffice.name} -> ${destOffice.name}\n` +
+      `*Grand Total:* ₹${booking.totalAmount.toFixed(2)} ${priceLabel} _(${booking.paymentType} · ${booking.paymentMode})_\n\n` +
 
-      `━━━━━━━━━━━━━━━━━━━━\n` +
-      `🏢 *Destination Office Details*\n` +
-      `📍 *Office:* ${destOffice.name}\n` +
-      `🏙️ *City:* ${destOffice.city}\n` +
-      `🗺️ *Address:* ${destOffice.address}\n` +
-      `📞 *Office Phone:* ${destOffice.phone}\n\n` +
+      `----------------------------------------\n` +
+      `*Destination Office Details*\n` +
+      `*Office:* ${destOffice.name}\n` +
+      `*City:* ${destOffice.city}\n` +
+      `*Address:* ${destOffice.address}\n` +
+      `*Office Phone:* ${destOffice.phone}\n\n` +
 
-      `━━━━━━━━━━━━━━━━━━━━\n` +
-      `🔍 *Live Tracking:*\n` +
+      `----------------------------------------\n` +
+      `*Live Tracking:*\n` +
       `${publicTrackingUrl}\n\n` +
 
-      `📞 *Helpline:* 6350603414 | 7852091119 | 0291-2651955\n` +
-      `🙏 Thank You for choosing Pooja Travels & Cargo!`
+      `*Helpline:* 6350603414 | 7852091119 | 0291-2651955\n` +
+      `Thank You for choosing Pooja Travels & Cargo!`
     );
   };
 

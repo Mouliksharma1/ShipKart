@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Phone, MapPin, Shield, Search, PackageCheck } from "lucide-react";
+import { Phone, MapPin, Shield, Search, PackageCheck, User } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function Header() {
@@ -47,8 +47,9 @@ export function Header() {
           </a>
           <Link
             href="/login"
-            className="flex items-center space-x-1 rounded-xl bg-slate-100 dark:bg-zinc-800 px-3 py-2 text-xs font-extrabold text-slate-700 dark:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-all border border-slate-200 dark:border-zinc-700"
+            className="flex items-center space-x-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 px-3.5 py-2 text-xs font-black shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 hover:shadow-amber-500/10 active:scale-95 transition-all border border-slate-800 dark:border-slate-200"
           >
+            <User className="h-3.5 w-3.5 text-amber-400 dark:text-amber-600 stroke-[2.5]" />
             <span>Customer Login</span>
           </Link>
           <Link

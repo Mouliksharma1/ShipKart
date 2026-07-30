@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { generateQRCodeDataUrl } from "@/lib/services/qrcode";
 

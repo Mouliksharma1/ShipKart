@@ -7,6 +7,8 @@ import { PickupMethod, BookingStatus, NotificationEvent, NotificationRecipientTy
 import { enqueueNotification } from "@/lib/services/notification";
 import { revalidatePath } from "next/cache";
 
+import { cookies } from "next/headers";
+
 export type EmployeeBookingActionResult = {
   success: boolean;
   message?: string;
@@ -30,6 +32,15 @@ export async function createEmployeeBookingAction(formData: unknown, employeeUse
   }
 
   const data = parseResult.data;
+
+  // Resolve staff user ID from cookie if not explicitly passed
+  let activeStaffId = employeeUserId;
+  if (!activeStaffId) {
+    try {
+      const cookieStore = await cookies();
+      activeStaffId = cookieStore.get("shipkart_staff_id")?.value;
+    } catch (_) {}
+  }
 
   try {
     let totalSubtotal = 0;
@@ -195,7 +206,7 @@ export async function createEmployeeBookingAction(formData: unknown, employeeUse
           totalAmount: grandTotal,
           specialNotes: data.specialNotes || null,
           status: BookingStatus.BOOKED,
-          createdById: employeeUserId || null,
+          createdById: activeStaffId || null,
         },
       });
 
@@ -222,7 +233,7 @@ export async function createEmployeeBookingAction(formData: unknown, employeeUse
           bookingId: booking.id,
           status: BookingStatus.BOOKED,
           officeId: data.originOfficeId,
-          userId: employeeUserId || null,
+          userId: activeStaffId || null,
           notes: `Counter Booking created by employee. LR: ${lrNumber}`,
         },
       });

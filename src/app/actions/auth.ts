@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { LoginSchema, RegisterSchema, ForgotPasswordSchema, UpdateProfileSchema } from "@/lib/validations/auth";
 import { redirect } from "next/navigation";
@@ -45,6 +46,11 @@ export async function employeeLoginAction(input: { username: string; password?: 
       return { success: false, error: 'Employee account deactivated or locked.' };
     }
 
+    // Store authenticated staff session in cookies
+    const cookieStore = await cookies();
+    cookieStore.set("shipkart_staff_id", user.id, { path: "/", httpOnly: true, maxAge: 60 * 60 * 24 * 7 });
+    cookieStore.set("shipkart_staff_name", user.name || user.username || "Staff", { path: "/", maxAge: 60 * 60 * 24 * 7 });
+
     // Direct all staff (including Admin logging in through employee portal) strictly to /employee dashboard
     let targetPath = '/employee';
     if (user.role === Role.PARTNER_OFFICE) {
@@ -86,6 +92,10 @@ export async function adminLoginAction(input: { email: string; password?: string
     if (user.status === false || user.accountLocked === true) {
       return { success: false, error: 'Admin account deactivated or locked.' };
     }
+
+    const cookieStore = await cookies();
+    cookieStore.set("shipkart_staff_id", user.id, { path: "/", httpOnly: true, maxAge: 60 * 60 * 24 * 7 });
+    cookieStore.set("shipkart_staff_name", user.name || user.username || "Admin", { path: "/", maxAge: 60 * 60 * 24 * 7 });
 
     return {
       success: true,

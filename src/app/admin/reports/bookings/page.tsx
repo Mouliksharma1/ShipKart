@@ -118,7 +118,20 @@ export default async function BookingsReportPage() {
                     </td>
                     <td className="p-4 uppercase font-semibold text-slate-600 dark:text-zinc-400">{b.items[0]?.parcelType || 'BOX'}</td>
                     <td className="p-4 text-slate-700 dark:text-zinc-300">{b.originOffice?.name || 'Unassigned'}</td>
-                    <td className="p-4 font-bold text-emerald-600 dark:text-emerald-400">{b.status}</td>
+                    <td className="p-4 font-bold">
+                      {b.status === "CANCELLED" ? (
+                        <div className="space-y-1">
+                          <span className="px-2 py-0.5 rounded-md text-xs font-black bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 inline-block uppercase">
+                            CANCELLED
+                          </span>
+                          <p className="text-[11px] font-bold text-red-600 dark:text-red-400">
+                            🚫 {b.lastUpdatedBy || "CANCELLED BY STAFF"}
+                          </p>
+                        </div>
+                      ) : (
+                        <span className="text-emerald-600 dark:text-emerald-400">{b.status}</span>
+                      )}
+                    </td>
                     <td className="p-4 text-right font-mono font-bold text-slate-900 dark:text-white">₹{b.totalAmount}</td>
                     <td className="p-4 text-right">
                       <CancelLRButton lrNumber={b.lrNumber} isCancelled={b.status === 'CANCELLED'} variant="compact" />

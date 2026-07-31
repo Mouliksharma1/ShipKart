@@ -186,9 +186,22 @@ export function BookingSearchTable({ initialBookings }: BookingSearchTableProps)
                       {b.originOffice?.name} &rarr; {b.destinationOffice?.name}
                     </td>
                     <td className="py-3 px-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-neutral-700">
-                        {b.status}
-                      </span>
+                      {b.status === "CANCELLED" ? (
+                        <div className="space-y-0.5">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
+                            CANCELLED
+                          </span>
+                          {b.lastUpdatedBy && (
+                            <p className="text-[10px] font-bold text-red-600 dark:text-red-400 max-w-[200px] truncate">
+                              🚫 {b.lastUpdatedBy}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-neutral-700">
+                          {b.status}
+                        </span>
+                      )}
                     </td>
                     <td className="py-3 px-3 font-bold text-slate-900 dark:text-white">
                       ₹{b.totalAmount} ({b.paymentType})

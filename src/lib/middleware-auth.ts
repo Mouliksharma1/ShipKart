@@ -10,6 +10,7 @@ export async function updateSession(request: NextRequest) {
   const isPartnerRoute = pathname.startsWith("/partner");
 
   const staffId = request.cookies.get("shipkart_staff_id")?.value;
+  const staffRole = request.cookies.get("shipkart_staff_role")?.value;
 
   // 1. EMPLOYEE ROUTES AUTHENTICATION
   if (isEmployeeRoute) {
@@ -31,13 +32,20 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // 2. ADMIN ROUTES AUTHENTICATION
+  // 2. ADMIN ROUTES AUTHENTICATION & ROLE AUTHORIZATION
   if (isAdminRoute) {
     const isAdminLoginPage = pathname === "/admin/login" || pathname === "/login";
-    if (!isAdminLoginPage && !staffId) {
-      const loginUrl = new URL("/employee/login", request.url);
-      loginUrl.searchParams.set("redirectTo", pathname);
-      return NextResponse.redirect(loginUrl);
+    if (!isAdminLoginPage) {
+      if (!staffId) {
+        const loginUrl = new URL("/employee/login", request.url);
+        loginUrl.searchParams.set("redirectTo", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+
+      // Restrict Admin routes strictly to ADMIN and SUPER_ADMIN roles
+      if (staffRole && staffRole !== "ADMIN" && staffRole !== "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/employee", request.url));
+      }
     }
   }
 

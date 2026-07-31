@@ -50,6 +50,7 @@ export async function employeeLoginAction(input: { username: string; password?: 
     const cookieStore = await cookies();
     cookieStore.set("shipkart_staff_id", user.id, { path: "/", httpOnly: true, maxAge: 60 * 60 * 24 * 7 });
     cookieStore.set("shipkart_staff_name", user.name || user.username || "Staff", { path: "/", maxAge: 60 * 60 * 24 * 7 });
+    cookieStore.set("shipkart_staff_role", user.role, { path: "/", maxAge: 60 * 60 * 24 * 7 });
 
     // Direct all staff (including Admin logging in through employee portal) strictly to /employee dashboard
     let targetPath = '/employee';
@@ -96,6 +97,7 @@ export async function adminLoginAction(input: { email: string; password?: string
     const cookieStore = await cookies();
     cookieStore.set("shipkart_staff_id", user.id, { path: "/", httpOnly: true, maxAge: 60 * 60 * 24 * 7 });
     cookieStore.set("shipkart_staff_name", user.name || user.username || "Admin", { path: "/", maxAge: 60 * 60 * 24 * 7 });
+    cookieStore.set("shipkart_staff_role", user.role, { path: "/", maxAge: 60 * 60 * 24 * 7 });
 
     return {
       success: true,

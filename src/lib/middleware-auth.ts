@@ -37,7 +37,7 @@ export async function updateSession(request: NextRequest) {
     const isAdminLoginPage = pathname === "/admin/login" || pathname === "/login";
     if (!isAdminLoginPage) {
       if (!staffId) {
-        const loginUrl = new URL("/employee/login", request.url);
+        const loginUrl = new URL("/admin/login", request.url);
         loginUrl.searchParams.set("redirectTo", pathname);
         return NextResponse.redirect(loginUrl);
       }

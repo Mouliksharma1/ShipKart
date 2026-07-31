@@ -567,14 +567,18 @@ export async function cancelBookingAction(lrNumber: string, reason?: string) {
 
     const cookieStore = await cookies();
     const staffId = cookieStore.get("shipkart_staff_id")?.value;
-    const staffName = cookieStore.get("shipkart_staff_name")?.value || "STAFF";
+    const staffName = cookieStore.get("shipkart_staff_name")?.value || "ADMIN";
 
-    // Find staff user name if ID present
-    let cancellerName = staffName;
+    // Find staff user name and role if ID present
+    let cancellerName = "ADMIN";
     if (staffId) {
       const user = await db.user.findUnique({ where: { id: staffId } });
       if (user) {
-        cancellerName = user.name || user.username || staffName;
+        if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+          cancellerName = "ADMIN";
+        } else {
+          cancellerName = user.name || user.username || staffName;
+        }
       }
     }
 

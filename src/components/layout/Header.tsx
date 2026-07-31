@@ -19,13 +19,13 @@ export function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300 ease-out pointer-events-none">
+    <header className="sticky top-0 z-50 w-full transition-all duration-300 ease-out pointer-events-none bg-transparent">
       <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8 py-2">
         <div
           className={`pointer-events-auto flex items-center justify-between px-4 py-3 sm:px-6 transition-all duration-300 ease-out ${
             scrolled
-              ? "rounded-2xl bg-white/85 dark:bg-neutral-950/85 backdrop-blur-xl shadow-xl border border-slate-200/80 dark:border-neutral-800 scale-[0.99] mx-2 sm:mx-4 my-1.5"
-              : "rounded-xl bg-white/95 dark:bg-neutral-950/95 backdrop-blur-md border border-slate-200/60 dark:border-neutral-800/80 shadow-xs"
+              ? "rounded-2xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl shadow-xl border border-slate-200/80 dark:border-neutral-800/80 scale-[0.99] mx-2 sm:mx-4 my-1"
+              : "rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-slate-200/60 dark:border-neutral-800/80 shadow-xs"
           }`}
         >
           {/* Brand Logo & Tagline */}

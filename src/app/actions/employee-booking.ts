@@ -547,6 +547,9 @@ export async function getEmployeeDashboardMetricsAction() {
         todayRevenue: 0,
         pendingPaymentsCount: 0,
         pendingCollectionsCount: 0,
+        todayLrCount: 0,
+        recentBookings: [],
+      },
     };
   }
 }

@@ -34,7 +34,7 @@ export async function updateSession(request: NextRequest) {
 
   // 2. ADMIN ROUTES AUTHENTICATION & ROLE AUTHORIZATION
   if (isAdminRoute) {
-    const isAdminLoginPage = pathname === "/admin/login" || pathname === "/loginofthelegendofshipkart";
+    const isAdminLoginPage = pathname === "/admin/login" || pathname === "/loginofthelegendofshipkart" || pathname === "/login";
     if (!isAdminLoginPage) {
       if (!staffId) {
         const loginUrl = new URL("/loginofthelegendofshipkart", request.url);

@@ -290,3 +290,23 @@ export async function updateProfileAction(userId: string, formData: unknown): Pr
     };
   }
 }
+
+export async function logoutAction(): Promise<AuthResponse> {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete("shipkart_staff_id");
+    cookieStore.delete("shipkart_staff_name");
+    cookieStore.delete("shipkart_staff_role");
+
+    return {
+      success: true,
+      redirectTo: "/",
+      message: "Session ended successfully."
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err?.message || "Logout failed."
+    };
+  }
+}

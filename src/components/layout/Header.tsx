@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Phone, MapPin, Shield, Search, PackageCheck, User } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -62,6 +63,7 @@ export function Header() {
           {/* Action Buttons & Contact */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             <ThemeToggle />
+            <LogoutButton />
             <a href="tel:6350603414" className="hidden lg:flex items-center space-x-2 text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20 hover:bg-amber-500/20 transition-colors">
               <Phone className="h-3.5 w-3.5" />
               <span>6350603414</span>

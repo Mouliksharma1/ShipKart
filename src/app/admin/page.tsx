@@ -2,6 +2,7 @@ import React from 'react';
 import { getDashboardStatsAction } from '@/app/actions/admin/dashboard';
 import { StatCard } from '@/components/admin/StatCard';
 import { GlobalSearch } from '@/components/admin/GlobalSearch';
+import { LogoutButton } from '@/components/auth/LogoutButton';
 import {
   Package,
   TrendingUp,
@@ -36,8 +37,9 @@ export default async function AdminDashboardPage() {
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Operational Control Center</h1>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <GlobalSearch />
+          <LogoutButton redirectTo="/employee/login" />
         </div>
       </div>
 

@@ -14,9 +14,8 @@ import {
   Users, 
   Calendar, 
   ArrowRight,
-  TrendingUp,
-  Truck
 } from "lucide-react";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 interface EmployeeDashboardProps {
   metrics: {
@@ -72,6 +71,8 @@ export function EmployeeDashboard({ metrics }: EmployeeDashboardProps) {
             <PlusCircle className="h-5 w-5" />
             <span>New Counter Booking</span>
           </Link>
+
+          <LogoutButton redirectTo="/employee/login" className="p-3 rounded-xl" />
         </div>
 
 

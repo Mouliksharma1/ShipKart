@@ -261,10 +261,7 @@ export default async function AdminDashboardPage() {
             ))
           )}
         </div>
-      </div>
-
-      {/* ── BI Reports Hub Banner ── */}
-      
+      </div>      
     </div>
   );
 }

@@ -71,7 +71,7 @@ export default function CustomerNotificationSettingsPage() {
           >
             <option value="en">English</option>
             <option value="hi">Hindi (हिंदी)</option>
-            <option value="gu">Gujarati (ગુજરાતી)</option>
+            <option value="up">UP (Hindi)</option>
           </select>
         </div>
 

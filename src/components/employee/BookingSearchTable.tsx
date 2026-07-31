@@ -160,10 +160,22 @@ export function BookingSearchTable({ initialBookings }: BookingSearchTableProps)
                   <tr key={b.id} className="hover:bg-slate-50 dark:hover:bg-neutral-800/40">
                     <td className="py-3 px-3 font-bold text-amber-600 dark:text-amber-400">
                       <Link href={`/employee/bookings/${b.lrNumber}`}>{b.lrNumber}</Link>
+                      {b.pickupMethod === "TAXI_PICKUP" && (
+                        <div className="mt-1">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-black bg-amber-500 text-amber-950 border border-amber-600 inline-flex items-center space-x-1 shadow-xs">
+                            <span>🚖 TAXI PICKUP</span>
+                          </span>
+                        </div>
+                      )}
                     </td>
                     <td className="py-3 px-3">
                       <p className="font-semibold text-slate-900 dark:text-white">{b.senderName}</p>
                       <p className="text-[10px] text-slate-500">{b.senderPhone}</p>
+                      {b.pickupMethod === "TAXI_PICKUP" && b.pickupAddress && (
+                        <p className="text-[10px] font-bold text-amber-600 dark:text-amber-400 mt-1 bg-amber-500/10 p-1 rounded border border-amber-500/20 max-w-xs">
+                          📍 Home: {b.pickupAddress}
+                        </p>
+                      )}
                     </td>
                     <td className="py-3 px-3">
                       <p className="font-semibold text-slate-900 dark:text-white">{b.receiverName}</p>

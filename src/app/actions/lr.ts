@@ -17,7 +17,7 @@ export type LRDetailsResponse = {
  * GET FULL DIGITAL LR DETAILS
  * Returns complete booking, items, offices, company settings, and generated QR Code.
  */
-export async function getLRDetailsAction(lrParam: string): Promise<LRDetailsResponse> {
+export async function getLRDetailsAction(lrParam: string, isEmployeeAccess = false): Promise<LRDetailsResponse> {
   try {
     if (!lrParam) {
       return { success: false, error: "LR Identifier is required" };
@@ -41,6 +41,7 @@ export async function getLRDetailsAction(lrParam: string): Promise<LRDetailsResp
             name: true,
             employeeCode: true,
             phone: true,
+            role: true,
           },
         },
         items: true,
@@ -55,15 +56,23 @@ export async function getLRDetailsAction(lrParam: string): Promise<LRDetailsResp
       return { success: false, error: `Digital LR document "${term}" was not found.` };
     }
 
-    // Security Check: If accessed via plain sequential number (e.g. 0004 or SK0004), verify staff session
-    const isSequentialAccess = term.toLowerCase() === booking.lrNumber.toLowerCase();
+    // Security Check: If accessed via plain sequential number (e.g. 0004 or SK0004)
+    const isSequentialAccess = term.toLowerCase() === booking.lrNumber.toLowerCase() || /^\d{1,6}$/.test(term);
+
     if (isSequentialAccess) {
+      if (!isEmployeeAccess) {
+        return { 
+          success: false, 
+          error: `Access Restricted. Sequential LR lookup ("${term}") is strictly permitted for employees on the Staff Terminal (/employee/bookings/${term}). Public access requires a 12-character alphanumeric secure LR key.` 
+        };
+      }
+
       const cookieStore = await cookies();
       const staffId = cookieStore.get("shipkart_staff_id")?.value;
       if (!staffId) {
         return { 
           success: false, 
-          error: `Access Restricted. Sequential LR lookup ("${term}") is only permitted for staff on the Employee Terminal. Customers must use the secure alphanumeric LR Link.` 
+          error: `Access Restricted. Sequential LR lookup ("${term}") requires an active employee session on the Staff Terminal.` 
         };
       }
     }

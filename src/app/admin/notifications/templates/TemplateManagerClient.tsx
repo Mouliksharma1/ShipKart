@@ -94,7 +94,7 @@ export function TemplateManagerClient({ initialTemplates }: TemplateManagerClien
               <FileText className="h-6 w-6 text-brand-blue" /> Notification Templates Engine
             </h1>
             <p className="text-xs text-slate-500 dark:text-neutral-400">
-              Versioned, Multi-language (English, Hindi, Gujarati) Message Templates
+              Versioned, Multi-language (English, Hindi, UP) Message Templates
             </p>
           </div>
         </div>
@@ -197,7 +197,7 @@ export function TemplateManagerClient({ initialTemplates }: TemplateManagerClien
                   <select value={languageCode} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setLanguageCode(e.target.value)} className="w-full h-9 rounded-md border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-2 mt-1">
                     <option value="en">English (en)</option>
                     <option value="hi">Hindi (hi)</option>
-                    <option value="gu">Gujarati (gu)</option>
+                    <option value="up">UP (up)</option>
                   </select>
                 </div>
               </div>

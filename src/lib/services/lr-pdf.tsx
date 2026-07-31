@@ -297,7 +297,7 @@ export const LRPDFDocument: React.FC<LRPDFData> = ({
             Status: {booking.status.replace(/_/g, " ")}
           </Text>
           <Text style={{ fontSize: 9, fontWeight: "bold", color: "#1e3a8a", textTransform: "uppercase" }}>
-            BOOKED BY :- {booking.createdBy?.name ? booking.createdBy.name.toUpperCase() : "COUNTER STAFF"}
+            BOOKED BY :- {!booking.createdBy || booking.createdBy.role === "CUSTOMER" ? "SELF" : (booking.createdBy.name ? booking.createdBy.name.toUpperCase() : "COUNTER STAFF")}
           </Text>
         </View>
 

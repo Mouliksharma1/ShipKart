@@ -146,7 +146,7 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
 
         {/* BOOKED BY DISPLAY */}
         <div className="text-xs font-black uppercase text-blue-950 bg-blue-100 border border-blue-300 px-3.5 py-1 rounded-md tracking-wider shadow-xs">
-          BOOKED BY :- {booking.createdBy?.name || 'COUNTER STAFF'}
+          BOOKED BY :- {!booking.createdBy || booking.createdBy.role === "CUSTOMER" ? "SELF" : (booking.createdBy.name || "COUNTER STAFF")}
         </div>
 
       </div>

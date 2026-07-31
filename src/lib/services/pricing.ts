@@ -129,7 +129,7 @@ export async function calculatePrice(input: CalculatePriceInput): Promise<Pricin
       taxiMessage = `Taxi pickup unavailable: Customer distance (${pickupDistanceKm} KM) from origin office exceeds maximum 5 KM limit.`;
     } else if (quantity < 5) {
       taxiEligible = false;
-      taxiMessage = `Taxi pickup unavailable: Quantity (${quantity}) is below minimum requirement of 5 items.`;
+      taxiMessage = "Minimum 5 quantity is required for Taxi Pickup.";
     }
 
     if (pickupMethod === PickupMethod.TAXI_PICKUP && !taxiEligible) {

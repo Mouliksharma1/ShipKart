@@ -33,7 +33,7 @@ export const NOTIFICATION_CONFIG = {
   SUPPORTED_LANGUAGES: [
     { code: 'en', name: 'English' },
     { code: 'hi', name: 'Hindi (हिंदी)' },
-    { code: 'gu', name: 'Gujarati (ગુજરાતી)' },
+    { code: 'up', name: 'UP (Hindi)' },
   ],
 };
 

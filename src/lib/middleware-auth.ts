@@ -2,71 +2,75 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key";
-
-  const supabase = createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          response = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-
   const pathname = request.nextUrl.pathname;
 
-  const isCustomerRoute = pathname.startsWith("/customer");
   const isEmployeeRoute = pathname.startsWith("/employee");
-  const isPartnerRoute = pathname.startsWith("/partner");
   const isAdminRoute = pathname.startsWith("/admin");
+  const isCustomerRoute = pathname.startsWith("/customer");
+  const isPartnerRoute = pathname.startsWith("/partner");
 
-  if (isCustomerRoute || isEmployeeRoute || isPartnerRoute || isAdminRoute) {
-    if (!user && process.env.NODE_ENV !== "development") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      url.searchParams.set("redirectTo", pathname);
-      return NextResponse.redirect(url);
+  const staffId = request.cookies.get("shipkart_staff_id")?.value;
+
+  // 1. EMPLOYEE ROUTES AUTHENTICATION
+  if (isEmployeeRoute) {
+    const isEmployeeLoginPage = pathname === "/employee/login";
+
+    if (isEmployeeLoginPage) {
+      // If already authenticated, redirect to /employee dashboard
+      if (staffId) {
+        return NextResponse.redirect(new URL("/employee", request.url));
+      }
+      return NextResponse.next();
     }
 
-    // Role extracted from Supabase user_metadata or app_metadata safely
-    const userRole = user?.user_metadata?.role || user?.app_metadata?.role || "ADMIN";
-
-    if (isCustomerRoute && userRole !== "CUSTOMER" && userRole !== "ADMIN") {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    if (isEmployeeRoute && userRole !== "EMPLOYEE" && userRole !== "ADMIN") {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    if (isPartnerRoute && userRole !== "PARTNER_OFFICE" && userRole !== "ADMIN") {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    if (isAdminRoute && userRole !== "ADMIN") {
-      return NextResponse.redirect(new URL("/login", request.url));
+    // Require valid staff session cookie for all /employee routes
+    if (!staffId) {
+      const loginUrl = new URL("/employee/login", request.url);
+      loginUrl.searchParams.set("redirectTo", pathname);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
-  return response;
+  // 2. ADMIN ROUTES AUTHENTICATION
+  if (isAdminRoute) {
+    const isAdminLoginPage = pathname === "/admin/login" || pathname === "/login";
+    if (!isAdminLoginPage && !staffId) {
+      const loginUrl = new URL("/employee/login", request.url);
+      loginUrl.searchParams.set("redirectTo", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // 3. CUSTOMER & PARTNER SUPABASE AUTH CHECK
+  if (isCustomerRoute || isPartnerRoute) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key";
+
+    let response = NextResponse.next({ request: { headers: request.headers } });
+
+    try {
+      const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+            response = NextResponse.next({ request });
+            cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+          },
+        },
+      });
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user && !staffId) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/login";
+        url.searchParams.set("redirectTo", pathname);
+        return NextResponse.redirect(url);
+      }
+    } catch (_) {}
+  }
+
+  return NextResponse.next();
 }

@@ -62,7 +62,7 @@ export default function OfficesDirectoryClient({ initialOffices }: { initialOffi
         </div>
         <h1 className="text-3xl font-black text-slate-900 dark:text-white">Pooja Travels & Cargo Branch Network</h1>
         <p className="text-xs sm:text-sm text-slate-600 dark:text-neutral-400 max-w-3xl leading-relaxed">
-          Find station offices, head offices, and partner branch locations across Rajasthan, Gujarat, Delhi, and Uttar Pradesh. All parcel dispatches must be collected from these designated offices.
+          Find station offices, head offices, and partner branch locations across Rajasthan, UP, Delhi, and Uttar Pradesh. All parcel dispatches must be collected from these designated offices.
         </p>
 
         {/* Filter & Search Bar */}

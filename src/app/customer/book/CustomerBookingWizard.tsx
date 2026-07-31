@@ -77,7 +77,7 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
   // STEP 4: ROUTE & PICKUP STATE
   const [originOfficeId, setOriginOfficeId] = useState(headOffice?.id || "");
   const [destinationOfficeId, setDestinationOfficeId] = useState(firstBranch?.id || "");
-  const [pickupMethod, setPickupMethod] = useState<PickupMethod>(PickupMethod.SELF_DROP);
+  const [pickupMethod, setPickupMethod] = useState<PickupMethod>(PickupMethod.TAXI_PICKUP);
   const [pickupDistanceKm, setPickupDistanceKm] = useState(3.0);
 
   // STEP 5: PAYMENT STATE
@@ -566,6 +566,13 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
                 ))}
               </div>
 
+              {items.reduce((sum, i) => sum + i.quantity, 0) < 5 && (
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs font-bold flex items-center space-x-2">
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />
+                  <span>Minimum 5 quantity is required for Taxi Pickup. (Current total: {items.reduce((sum, i) => sum + i.quantity, 0)})</span>
+                </div>
+              )}
+
               <div className="flex justify-between pt-3">
                 <button
                   type="button"
@@ -577,7 +584,15 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep(4)}
+                  onClick={() => {
+                    const totalQty = items.reduce((sum, i) => sum + i.quantity, 0);
+                    if (totalQty < 5) {
+                      setErrorMsg("Minimum 5 quantity is required for Taxi Pickup.");
+                      return;
+                    }
+                    setErrorMsg(null);
+                    setStep(4);
+                  }}
                   className="px-5 py-2.5 rounded-xl bg-amber-500 text-amber-950 font-bold hover:bg-amber-400 flex items-center space-x-2"
                 >
                   <span>Next: Route & Pickup</span>
@@ -625,50 +640,17 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
 
               {/* Pickup Method Selection */}
               <div className="space-y-3 pt-2">
-                <label className="block font-bold text-slate-900 dark:text-white">Select Pickup Method</label>
+                <label className="block font-bold text-slate-900 dark:text-white">Pickup Method</label>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <label
-                    onClick={() => setPickupMethod(PickupMethod.SELF_DROP)}
-                    className={`p-4 rounded-xl border cursor-pointer flex items-center space-x-3 transition-all ${
-                      pickupMethod === PickupMethod.SELF_DROP
-                        ? "border-amber-500 bg-amber-500/10 font-bold"
-                        : "border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950"
-                    }`}
-                  >
-                    <input type="radio" checked={pickupMethod === PickupMethod.SELF_DROP} readOnly />
-                    <div>
-                      <span className="block font-bold text-slate-900 dark:text-white">Self Drop</span>
-                      <span className="text-[11px] text-slate-500 dark:text-neutral-400">Customer drops parcel at Origin Office</span>
-                    </div>
-                  </label>
-
-                  <label
-                    onClick={() => {
-                      if (taxiEligible) setPickupMethod(PickupMethod.TAXI_PICKUP);
-                    }}
-                    className={`p-4 rounded-xl border cursor-pointer flex items-center space-x-3 transition-all ${
-                      !taxiEligible
-                        ? "opacity-50 cursor-not-allowed border-red-500/30 bg-red-500/5"
-                        : pickupMethod === PickupMethod.TAXI_PICKUP
-                        ? "border-amber-500 bg-amber-500/10 font-bold"
-                        : "border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950"
-                    }`}
-                  >
-                    <input type="radio" checked={pickupMethod === PickupMethod.TAXI_PICKUP} disabled={!taxiEligible} readOnly />
-                    <div>
-                      <span className="block font-bold text-slate-900 dark:text-white">Taxi Pickup</span>
-                      <span className="text-[11px] text-slate-500 dark:text-neutral-400">Taxi collects parcel from sender location</span>
-                    </div>
-                  </label>
-                </div>
-
-                {!taxiEligible && taxiWarning && (
-                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-semibold flex items-center space-x-2">
-                    <Info className="h-4 w-4 shrink-0" />
-                    <span>{taxiWarning}</span>
+                <div className="p-4 rounded-xl border border-amber-500 bg-amber-500/10 flex items-center space-x-3">
+                  <div className="p-2.5 rounded-lg bg-amber-500 text-amber-950 font-black">
+                    🚖
                   </div>
-                )}
+                  <div>
+                    <span className="block font-bold text-slate-900 dark:text-white text-xs">Doorstep Taxi Pickup (Home Pickup)</span>
+                    <span className="text-[11px] text-slate-500 dark:text-neutral-400">Our logistics team collects the parcel directly from your doorstep/sender location.</span>
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-between pt-3">

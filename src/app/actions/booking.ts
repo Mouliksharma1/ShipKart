@@ -71,13 +71,13 @@ export async function createBookingAction(formData: unknown): Promise<BookingAct
         };
       }
 
-      // Taxi Eligibility Check across multi-item total quantity
+      // Taxi Eligibility Check
       if (data.pickupMethod === PickupMethod.TAXI_PICKUP) {
         if (item.parcelType === "ENVELOPE") {
           return { success: false, error: "Taxi Pickup is not available for Envelope consignments." };
         }
         if (totalQuantity < 5) {
-          return { success: false, error: `Taxi pickup unavailable: Total parcel quantity (${totalQuantity}) is below minimum 5 items.` };
+          return { success: false, error: "Minimum 5 quantity is required for Taxi Pickup." };
         }
       }
 

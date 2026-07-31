@@ -99,7 +99,21 @@ export default async function BookingsReportPage() {
               <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 font-medium">
                 {data.bookings.map((b) => (
                   <tr key={b.id} className="hover:bg-slate-50/50 dark:hover:bg-zinc-800/40 transition-colors">
-                    <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">{b.lrNumber}</td>
+                    <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">
+                      <div>{b.lrNumber}</div>
+                      {b.pickupMethod === "TAXI_PICKUP" && (
+                        <div className="mt-1">
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-amber-500 text-amber-950 border border-amber-600 inline-flex items-center space-x-1 shadow-xs">
+                            <span>🚖 TAXI PICKUP</span>
+                          </span>
+                          {b.pickupAddress && (
+                            <p className="text-[10px] font-normal text-amber-600 dark:text-amber-400 mt-0.5 font-sans">
+                              📍 {b.pickupAddress}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </td>
                     <td className="p-4 uppercase font-semibold text-slate-600 dark:text-zinc-400">{b.items[0]?.parcelType || 'BOX'}</td>
                     <td className="p-4 text-slate-700 dark:text-zinc-300">{b.originOffice?.name || 'Unassigned'}</td>
                     <td className="p-4 font-bold text-emerald-600 dark:text-emerald-400">{b.status}</td>

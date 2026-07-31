@@ -16,7 +16,7 @@ export default async function EmployeeBookingDetailPage({
   params: Promise<{ lr: string }>;
 }) {
   const { lr } = await params;
-  const res = await getLRDetailsAction(lr);
+  const res = await getLRDetailsAction(lr, true);
 
   if (!res.success || !res.data) {
     return (

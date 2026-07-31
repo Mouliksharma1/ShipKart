@@ -547,9 +547,96 @@ export async function getEmployeeDashboardMetricsAction() {
         todayRevenue: 0,
         pendingPaymentsCount: 0,
         pendingCollectionsCount: 0,
-        todayLrCount: 0,
-        recentBookings: [],
-      },
+    };
+  }
+}
+
+/**
+ * CANCEL LR / BOOKING ACTION (Available to Employee & Admin)
+ * Updates status to CANCELLED and records who cancelled it with timestamp.
+ * Format: "LR CANCELLED BY :- RAJESH SHARMA AT 06:00 PM (31 JUL 2026)"
+ */
+export async function cancelBookingAction(lrNumber: string, reason?: string) {
+  try {
+    if (!lrNumber) {
+      return { success: false, error: "LR Number is required for cancellation." };
+    }
+
+    const cookieStore = await cookies();
+    const staffId = cookieStore.get("shipkart_staff_id")?.value;
+    const staffName = cookieStore.get("shipkart_staff_name")?.value || "STAFF";
+
+    // Find staff user name if ID present
+    let cancellerName = staffName;
+    if (staffId) {
+      const user = await db.user.findUnique({ where: { id: staffId } });
+      if (user) {
+        cancellerName = user.name || user.username || staffName;
+      }
+    }
+
+    const booking = await db.booking.findUnique({
+      where: { lrNumber },
+      include: { originOffice: true }
+    });
+
+    if (!booking) {
+      return { success: false, error: `Consignment LR ${lrNumber} not found.` };
+    }
+
+    if (booking.status === BookingStatus.CANCELLED) {
+      return { success: false, error: `LR ${lrNumber} is already cancelled.` };
+    }
+
+    const formattedTime = new Date().toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    });
+
+    const formattedDate = new Date().toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+
+    const cancelAuditText = `LR CANCELLED BY :- ${cancellerName.toUpperCase()} AT ${formattedTime} (${formattedDate})`;
+
+    await db.$transaction([
+      db.booking.update({
+        where: { lrNumber },
+        data: {
+          status: BookingStatus.CANCELLED,
+          lastUpdatedAt: new Date(),
+          lastUpdatedBy: cancelAuditText,
+        }
+      }),
+      db.trackingHistory.create({
+        data: {
+          bookingId: booking.id,
+          status: BookingStatus.CANCELLED,
+          officeId: booking.originOfficeId,
+          userId: staffId || null,
+          notes: cancelAuditText + (reason ? ` | Reason: ${reason}` : ""),
+        }
+      })
+    ]);
+
+    revalidatePath(`/lr/${lrNumber}`);
+    revalidatePath(`/employee/bookings/${lrNumber}`);
+    revalidatePath("/employee/bookings");
+    revalidatePath("/admin/reports/bookings");
+
+    return {
+      success: true,
+      message: `LR ${lrNumber} successfully cancelled by ${cancellerName} at ${formattedTime}.`,
+      cancelledByInfo: cancelAuditText
+    };
+  } catch (err: any) {
+    console.error("Cancel Booking Error:", err);
+    return {
+      success: false,
+      error: `Failed to cancel LR: ${err?.message || String(err)}`
     };
   }
 }

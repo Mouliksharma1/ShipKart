@@ -134,12 +134,12 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
       </div>
 
       {/* STATUS & BOOKED BY BADGE */}
-      <div className="flex items-center justify-between bg-blue-50 border border-blue-200 px-4 py-2.5 rounded-md mb-6 print:border-slate-300">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-blue-50 border border-blue-200 px-4 py-2.5 rounded-md mb-6 print:border-slate-300">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
             Current Status:
           </span>
-          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-900 text-white uppercase tracking-wider">
+          <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full text-white uppercase tracking-wider ${booking.status === 'CANCELLED' ? 'bg-red-600' : 'bg-blue-900'}`}>
             {booking.status.replace(/_/g, " ")}
           </span>
         </div>
@@ -148,8 +148,18 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
         <div className="text-xs font-black uppercase text-blue-950 bg-blue-100 border border-blue-300 px-3.5 py-1 rounded-md tracking-wider shadow-xs">
           BOOKED BY :- {!booking.createdBy || booking.createdBy.role === "CUSTOMER" ? "SELF" : (booking.createdBy.name || "COUNTER STAFF")}
         </div>
-
       </div>
+
+      {booking.status === "CANCELLED" && (
+        <div className="mb-6 p-4 rounded-md border border-red-300 bg-red-50 text-red-900 font-bold text-xs flex items-center space-x-2">
+          <span className="text-base">🚫</span>
+          <span>
+            {booking.lastUpdatedBy?.startsWith("LR CANCELLED BY")
+              ? booking.lastUpdatedBy
+              : `LR CANCELLED BY :- ${booking.lastUpdatedBy || "STAFF"} AT ${new Date(booking.updatedAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true })}`}
+          </span>
+        </div>
+      )}
 
       {/* 2. SENDER & RECEIVER DETAILS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

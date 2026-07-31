@@ -5,6 +5,7 @@ import { ArrowLeft, RotateCcw } from "lucide-react";
 import { getBookingAction } from "@/app/actions/employee-booking";
 import { getLRDetailsAction } from "@/app/actions/lr";
 import { LRPreview } from "@/components/lr/LRPreview";
+import { CancelLRButton } from "@/components/lr/CancelLRButton";
 
 export const metadata = {
   title: "Consignment Digital LR | Pooja Travels & Cargo",
@@ -59,6 +60,7 @@ export default async function EmployeeBookingDetailPage({
           </Link>
 
           <div className="flex items-center space-x-3">
+            <CancelLRButton lrNumber={booking.lrNumber} isCancelled={booking.status === 'CANCELLED'} />
             <Link
               href={`/employee/book?repeatLr=${booking.lrNumber}`}
               className="px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs hover:bg-emerald-500 hover:text-white transition-all flex items-center space-x-1.5"

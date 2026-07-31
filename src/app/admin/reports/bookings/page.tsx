@@ -2,6 +2,7 @@ import React from 'react';
 import { getBookingAnalytics } from '@/lib/services/analytics/booking.service';
 import { ExportButton } from '@/components/reports/ExportButton';
 import { EmptyReport } from '@/components/reports/EmptyReport';
+import { CancelLRButton } from '@/components/lr/CancelLRButton';
 import { Package, Clock, Tag, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -94,6 +95,7 @@ export default async function BookingsReportPage() {
                   <th className="p-4">Origin Branch</th>
                   <th className="p-4">Status</th>
                   <th className="p-4 text-right">Amount (₹)</th>
+                  <th className="p-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 font-medium">
@@ -118,6 +120,9 @@ export default async function BookingsReportPage() {
                     <td className="p-4 text-slate-700 dark:text-zinc-300">{b.originOffice?.name || 'Unassigned'}</td>
                     <td className="p-4 font-bold text-emerald-600 dark:text-emerald-400">{b.status}</td>
                     <td className="p-4 text-right font-mono font-bold text-slate-900 dark:text-white">₹{b.totalAmount}</td>
+                    <td className="p-4 text-right">
+                      <CancelLRButton lrNumber={b.lrNumber} isCancelled={b.status === 'CANCELLED'} variant="compact" />
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -301,6 +301,16 @@ export const LRPDFDocument: React.FC<LRPDFData> = ({
           </Text>
         </View>
 
+        {booking.status === "CANCELLED" && (
+          <View style={{ backgroundColor: "#fef2f2", borderWidth: 1, borderColor: "#fca5a5", padding: 6, marginBottom: 8, borderRadius: 4 }}>
+            <Text style={{ fontSize: 9, fontWeight: "bold", color: "#991b1b" }}>
+              {booking.lastUpdatedBy?.startsWith("LR CANCELLED BY")
+                ? booking.lastUpdatedBy
+                : `LR CANCELLED BY :- ${booking.lastUpdatedBy || "STAFF"}`}
+            </Text>
+          </View>
+        )}
+
 
         {/* SENDER & RECEIVER */}
         <View style={styles.gridTwo}>

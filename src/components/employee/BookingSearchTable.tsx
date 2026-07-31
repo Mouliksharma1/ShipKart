@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Search, Filter, Calendar, FileText, ArrowRight, User, Phone, CheckCircle, Clock } from "lucide-react";
 import { BookingStatus, PaymentType } from "@prisma/client";
 import { searchBookingsAction } from "@/app/actions/employee-booking";
+import { CancelLRButton } from "@/components/lr/CancelLRButton";
 
 interface BookingSearchTableProps {
   initialBookings: any[];
@@ -197,6 +198,7 @@ export function BookingSearchTable({ initialBookings }: BookingSearchTableProps)
                     </td>
                     <td className="py-3 px-3 text-right">
                       <div className="inline-flex items-center justify-end gap-1.5 whitespace-nowrap">
+                        <CancelLRButton lrNumber={b.lrNumber} isCancelled={b.status === 'CANCELLED'} variant="compact" />
                         <Link
                           href={`/employee/bookings/${b.lrNumber}`}
                           className="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-200 hover:bg-slate-200 dark:hover:bg-neutral-700 font-bold text-[11px] transition-colors"

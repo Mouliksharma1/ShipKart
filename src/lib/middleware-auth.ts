@@ -34,10 +34,10 @@ export async function updateSession(request: NextRequest) {
 
   // 2. ADMIN ROUTES AUTHENTICATION & ROLE AUTHORIZATION
   if (isAdminRoute) {
-    const isAdminLoginPage = pathname === "/admin/login" || pathname === "/login";
+    const isAdminLoginPage = pathname === "/admin/login" || pathname === "/loginofthelegendofshipkart";
     if (!isAdminLoginPage) {
       if (!staffId) {
-        const loginUrl = new URL("/admin/login", request.url);
+        const loginUrl = new URL("/loginofthelegendofshipkart", request.url);
         loginUrl.searchParams.set("redirectTo", pathname);
         return NextResponse.redirect(loginUrl);
       }

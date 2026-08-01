@@ -55,15 +55,15 @@ export default async function PublicLRPage({
 
   return (
     <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8 print:bg-white print:p-0">
-      <div className="max-w-4xl mx-auto mb-4 flex items-center justify-between print:hidden">
+      <div className="max-w-4xl mx-auto mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 print:hidden">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-neutral-300 hover:text-amber-600 dark:hover:text-amber-400 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to ShipKart
         </Link>
-        <span className="text-xs text-slate-500 font-mono">
+        <span className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono tracking-wider">
           POOJA TRAVELS & CARGO • OFFICIAL DIGITAL LR
         </span>
       </div>

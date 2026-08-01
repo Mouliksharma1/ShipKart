@@ -2,6 +2,7 @@ import React from "react";
 import { getTrackingTimelineAction } from "@/app/actions/tracking";
 import { TrackingTimeline } from "@/components/tracking/TrackingTimeline";
 import { StatusBadge } from "@/components/tracking/StatusBadge";
+import { DigitalLRVerificationModal } from "@/components/tracking/DigitalLRVerificationModal";
 import { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -128,13 +129,7 @@ export default async function PublicTrackingPage({
             </div>
 
             <div className="flex items-center gap-2">
-              <Link
-                href={`/lr/${booking.lrNumber}`}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-amber-950 text-xs font-black transition-all shadow-md active:scale-95"
-              >
-                <FileText className="w-4 h-4 stroke-[2.5]" />
-                View Digital LR
-              </Link>
+              <DigitalLRVerificationModal lrNumber={booking.lrNumber} status={booking.status} />
             </div>
           </div>
 

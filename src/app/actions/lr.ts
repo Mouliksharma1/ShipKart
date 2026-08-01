@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { generateQRCodeDataUrl } from "@/lib/services/qrcode";
+import { BookingStatus } from "@prisma/client";
 
 export type LRDetailsResponse = {
   success: boolean;
@@ -54,6 +55,14 @@ export async function getLRDetailsAction(lrParam: string, isEmployeeAccess = fal
 
     if (!booking) {
       return { success: false, error: `Digital LR document "${term}" was not found.` };
+    }
+
+    // If LR is cancelled and accessed publicly
+    if (booking.status === BookingStatus.CANCELLED && !isEmployeeAccess) {
+      return {
+        success: false,
+        error: "LR (Builty) is Cancelled. You are not able to see the builty.",
+      };
     }
 
     // Security Check: If accessed via plain sequential number (e.g. 0004 or SK0004)
@@ -188,3 +197,82 @@ export async function getTrackingForLRAction(lrNumber: string) {
     };
   }
 }
+
+/**
+ * VERIFY PHONE NUMBER FOR DIGITAL LR ACCESS
+ * Checks if the phone number matches sender or receiver for the LR.
+ * If LR is cancelled, returns isCancelled error.
+ * If phone matches & active, returns the 12-char/alphanumeric secure LR link URL (/lr/[booking.id]).
+ */
+export async function verifyLRPhoneAction(lrNumber: string, phoneInput: string) {
+  try {
+    if (!lrNumber || !phoneInput) {
+      return { success: false, error: "LR Number and Phone Number are required." };
+    }
+
+    const cleanInput = phoneInput.replace(/\D/g, "");
+    if (cleanInput.length < 10) {
+      return { success: false, error: "Please enter a valid 10-digit mobile number." };
+    }
+
+    const target10 = cleanInput.slice(-10);
+    const normalizedLR = lrNumber.trim();
+    const numericPart = normalizedLR.replace(/\D/g, "");
+    const paddedLR = numericPart ? `SK${numericPart.padStart(4, "0")}` : normalizedLR;
+
+    const booking = await db.booking.findFirst({
+      where: {
+        OR: [
+          { lrNumber: { equals: normalizedLR, mode: "insensitive" } },
+          { lrNumber: { equals: paddedLR, mode: "insensitive" } },
+          { id: normalizedLR },
+        ],
+      },
+      select: {
+        id: true,
+        lrNumber: true,
+        status: true,
+        senderPhone: true,
+        receiverPhone: true,
+      },
+    });
+
+    if (!booking) {
+      return { success: false, error: `No consignment record found for LR "${lrNumber}".` };
+    }
+
+    // First check if cancelled
+    if (booking.status === BookingStatus.CANCELLED) {
+      return {
+        success: false,
+        isCancelled: true,
+        error: "LR (Builty) is Cancelled. You are not able to see the builty.",
+      };
+    }
+
+    const cleanSender = (booking.senderPhone || "").replace(/\D/g, "").slice(-10);
+    const cleanReceiver = (booking.receiverPhone || "").replace(/\D/g, "").slice(-10);
+
+    const isMatch = target10 === cleanSender || target10 === cleanReceiver;
+
+    if (!isMatch) {
+      return {
+        success: false,
+        error: "Mobile number does not match Sender or Receiver record registered on this LR.",
+      };
+    }
+
+    return {
+      success: true,
+      bookingId: booking.id,
+      targetUrl: `/lr/${booking.id}`,
+    };
+  } catch (err: any) {
+    console.error("Verify LR Phone Error:", err);
+    return {
+      success: false,
+      error: `Verification failed: ${err?.message || String(err)}`,
+    };
+  }
+}
+

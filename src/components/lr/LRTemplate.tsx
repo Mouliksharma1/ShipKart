@@ -146,7 +146,7 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
 
         {/* BOOKED BY DISPLAY */}
         <div className="text-xs font-black uppercase text-blue-950 bg-blue-100 border border-blue-300 px-3.5 py-1 rounded-md tracking-wider shadow-xs">
-          BOOKED BY :- {!booking.createdBy || booking.createdBy.role === "CUSTOMER" ? "SELF" : (booking.createdBy.name || "COUNTER STAFF")}
+          BOOKED BY :- {!booking.createdBy || (booking.createdBy as any).role === "CUSTOMER" ? "SELF" : (booking.createdBy.name || "COUNTER STAFF")}
         </div>
       </div>
 
@@ -154,9 +154,9 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
         <div className="mb-6 p-4 rounded-md border border-red-300 bg-red-50 text-red-900 font-bold text-xs flex items-center space-x-2">
           <span className="text-base">🚫</span>
           <span>
-            {booking.lastUpdatedBy?.startsWith("LR CANCELLED BY")
-              ? booking.lastUpdatedBy
-              : `LR CANCELLED BY :- ${booking.lastUpdatedBy || "STAFF"} AT ${new Date(booking.updatedAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true })}`}
+            {(booking as any).lastUpdatedBy?.startsWith("LR CANCELLED BY")
+              ? (booking as any).lastUpdatedBy
+              : `LR CANCELLED BY :- ${(booking as any).lastUpdatedBy || "STAFF"} AT ${new Date((booking as any).updatedAt || booking.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true })}`}
           </span>
         </div>
       )}

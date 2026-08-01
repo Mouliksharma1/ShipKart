@@ -14,6 +14,8 @@ import {
   Users, 
   Calendar, 
   ArrowRight,
+  TrendingUp,
+  Truck,
 } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 

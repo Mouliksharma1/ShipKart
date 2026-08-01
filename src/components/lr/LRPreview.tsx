@@ -137,57 +137,64 @@ export const LRPreview: React.FC<LRPreviewProps> = ({
     <div className="space-y-6">
       {/* ACTIONS BAR */}
       {showActions && (
-        <div className="bg-slate-900 text-white p-4 rounded-xl shadow-lg border border-slate-800 flex flex-wrap items-center justify-between gap-3 print:hidden">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-bold text-sm tracking-wide">
-              Digital LR: <span className="font-mono text-blue-300">{booking.lrNumber}</span>
+        <div className="bg-slate-900 dark:bg-neutral-900 text-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-800 dark:border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 print:hidden">
+          {/* Header & Status Indicator */}
+          <div className="flex items-center justify-between sm:justify-start gap-2.5 pb-2.5 sm:pb-0 border-b sm:border-b-0 border-slate-800/80">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="font-black text-sm tracking-wide uppercase">
+                Digital LR: <span className="font-mono text-amber-400 font-bold ml-1">{booking.lrNumber}</span>
+              </span>
+            </div>
+            <span className="sm:hidden text-[10px] font-extrabold text-slate-400 uppercase tracking-widest bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700/80">
+              Official
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Action Buttons: 2x2 Grid on Mobile, Flex Row on Desktop */}
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
             {/* PRINT BUTTON */}
             <button
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-semibold transition border border-slate-700 shadow-xs cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-100 text-xs font-bold transition border border-slate-700/80 shadow-xs cursor-pointer w-full sm:w-auto"
             >
-              <Printer className="w-4 h-4 text-blue-400" />
-              Print LR
+              <Printer className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Print LR</span>
             </button>
 
             {/* DOWNLOAD PDF BUTTON */}
             <button
               onClick={handleDownloadPDF}
               disabled={isGeneratingPdf}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-700 hover:bg-blue-600 disabled:bg-blue-900 text-white text-xs font-semibold transition shadow-xs cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-600 disabled:bg-blue-900 active:scale-95 text-white text-xs font-bold transition shadow-md cursor-pointer w-full sm:w-auto"
             >
-              <Download className="w-4 h-4 text-blue-200" />
-              {isGeneratingPdf ? "Generating PDF..." : "Download PDF"}
+              <Download className="w-4 h-4 text-blue-200 shrink-0" />
+              <span className="truncate">{isGeneratingPdf ? "Generating..." : "Download PDF"}</span>
             </button>
 
             {/* WHATSAPP SHARE BUTTON */}
             <button
               onClick={() => setShowWhatsAppModal(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition shadow-xs cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold transition shadow-md cursor-pointer w-full sm:w-auto"
             >
-              <Share2 className="w-4 h-4" />
-              Share WhatsApp
+              <Share2 className="w-4 h-4 shrink-0 text-emerald-100" />
+              <span>WhatsApp</span>
             </button>
 
             {/* COPY LINK BUTTON */}
             <button
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition border border-slate-700 cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-bold transition border border-slate-700/80 cursor-pointer w-full sm:w-auto"
             >
               {copiedLink ? (
                 <>
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  Copied!
+                  <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 text-slate-400" />
-                  Copy LR Link
+                  <Copy className="w-4 h-4 text-slate-400 shrink-0" />
+                  <span>Copy Link</span>
                 </>
               )}
             </button>

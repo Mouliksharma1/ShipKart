@@ -38,6 +38,20 @@ export async function getOfficesAction(query?: string, activeOnly = false) {
   }
 }
 
+function extractGoogleEmbedUrl(input?: string | null): string | null {
+  if (!input) return null;
+  const trimmed = input.trim();
+  const srcMatch = trimmed.match(/src=["']([^"']+)["']/i);
+  if (srcMatch && srcMatch[1]) {
+    return srcMatch[1];
+  }
+  const urlOnly = trimmed.split(/\s+/)[0];
+  if (urlOnly && (urlOnly.startsWith("http://") || urlOnly.startsWith("https://"))) {
+    return urlOnly.replace(/["'>]/g, "");
+  }
+  return trimmed || null;
+}
+
 export async function createOfficeAction(formData: unknown): Promise<ActionResponse> {
   const parseResult = OfficeSchema.safeParse(formData);
   if (!parseResult.success) {
@@ -61,16 +75,28 @@ export async function createOfficeAction(formData: unknown): Promise<ActionRespo
     }
 
     const officeTiming = `${data.openingTime} - ${data.closingTime}`;
+    const cleanUrl = extractGoogleEmbedUrl(data.mapEmbedUrl || data.googleMapsUrl);
 
     const newOffice = await db.officeMaster.create({
       data: {
-        ...data,
-        officeTiming,
+        name: data.name,
         code: data.code || null,
+        address: data.address,
+        city: data.city,
+        state: data.state,
+        pinCode: data.pinCode,
+        country: data.country || "India",
+        phone: data.phone,
         altPhone: data.altPhone || null,
         managerName: data.managerName || null,
         managerPhone: data.managerPhone || null,
-        googleMapsUrl: data.googleMapsUrl || null,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        googleMapsUrl: cleanUrl,
+        openingTime: data.openingTime,
+        closingTime: data.closingTime,
+        officeTiming,
+        status: data.status,
       },
     });
 
@@ -93,6 +119,7 @@ export async function updateOfficeAction(id: string, formData: unknown): Promise
 
   try {
     const officeTiming = `${data.openingTime} - ${data.closingTime}`;
+    const cleanUrl = extractGoogleEmbedUrl(data.mapEmbedUrl || data.googleMapsUrl);
 
     // Check if another office with the exact same name already exists
     const existingOffice = await db.officeMaster.findFirst({
@@ -109,13 +136,24 @@ export async function updateOfficeAction(id: string, formData: unknown): Promise
     const updatedOffice = await db.officeMaster.update({
       where: { id },
       data: {
-        ...data,
-        officeTiming,
+        name: data.name,
         code: data.code || null,
+        address: data.address,
+        city: data.city,
+        state: data.state,
+        pinCode: data.pinCode,
+        country: data.country || "India",
+        phone: data.phone,
         altPhone: data.altPhone || null,
         managerName: data.managerName || null,
         managerPhone: data.managerPhone || null,
-        googleMapsUrl: data.googleMapsUrl || null,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        googleMapsUrl: cleanUrl,
+        openingTime: data.openingTime,
+        closingTime: data.closingTime,
+        officeTiming,
+        status: data.status,
       },
     });
 

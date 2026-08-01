@@ -8,6 +8,9 @@ import { StatCard } from '@/components/admin/StatCard';
 import { Activity, Bell, Building, Truck, Users, Package, Clock, ShieldCheck, ChevronRight, TrendingUp, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 
+import { DatabaseHealthCard } from '@/components/monitoring/DatabaseHealthCard';
+import { SystemCleanupCard } from '@/components/admin/SystemCleanupCard';
+
 export default function MonitoringControlCenterPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -115,6 +118,12 @@ export default function MonitoringControlCenterPage() {
         </div>
       </div>
 
+      {/* Database Health Monitoring & Latency Check */}
+      <DatabaseHealthCard />
+
+      {/* System Maintenance & Cleanup Control */}
+      <SystemCleanupCard />
+
       {/* Monitoring Subpage Navigation Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         <Link
@@ -162,7 +171,6 @@ export default function MonitoringControlCenterPage() {
           <span className="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5">Transit Compliance</span>
         </Link>
       </div>
-
 
       {/* Operations Highlights Card */}
       <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-3xl p-6 shadow-xs">

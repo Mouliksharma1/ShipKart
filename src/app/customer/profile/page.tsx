@@ -5,9 +5,17 @@ import { getProfileAction, updateProfileAction } from '@/app/actions/customer';
 import { User, Phone, Mail, MapPin, Save, ArrowLeft, CheckCircle2, Sparkles, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
+function getCookie(name: string) {
+  if (typeof document === 'undefined') return '';
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+  return '';
+}
+
 export default function CustomerProfilePage() {
-  const [phone, setPhone] = useState('9876543210');
-  const [inputPhone, setInputPhone] = useState('9876543210');
+  const [phone, setPhone] = useState('');
+  const [inputPhone, setInputPhone] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [alternatePhone, setAlternatePhone] = useState('');
@@ -41,7 +49,16 @@ export default function CustomerProfilePage() {
   };
 
   useEffect(() => {
-    fetchProfile(phone);
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryPhone = urlParams.get('phone') || urlParams.get('mobile');
+      const storedPhone = localStorage.getItem('shipkart_customer_phone') || getCookie('shipkart_customer_phone');
+      
+      const activePhone = queryPhone || storedPhone || '6378507160';
+      setPhone(activePhone);
+      setInputPhone(activePhone);
+      fetchProfile(activePhone);
+    }
   }, []);
 
   const handlePhoneLoad = (e: React.FormEvent) => {

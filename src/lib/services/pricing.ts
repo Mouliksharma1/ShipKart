@@ -105,13 +105,22 @@ export async function calculatePrice(input: CalculatePriceInput): Promise<Pricin
     }
 
     // Find normalized rule matching parcelType
-    const matchingRule = resolvedPricingGroup.pricingRules.find(
+    const matchingRule = resolvedPricingGroup?.pricingRules?.find(
       (r: any) => r.parcelType === parcelType
     );
 
-    if (!matchingRule) {
-      return { success: false, error: `No tariff rule configured for parcel type: ${parcelType}` };
-    }
+    // Default price fallbacks if no tariff rule is explicitly configured
+    const defaultSelfPrices: Record<string, number> = {
+      ENVELOPE: 30,
+      SMALL_PARCEL: 50,
+      MEDIUM_PARCEL: 80,
+      BOX: 100,
+      HEAVY_PARCEL: 150,
+      LOOSE_CARGO: 200,
+    };
+
+    const selfPrice = matchingRule?.selfPrice ?? defaultSelfPrices[parcelType] ?? 50;
+    const taxiPrice = matchingRule?.taxiPrice ?? (selfPrice + 20);
 
     // 4. TAXI PICKUP RESTRICTIONS & ELIGIBILITY EVALUATION
     // Rule: Distance between Customer & Office <= 5 KM AND Quantity >= 5 AND ParcelType != ENVELOPE
@@ -120,8 +129,8 @@ export async function calculatePrice(input: CalculatePriceInput): Promise<Pricin
 
     if (parcelType === ParcelType.ENVELOPE) {
       taxiEligible = false;
-      taxiMessage = "Taxi Pickup is not available for Envelope consignments.";
-    } else if (matchingRule.taxiPrice === null) {
+      taxiMessage = "Envelope items are priced at standard drop-off rate.";
+    } else if (matchingRule && matchingRule.taxiPrice === null) {
       taxiEligible = false;
       taxiMessage = "Taxi Pickup is disabled for this item tariff.";
     } else if (pickupDistanceKm > 5) {
@@ -132,34 +141,22 @@ export async function calculatePrice(input: CalculatePriceInput): Promise<Pricin
       taxiMessage = "Minimum 5 quantity is required for Taxi Pickup.";
     }
 
-    if (pickupMethod === PickupMethod.TAXI_PICKUP && !taxiEligible) {
-      return {
-        success: false,
-        error: taxiMessage,
-        taxiEligible: false,
-        taxiMessage,
-      };
-    }
-
     // 5. PRICE CALCULATIONS
-    const unitPrice =
-      pickupMethod === PickupMethod.TAXI_PICKUP
-        ? matchingRule.taxiPrice ?? matchingRule.selfPrice
-        : matchingRule.selfPrice;
+    const isTaxiApplied = pickupMethod === PickupMethod.TAXI_PICKUP && taxiEligible;
 
-    const selfPrice = matchingRule.selfPrice;
-    const taxiPrice = matchingRule.taxiPrice;
+    const unitPrice = isTaxiApplied
+      ? taxiPrice ?? selfPrice
+      : selfPrice;
 
     const subtotal = unitPrice * quantity;
-    const pickupCharge =
-      pickupMethod === PickupMethod.TAXI_PICKUP
-        ? Math.max(0, (unitPrice - selfPrice) * quantity)
-        : 0;
+    const pickupCharge = isTaxiApplied
+      ? Math.max(0, (unitPrice - selfPrice) * quantity)
+      : 0;
 
     return {
       success: true,
-      resolutionStage,
-      pricingGroupName: resolvedPricingGroup.name,
+      resolutionStage: resolvedPricingGroup ? resolutionStage : "RAJASTHAN_DEFAULT",
+      pricingGroupName: resolvedPricingGroup?.name || "Standard Tariff",
       parcelType,
       pickupMethod,
       unitPrice,

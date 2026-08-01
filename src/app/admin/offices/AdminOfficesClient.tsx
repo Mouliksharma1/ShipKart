@@ -18,6 +18,8 @@ interface Office {
   managerPhone?: string | null;
   latitude: number;
   longitude: number;
+  googleMapsUrl?: string | null;
+  mapEmbedUrl?: string | null;
   openingTime: string;
   closingTime: string;
   status: boolean;
@@ -44,6 +46,7 @@ export default function AdminOfficesClient({ initialOffices }: { initialOffices:
   const [managerPhone, setManagerPhone] = useState("");
   const [latitude, setLatitude] = useState(26.285498);
   const [longitude, setLongitude] = useState(73.018264);
+  const [mapEmbedUrl, setMapEmbedUrl] = useState("");
   const [openingTime, setOpeningTime] = useState("04:00 AM");
   const [closingTime, setClosingTime] = useState("11:00 PM");
 
@@ -61,6 +64,7 @@ export default function AdminOfficesClient({ initialOffices }: { initialOffices:
     setManagerPhone("");
     setLatitude(26.285498);
     setLongitude(73.018264);
+    setMapEmbedUrl("");
     setOpeningTime("04:00 AM");
     setClosingTime("11:00 PM");
     setErrorMsg(null);
@@ -81,6 +85,7 @@ export default function AdminOfficesClient({ initialOffices }: { initialOffices:
     setManagerPhone(off.managerPhone || "");
     setLatitude(off.latitude);
     setLongitude(off.longitude);
+    setMapEmbedUrl(off.mapEmbedUrl || off.googleMapsUrl || "");
     setOpeningTime(off.openingTime);
     setClosingTime(off.closingTime);
     setErrorMsg(null);
@@ -105,6 +110,8 @@ export default function AdminOfficesClient({ initialOffices }: { initialOffices:
       managerPhone,
       latitude: Number(latitude),
       longitude: Number(longitude),
+      mapEmbedUrl,
+      googleMapsUrl: mapEmbedUrl,
       openingTime,
       closingTime,
       status: editingOffice ? editingOffice.status : true,
@@ -386,6 +393,23 @@ export default function AdminOfficesClient({ initialOffices }: { initialOffices:
                     className="w-full rounded-xl border border-slate-300 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2 px-3 text-slate-900 dark:text-white font-mono"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-slate-700 dark:text-neutral-300 mb-1 flex items-center justify-between">
+                  <span>Google Maps Embed URL / iFrame Link</span>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">100% Free • No API Key</span>
+                </label>
+                <input
+                  type="text"
+                  value={mapEmbedUrl}
+                  onChange={(e) => setMapEmbedUrl(e.target.value)}
+                  placeholder='Paste Google Maps Embed URL or full <iframe> tag (e.g. https://www.google.com/maps/embed?...)'
+                  className="w-full rounded-xl border border-slate-300 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-2 px-3 text-slate-900 dark:text-white font-mono text-[11px]"
+                />
+                <p className="text-[10px] text-slate-400 mt-1">
+                  How to get: Go to Google Maps → Search office landmark → Share → Embed a map → Copy HTML / URL.
+                </p>
               </div>
 
               <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200 dark:border-neutral-800">

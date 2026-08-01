@@ -166,9 +166,9 @@ export const LRPreview: React.FC<LRPreviewProps> = ({
             <button
               onClick={handleDownloadPDF}
               disabled={isGeneratingPdf}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-600 disabled:bg-blue-900 active:scale-95 text-white text-xs font-bold transition shadow-md cursor-pointer w-full sm:w-auto"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:bg-blue-900 active:scale-95 text-white text-xs font-extrabold transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-blue-500/25 cursor-pointer w-full sm:w-auto group"
             >
-              <Download className="w-4 h-4 text-blue-200 shrink-0" />
+              <Download className="w-4 h-4 text-blue-200 group-hover:scale-110 transition-transform shrink-0" />
               <span className="truncate">{isGeneratingPdf ? "Generating..." : "Download PDF"}</span>
             </button>
 

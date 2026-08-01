@@ -4,7 +4,16 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createBookingAction } from "@/app/actions/booking";
 import { calculatePriceAction } from "@/app/actions/pricing";
+import { getBookingHistoryAction, getProfileAction } from "@/app/actions/customer";
 import { ParcelType, PickupMethod, PaymentType, PaymentMode } from "@prisma/client";
+
+function getCookie(name: string) {
+  if (typeof document === 'undefined') return '';
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+  return '';
+}
 import {
   MapPin,
   User,
@@ -56,18 +65,57 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
   const firstBranch = offices.find(o => o.id !== headOffice?.id) || offices[1] || offices[0];
 
   // STEP 1: SENDER FORM STATE
-  const [senderName, setSenderName] = useState("Rudra Pratap");
-  const [senderPhone, setSenderPhone] = useState("9829012345");
-  const [senderEmail, setSenderEmail] = useState("rudra@shipkart.com");
+  const [senderName, setSenderName] = useState("");
+  const [senderPhone, setSenderPhone] = useState("");
+  const [senderEmail, setSenderEmail] = useState("");
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [locationAccuracy, setLocationAccuracy] = useState<number | null>(null);
-  const [pickupAddress, setPickupAddress] = useState("Paota Circle, Jodhpur, Rajasthan");
+  const [pickupAddress, setPickupAddress] = useState("");
   const [gpsStatus, setGpsStatus] = useState<"IDLE" | "CAPTURING" | "CAPTURED" | "DENIED">("IDLE");
 
   // STEP 2: RECEIVER FORM STATE
-  const [receiverName, setReceiverName] = useState("Vikram Sharma");
-  const [receiverPhone, setReceiverPhone] = useState("9414098765");
+  const [receiverName, setReceiverName] = useState("");
+  const [receiverPhone, setReceiverPhone] = useState("");
+
+  // Dynamically load logged-in customer phone & pre-fill sender name from previous builty
+  useEffect(() => {
+    async function loadCustomerDefaults() {
+      if (typeof window === "undefined") return;
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryPhone = urlParams.get("phone") || urlParams.get("mobile");
+      const storedPhone = localStorage.getItem("shipkart_customer_phone") || getCookie("shipkart_customer_phone");
+      const activePhone = queryPhone || storedPhone || "6378507160";
+
+      if (activePhone) {
+        setSenderPhone(activePhone);
+
+        try {
+          // 1. Fetch most recent builty to get the name, email & address used in previous builty
+          const historyRes = await getBookingHistoryAction(activePhone);
+          if (historyRes.success && historyRes.data && historyRes.data.length > 0) {
+            const latest = historyRes.data[0];
+            if (latest.senderName) setSenderName(latest.senderName);
+            if (latest.senderEmail) setSenderEmail(latest.senderEmail);
+            if (latest.pickupAddress) setPickupAddress(latest.pickupAddress);
+          } else {
+            // 2. Fallback to customer account profile if no previous builty exists
+            const profileRes = await getProfileAction(activePhone);
+            if (profileRes.success && profileRes.data) {
+              const p = profileRes.data;
+              if (p.name) setSenderName(p.name);
+              if (p.email) setSenderEmail(p.email);
+              if (p.address) setPickupAddress(p.address);
+            }
+          }
+        } catch (err) {
+          console.warn("Failed to auto-prefill customer builty details:", err);
+        }
+      }
+    }
+
+    loadCustomerDefaults();
+  }, []);
 
   // STEP 3: PARCEL ITEMS STATE (Multi-Item)
   const [items, setItems] = useState<ParcelItemState[]>([
@@ -131,6 +179,43 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
 
   const handleUpdateItem = (id: string, field: keyof ParcelItemState, value: any) => {
     setItems(items.map((i) => (i.id === id ? { ...i, [field]: value } : i)));
+  };
+
+  // Step 1 Validation Handler
+  const handleStep1Next = () => {
+    setErrorMsg(null);
+    if (!senderName || !senderName.trim()) {
+      setErrorMsg("Sender Full Name is required.");
+      return;
+    }
+    if (!senderPhone || !/^[0-9]{10}$/.test(senderPhone.trim())) {
+      setErrorMsg("Please enter a valid 10-digit Sender Phone Number.");
+      return;
+    }
+
+    const hasGPS = latitude !== null && longitude !== null;
+    const hasManualAddress = pickupAddress && pickupAddress.trim().length > 0;
+
+    if (!hasGPS && !hasManualAddress) {
+      setErrorMsg("Pickup location missing! Please capture your GPS location OR enter a manual pickup address.");
+      return;
+    }
+
+    setStep(2);
+  };
+
+  // Step 2 Validation Handler
+  const handleStep2Next = () => {
+    setErrorMsg(null);
+    if (!receiverName || !receiverName.trim()) {
+      setErrorMsg("Receiver Full Name is required.");
+      return;
+    }
+    if (!receiverPhone || !/^[0-9]{10}$/.test(receiverPhone.trim())) {
+      setErrorMsg("Please enter a valid 10-digit Receiver Phone Number.");
+      return;
+    }
+    setStep(3);
   };
 
   // Recalculate Prices on Step Changes & Form Edits
@@ -404,7 +489,7 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
               <div className="flex justify-end pt-3">
                 <button
                   type="button"
-                  onClick={() => setStep(2)}
+                  onClick={handleStep1Next}
                   className="px-5 py-2.5 rounded-xl bg-amber-500 text-amber-950 font-bold hover:bg-amber-400 flex items-center space-x-2"
                 >
                   <span>Next: Receiver Information</span>
@@ -457,7 +542,7 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep(3)}
+                  onClick={handleStep2Next}
                   className="px-5 py-2.5 rounded-xl bg-amber-500 text-amber-950 font-bold hover:bg-amber-400 flex items-center space-x-2"
                 >
                   <span>Next: Parcel Items</span>
@@ -509,7 +594,6 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
                           onChange={(e) => handleUpdateItem(item.id, "parcelType", e.target.value as ParcelType)}
                           className="w-full rounded-lg border border-slate-300 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-2 font-bold"
                         >
-                          <option value="ENVELOPE">ENVELOPE</option>
                           <option value="BOX">BOX</option>
                           <option value="MEDIUM_PARCEL">MEDIUM PARCEL</option>
                           <option value="LARGE_BUNDLE">LARGE BUNDLE</option>

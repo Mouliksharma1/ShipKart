@@ -2,6 +2,8 @@ import React from 'react';
 import { getSettingsAction } from '@/app/actions/admin/settings';
 import { Shield, Building, Globe, Bell, DollarSign, Lock, Sliders, ToggleLeft, ToggleRight, HardDrive } from 'lucide-react';
 import Link from 'next/link';
+import { DatabaseHealthCard } from '@/components/monitoring/DatabaseHealthCard';
+import { SystemCleanupCard } from '@/components/admin/SystemCleanupCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,9 +23,15 @@ export default async function AdminSettingsPage() {
             <span className="text-xs text-slate-300 dark:text-zinc-600">/</span>
             <span className="text-xs text-slate-500 dark:text-zinc-400 font-semibold">Settings</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Enterprise Configuration & Feature Flags</h1>
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Enterprise Configuration & System Control</h1>
         </div>
       </div>
+
+      {/* Database Infrastructure Health Check */}
+      <DatabaseHealthCard />
+
+      {/* Manual System Maintenance & Cleanup */}
+      <SystemCleanupCard />
 
       {/* Feature Flags Section */}
       <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-slate-200/80 dark:border-zinc-800 p-6 shadow-xs space-y-4">

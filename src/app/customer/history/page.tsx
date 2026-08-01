@@ -5,13 +5,34 @@ import { getBookingHistoryAction } from '@/app/actions/customer';
 import { Search, Download, ExternalLink, ArrowLeft, Filter, Phone, Package, Calendar } from 'lucide-react';
 import Link from 'next/link';
 
+function getCookie(name: string) {
+  if (typeof document === 'undefined') return '';
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+  return '';
+}
+
 export default function CustomerBookingHistoryPage() {
-  const [phone, setPhone] = useState('9876543210');
-  const [inputPhone, setInputPhone] = useState('9876543210');
+  const [phone, setPhone] = useState('');
+  const [inputPhone, setInputPhone] = useState('');
   const [bookings, setBookings] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [loading, setLoading] = useState(false);
+
+  // Initialize customer phone from URL parameters, localStorage, or cookies
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryPhone = urlParams.get('phone') || urlParams.get('mobile');
+      const storedPhone = localStorage.getItem('shipkart_customer_phone') || getCookie('shipkart_customer_phone');
+      
+      const activePhone = queryPhone || storedPhone || '6378507160';
+      setPhone(activePhone);
+      setInputPhone(activePhone);
+    }
+  }, []);
 
   const fetchHistory = async (userPhone: string, q?: string, status?: string) => {
     if (!userPhone) return;
@@ -19,18 +40,27 @@ export default function CustomerBookingHistoryPage() {
     const res = await getBookingHistoryAction(userPhone, q, status);
     if (res.success && res.data) {
       setBookings(res.data);
+    } else {
+      setBookings([]);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchHistory(phone, searchQuery, statusFilter);
+    if (phone) {
+      fetchHistory(phone, searchQuery, statusFilter);
+    }
   }, [phone, searchQuery, statusFilter]);
 
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputPhone.trim()) {
-      setPhone(inputPhone.trim());
+    const trimmed = inputPhone.trim();
+    if (trimmed) {
+      setPhone(trimmed);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('shipkart_customer_phone', trimmed);
+        document.cookie = `shipkart_customer_phone=${trimmed}; path=/; max-age=604800`;
+      }
     }
   };
 
@@ -138,9 +168,9 @@ export default function CustomerBookingHistoryPage() {
                       <Link
                         href={`/lr/${b.id}`}
                         target="_blank"
-                        className="px-3 py-1.5 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 text-slate-700 dark:text-zinc-300 rounded-xl text-xs font-bold transition inline-flex items-center"
+                        className="px-3.5 py-1.5 bg-slate-100 dark:bg-zinc-800/80 hover:bg-amber-500 dark:hover:bg-amber-500 text-slate-700 dark:text-zinc-200 hover:text-amber-950 dark:hover:text-amber-950 rounded-xl text-xs font-bold transition-all duration-200 inline-flex items-center shadow-xs group cursor-pointer"
                       >
-                        <Download className="w-3.5 h-3.5 mr-1" /> PDF LR
+                        <Download className="w-3.5 h-3.5 mr-1 text-slate-500 dark:text-zinc-400 group-hover:text-amber-950 transition-colors" /> PDF LR
                       </Link>
                       <Link
                         href={`/track/${b.lrNumber}`}

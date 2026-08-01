@@ -37,9 +37,13 @@ export async function employeeLoginAction(input: { username: string; password?: 
       return { success: false, error: 'Invalid Employee Code / Username or Password.' };
     }
 
-    // Strictly reject customers from logging in via staff terminal
+    // Strictly reject customers and admins from logging in via staff terminal
     if (user.role === Role.CUSTOMER) {
       return { success: false, error: 'Access Denied. Customer accounts cannot access the Staff Terminal.' };
+    }
+
+    if (user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN) {
+      return { success: false, error: 'Invalid Employee Code / Username or Password.' };
     }
 
     if (user.status === false || user.accountLocked === true) {
@@ -138,6 +142,13 @@ export async function loginAction(formData: unknown): Promise<AuthResponse> {
 
 
     if (!user) {
+      return {
+        success: false,
+        error: "Invalid email address or password.",
+      };
+    }
+
+    if (user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN) {
       return {
         success: false,
         error: "Invalid email address or password.",

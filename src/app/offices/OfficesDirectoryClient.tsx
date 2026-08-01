@@ -28,6 +28,8 @@ interface Office {
   managerPhone?: string | null;
   latitude: number;
   longitude: number;
+  googleMapsUrl?: string | null;
+  mapEmbedUrl?: string | null;
   officeTiming: string;
   status: boolean;
 }
@@ -169,14 +171,41 @@ export default function OfficesDirectoryClient({ initialOffices }: { initialOffi
               </div>
             </div>
 
-            {/* Interactive OpenStreetMap */}
+            {/* Interactive Google Map / OpenStreetMap */}
             <div className="pt-2">
-              <DynamicOfficeMap
-                latitude={office.latitude}
-                longitude={office.longitude}
-                officeName={office.name}
-                address={office.address}
-              />
+              {office.mapEmbedUrl || office.googleMapsUrl ? (
+                <div className="w-full h-52 rounded-xl overflow-hidden border border-slate-200 dark:border-neutral-800 shadow-inner bg-slate-100 dark:bg-neutral-950 relative group">
+                  <iframe
+                    title={`${office.name} Google Map`}
+                    src={office.mapEmbedUrl || office.googleMapsUrl || ""}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen={true}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="w-full h-full rounded-xl"
+                  />
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      `${office.name} ${office.address} ${office.city}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-900 text-amber-400 text-[10px] font-bold border border-slate-700 shadow-md backdrop-blur-sm transition flex items-center gap-1"
+                  >
+                    <Compass className="w-3 h-3 text-amber-500" />
+                    Open Directions
+                  </a>
+                </div>
+              ) : (
+                <DynamicOfficeMap
+                  latitude={office.latitude}
+                  longitude={office.longitude}
+                  officeName={office.name}
+                  address={office.address}
+                />
+              )}
             </div>
           </div>
         ))}

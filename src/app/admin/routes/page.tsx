@@ -1,7 +1,7 @@
 import React from 'react';
 import { getRoutesAction } from '@/app/actions/admin/routes';
 import { getOfficesAction } from '@/app/actions/admin/office';
-import { getPricingGroupsAction } from '@/app/actions/admin/pricing';
+import { getPricingGroupsAction } from '@/app/actions/pricing';
 import AdminRoutesClient from './AdminRoutesClient';
 
 export const dynamic = 'force-dynamic';

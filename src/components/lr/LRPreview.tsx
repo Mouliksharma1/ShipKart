@@ -27,7 +27,7 @@ export const LRPreview: React.FC<LRPreviewProps> = ({
       : appDomain;
 
   const publicLrUrl = `${baseUrl}/lr/${booking.id}`;
-  const publicTrackingUrl = `${baseUrl}/track?lr=${booking.lrNumber}`;
+  const publicTrackingUrl = `${baseUrl}/track/${booking.id}`;
 
   // PRINT HANDLER
   const handlePrint = () => {

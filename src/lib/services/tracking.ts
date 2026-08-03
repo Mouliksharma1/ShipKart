@@ -183,7 +183,7 @@ export async function updateBookingStatus(params: UpdateStatusParams) {
         officeName: collectionOffice,
         collectedTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         helpline: "6350603414",
-        trackingUrl: `https://shipkart.app/track/${booking.lrNumber}`,
+        trackingUrl: `https://shipkart.app/track/${booking.id || booking.lrNumber}`,
         status: params.status.replace(/_/g, " "),
       };
 

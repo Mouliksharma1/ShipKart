@@ -191,7 +191,7 @@ export async function createBookingAction(formData: unknown): Promise<BookingAct
           lrNumber,
           origin: originOffice?.name || 'Origin Office',
           destination: destOffice?.name || 'Destination Office',
-          trackingUrl: `https://shipkart.app/track/${lrNumber}`,
+          trackingUrl: `https://shipkart.app/track/${result.id || lrNumber}`,
         };
 
         // Sender Notification

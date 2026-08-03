@@ -105,7 +105,7 @@ export async function globalAdminSearch(query: string): Promise<GlobalSearchResu
       id: b.id,
       title: `LR: ${b.lrNumber}`,
       subtitle: `${b.senderName} ➔ ${b.receiverName} (${b.originOffice.city} to ${b.destinationOffice.city})`,
-      url: `/admin/bookings/${b.id}`,
+      url: `/track/${b.id}`,
       badge: b.status,
     });
   }

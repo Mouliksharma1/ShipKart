@@ -239,6 +239,7 @@ export async function getBookingTimeline(lrNumber: string, isStaff = false) {
   const booking = await db.booking.findFirst({
     where: {
       OR: [
+        { id: lrNumber }, // Direct Booking UUID lookup
         { lrNumber: normalized },
         { lrNumber: padded },
         { lrNumber }, // also try exact input (covers legacy SK... LRs)
@@ -282,6 +283,7 @@ export async function getBookingTimeline(lrNumber: string, isStaff = false) {
 
   return {
     booking: {
+      id: booking.id,
       lrNumber: booking.lrNumber,
       status: booking.status,
       createdAt: booking.createdAt,

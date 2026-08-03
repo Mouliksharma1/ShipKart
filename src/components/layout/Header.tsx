@@ -56,7 +56,7 @@ export function Header() {
 
             {/* Desktop Navigation Links */}
             <nav className="hidden md:flex items-center space-x-6 text-xs font-bold">
-              <Link href="/employee/tracking" className="flex items-center space-x-1.5 text-slate-600 dark:text-neutral-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
+              <Link href="/track" className="flex items-center space-x-1.5 text-slate-600 dark:text-neutral-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
                 <Search className="h-4 w-4 text-amber-500" />
                 <span>Track LR</span>
               </Link>
@@ -119,7 +119,7 @@ export function Header() {
               {/* Navigation Links */}
               <div className="grid grid-cols-1 gap-1.5">
                 <Link
-                  href="/employee/tracking"
+                  href="/track"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-neutral-200 bg-slate-50 dark:bg-neutral-950/60 hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 border border-slate-200/60 dark:border-neutral-800 transition-all"
                 >

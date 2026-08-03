@@ -17,6 +17,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+import { redirect } from "next/navigation";
+
 export async function generateMetadata({
   params,
 }: {
@@ -25,8 +27,8 @@ export async function generateMetadata({
   const resolvedParams = await params;
   const lrNumber = resolvedParams.lrNumber;
   return {
-    title: `Track Parcel ${lrNumber} | POOJA TRAVELS & CARGO`,
-    description: `Real-time consignment tracking for LR ${lrNumber} powered by ShipKart.`,
+    title: `Track Parcel | POOJA TRAVELS & CARGO`,
+    description: `Real-time consignment tracking powered by ShipKart.`,
   };
 }
 
@@ -36,9 +38,9 @@ export default async function PublicTrackingPage({
   params: Promise<{ lrNumber: string }>;
 }) {
   const resolvedParams = await params;
-  const lrNumber = resolvedParams.lrNumber;
+  const lrNumberParam = resolvedParams.lrNumber;
 
-  const result = await getTrackingTimelineAction(lrNumber, false);
+  const result = await getTrackingTimelineAction(lrNumberParam, false);
 
   if (!result.success || !result.data) {
     return (
@@ -49,7 +51,7 @@ export default async function PublicTrackingPage({
           </div>
           <h1 className="text-xl font-bold text-slate-100">Parcel Not Found</h1>
           <p className="text-sm text-slate-400">
-            {result.error || `No consignment record found for LR "${lrNumber}". Please check the LR number.`}
+            {result.error || `No consignment record found for "${lrNumberParam}". Please check your tracking number.`}
           </p>
           <div className="pt-2">
             <Link
@@ -65,6 +67,11 @@ export default async function PublicTrackingPage({
   }
 
   const { booking, timeline, expectedNextStep } = result.data;
+
+  // Auto-redirect URL to canonical Booking UUID if user visited via LR number (e.g. /track/0006 -> /track/01bd870f-17a9-4eef-9134-9deff384b50c)
+  if (booking.id && lrNumberParam !== booking.id) {
+    redirect(`/track/${booking.id}`);
+  }
 
   const formattedBookedDate = new Date(booking.createdAt).toLocaleString("en-IN", {
     day: "2-digit",

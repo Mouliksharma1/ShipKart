@@ -11,9 +11,9 @@ export function InstantTrackerForm() {
 
   const handleTrackSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const clean = query.trim().toUpperCase();
+    const clean = query.trim();
     if (!clean) return;
-    router.push(`/track/${encodeURIComponent(clean)}`);
+    router.push(`/track?lr=${encodeURIComponent(clean)}`);
   };
 
   const handleBookRedirect = () => {

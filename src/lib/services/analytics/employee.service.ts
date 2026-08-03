@@ -28,7 +28,7 @@ export async function getEmployeeAnalytics(officeId?: string) {
         const userBookings = await db.booking.findMany({
           where: {
             OR: [
-              { createdBy: emp.id },
+              { createdById: emp.id },
               { lastUpdatedBy: emp.id },
             ],
           },

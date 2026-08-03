@@ -125,6 +125,8 @@ export async function getEmployees(params?: {
   }
   if (params?.role) {
     where.role = params.role;
+  } else {
+    where.role = { not: Role.CUSTOMER };
   }
   if (params?.search) {
     where.OR = [

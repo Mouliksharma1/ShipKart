@@ -20,13 +20,14 @@ export const LRPreview: React.FC<LRPreviewProps> = ({
   const [copiedLink, setCopiedLink] = useState(false);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
 
+  const appDomain = process.env.NEXT_PUBLIC_APP_URL || "https://shipkart.app";
   const baseUrl =
-    typeof window !== "undefined"
+    typeof window !== "undefined" && !window.location.hostname.includes("localhost")
       ? window.location.origin
-      : process.env.NEXT_PUBLIC_APP_URL || "https://shipkart.in";
+      : appDomain;
 
   const publicLrUrl = `${baseUrl}/lr/${booking.id}`;
-  const publicTrackingUrl = `${baseUrl}/track/${booking.lrNumber}`;
+  const publicTrackingUrl = `${baseUrl}/track?lr=${booking.lrNumber}`;
 
   // PRINT HANDLER
   const handlePrint = () => {

@@ -89,19 +89,6 @@ function LoginFormContent() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-slate-50 dark:bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.15),rgba(255,255,255,0))] transition-colors duration-300">
       <div className="w-full max-w-md space-y-6">
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white p-1 shadow-xl shadow-amber-500/20 border border-slate-200 dark:border-neutral-800">
-            <img src="/logo.png" alt="ShipKart Logo" className="h-full w-full object-contain" />
-          </div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-            Ship<span className="text-amber-500 dark:text-amber-400">Kart</span>
-          </h1>
-          <p className="text-xs font-semibold text-amber-600 dark:text-amber-300 uppercase tracking-widest">
-            CUSTOMER PORTAL & EXPRESS LOGISTICS
-          </p>
-        </div>
-
         {/* Auth Mode Tab Switcher */}
         {mode !== "forgot" && (
           <div className="grid grid-cols-2 p-1.5 bg-slate-200/80 dark:bg-neutral-900 border border-slate-300 dark:border-neutral-800 rounded-2xl">

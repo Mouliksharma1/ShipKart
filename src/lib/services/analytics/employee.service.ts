@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db';
+import { db } from '@/lib/db';
 
 export async function getEmployeeAnalytics(officeId?: string) {
   try {
@@ -7,7 +7,7 @@ export async function getEmployeeAnalytics(officeId?: string) {
       whereClause.officeId = officeId;
     }
 
-    const employees = await prisma.user.findMany({
+    const employees = await db.user.findMany({
       where: whereClause,
       select: {
         id: true,
@@ -21,14 +21,37 @@ export async function getEmployeeAnalytics(officeId?: string) {
       },
     });
 
-    const leaderboard = employees.map((emp) => ({
-      ...emp,
-      bookingsCount: Math.floor(Math.random() * 45) + 5, // Simulated aggregated bookings processed
-      collectionsAmount: Math.floor(Math.random() * 85000) + 12000, // Simulated collections handled
-      rating: (4.0 + Math.random() * 0.9).toFixed(1),
-    }));
+    // Fetch real booking statistics for each employee
+    const leaderboard = await Promise.all(
+      employees.map(async (emp) => {
+        // Bookings created by or last updated by this staff member
+        const userBookings = await db.booking.findMany({
+          where: {
+            OR: [
+              { createdBy: emp.id },
+              { lastUpdatedBy: emp.id },
+            ],
+          },
+          select: {
+            totalAmount: true,
+            paymentStatus: true,
+          },
+        });
 
-    leaderboard.sort((a, b) => b.bookingsCount - a.bookingsCount);
+        const bookingsCount = userBookings.length;
+        const collectionsAmount = userBookings
+          .filter((b) => b.paymentStatus === 'PAID')
+          .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+
+        return {
+          ...emp,
+          bookingsCount,
+          collectionsAmount,
+        };
+      })
+    );
+
+    leaderboard.sort((a, b) => b.collectionsAmount - a.collectionsAmount || b.bookingsCount - a.bookingsCount);
 
     return {
       totalEmployees: employees.length,

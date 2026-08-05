@@ -98,15 +98,15 @@ export function Footer() {
             </div>
 
             {/* Embedded Google Map Frame */}
-            <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-neutral-800/90 shadow-xl h-44 w-full bg-slate-200 dark:bg-neutral-900">
+            <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-neutral-800/90 shadow-xl h-44 w-full bg-slate-200 dark:bg-neutral-900 relative">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3577.2652977703!2d73.01826457502641!3d26.285498277026598!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39418da8481efa59%3A0x86303ce101608fd5!2sPooja%20Travels!5e0!3m2!1sen!2sin!4v1784798358807!5m2!1sen!2sin"
+                src="https://maps.google.com/maps?q=Pooja+Travels+Sojati+Gate+Jodhpur+Rajasthan&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
-                style={{ border: 0, filter: "contrast(1.05) saturate(1.1)" }}
+                style={{ border: 0 }}
                 allowFullScreen={false}
                 loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
+                referrerPolicy="no-referrer-when-downgrade"
                 title="Pooja Travels Head Office Map"
               />
             </div>

@@ -15,7 +15,7 @@ export function Footer() {
           <div className="lg:col-span-4 space-y-4">
             <Link href="/" className="flex items-center space-x-3 group">
               <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-white p-0.5 shadow-md shadow-amber-500/10 dark:shadow-amber-500/20 border border-slate-200 dark:border-transparent">
-                <img src="/logo.png" alt="ShipKart Logo" className="h-full w-full object-contain" />
+                <img src="/shipkartLogo.png" alt="ShipKart Logo" className="h-full w-full object-contain" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white">

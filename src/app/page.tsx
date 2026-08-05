@@ -17,23 +17,23 @@ export default function Home() {
                 <Truck className="h-4 w-4" />
                 <span>POOJA TRAVELS & CARGO • OFFICIAL LOGISTICS PLATFORM</span>
               </div>
-              
+
               <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                 Fast, Reliable <br />
                 <span className="inline-block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-400 dark:via-amber-200 dark:to-amber-500">
-                  <Typewriter 
+                  <Typewriter
                     words={[
                       "Parcel Logistics & Builty",
                       "Bus Freight Management",
                       "Rajasthan & UP Routes",
                       "Instant LR Tracking"
-                    ]} 
-                    speed={80} 
-                    delayBetweenWords={2000} 
+                    ]}
+                    speed={80}
+                    delayBetweenWords={2000}
                   />
                 </span>
               </h1>
-              
+
               <p className="text-sm sm:text-base text-slate-600 dark:text-neutral-400 max-w-2xl leading-relaxed">
                 Direct parcel dispatches across Rajasthan & UP. Complete digitised LR generation, instant tracking, partner office collections, and zero-delay bus cargo management.
               </p>

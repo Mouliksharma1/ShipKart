@@ -41,7 +41,7 @@ function AdminLoginFormContent() {
         {/* Brand Header */}
         <div className="text-center space-y-2">
           <div className="inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white p-1 shadow-xl shadow-amber-500/20 border border-slate-200 dark:border-neutral-800">
-            <img src="/logo.png" alt="ShipKart Logo" className="h-full w-full object-contain" />
+            <img src="/shipkartLogo.png" alt="ShipKart Logo" className="h-full w-full object-contain" />
           </div>
           <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
             Ship<span className="text-amber-500 dark:text-amber-400">Kart</span>

@@ -182,6 +182,19 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
                 <span className="font-semibold">Pickup Address:</span> {booking.pickupAddress}
               </p>
             )}
+            {(booking as any).latitude && (booking as any).longitude && (
+              <p className="text-xs text-slate-600 mt-1">
+                <span className="font-semibold">GPS Coordinates:</span>{" "}
+                <a
+                  href={`https://www.google.com/maps?q=${(booking as any).latitude},${(booking as any).longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 font-mono font-bold hover:underline"
+                >
+                  📍 {(booking as any).latitude.toFixed(5)}, {(booking as any).longitude.toFixed(5)} (Google Maps)
+                </a>
+              </p>
+            )}
           </div>
         </div>
 
@@ -409,11 +422,21 @@ export const LRTemplate: React.FC<LRTemplateProps> = ({
       {/* 7. TERMS & CONDITIONS & FOOTER */}
       <div className="border-t border-slate-300 pt-3 text-[10px] text-slate-600 leading-normal">
         <p className="font-bold text-slate-800 uppercase tracking-wider mb-1">Terms & Conditions:</p>
+        <p className="italic text-slate-700 mb-1.5">
+          In the event of any dispute, it shall be deemed that the merchant/party has accepted the following terms and conditions upon booking the parcel:
+        </p>
         <ul className="list-disc list-inside space-y-0.5">
           <li>Receiver must present a valid original ID at the destination office for parcel collection.</li>
           <li>Home delivery is NOT available; all parcels are to be collected from the specified Destination Office.</li>
           <li>Keep this Digital LR / LR Number until parcel delivery is verified and completed.</li>
           <li>Goods are transported at owner's risk under standard Pooja Travels & Cargo carriage policies.</li>
+          <li>Luggage delivery will be charged at ₹20 per piece. After 3 days, an additional demurrage charge of ₹10 per piece per day will be applicable.</li>
+          <li>The company shall bear no responsibility for any breakage, damage, or spoilage of goods inside the parcel. Such risk lies entirely with the party/sender.</li>
+          <li>If the luggage is not collected by the party within 7 days, the company shall bear no liability whatsoever.</li>
+          <li>In case of loss of luggage, the maximum claim payable shall be limited to ₹1,000 only.</li>
+          <li>All responsibilities regarding Sale Tax, GST, E-Way Bill, and related compliance for the goods shall lie solely with the party/sender.</li>
+          <li>Any dispute arising shall be subject to the jurisdiction of Jodhpur courts only.</li>
+          <li>Narcotic and illegal substances are strictly prohibited. If found, the party/sender shall be solely responsible.</li>
         </ul>
         <div className="mt-4 pt-2 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-400 font-mono">
           <span>Powered by ShipKart Digital LR System</span>

@@ -40,15 +40,15 @@ export function Header() {
           {/* Main Top Header Bar */}
           <div className="flex items-center justify-between px-4 py-3 sm:px-6">
             {/* Brand Logo & Tagline */}
-            <Link href="/" className="flex items-center space-x-2.5 sm:space-x-3 group shrink-0">
-              <div className="relative h-9 w-9 sm:h-10 sm:w-10 overflow-hidden rounded-xl bg-white p-0.5 shadow-md shadow-amber-500/10 dark:shadow-amber-500/20 border border-slate-200 dark:border-neutral-800 transition-transform group-hover:scale-105">
-                <img src="/logo.png" alt="ShipKart Logo" className="h-full w-full object-contain" />
+            <Link href="/" className="flex items-center space-x-3 sm:space-x-3.5 group shrink-0">
+              <div className="relative h-11 w-11 sm:h-13 sm:w-13 overflow-hidden rounded-2xl bg-white p-1 shadow-lg shadow-amber-500/15 dark:shadow-amber-500/25 border border-slate-200 dark:border-neutral-800 transition-transform group-hover:scale-105">
+                <img src="/shipkartLogo.png" alt="ShipKart Logo" className="h-full w-full object-contain" />
               </div>
               <div className="flex flex-col">
-                <span className="text-base sm:text-xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                <span className="text-lg sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                   Ship<span className="text-amber-500">Kart</span>
                 </span>
-                <span className="text-[8px] sm:text-[10px] font-bold text-amber-600 dark:text-amber-400 tracking-wider uppercase">
+                <span className="text-[9px] sm:text-[11px] font-bold text-amber-600 dark:text-amber-400 tracking-wider uppercase">
                   POOJA TRAVELS & CARGO
                 </span>
               </div>

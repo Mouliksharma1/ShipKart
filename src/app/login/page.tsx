@@ -38,6 +38,9 @@ function LoginFormContent() {
     if (!res.success) {
       setError(res.error || "Login failed");
     } else {
+      if (res.userPhone && typeof window !== "undefined") {
+        localStorage.setItem("shipkart_customer_phone", res.userPhone);
+      }
       setSuccessMsg("Authentication successful! Redirecting to dashboard...");
       const targetUrl = redirectToParam || res.redirectTo || "/customer";
       window.location.href = targetUrl;
@@ -75,6 +78,9 @@ function LoginFormContent() {
     if (!res.success) {
       setError(res.error || "Customer registration failed");
     } else {
+      if (res.userPhone && typeof window !== "undefined") {
+        localStorage.setItem("shipkart_customer_phone", res.userPhone);
+      }
       setSuccessMsg("Account created successfully! Logging you in...");
       const targetUrl = redirectToParam || res.redirectTo || "/customer";
       window.location.href = targetUrl;

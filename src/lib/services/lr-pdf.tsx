@@ -422,9 +422,19 @@ export const LRPDFDocument: React.FC<LRPDFData> = ({
         {/* TERMS */}
         <View style={styles.termsSection}>
           <Text style={{ fontWeight: "bold", marginBottom: 2 }}>Terms & Conditions:</Text>
+          <Text style={{ fontStyle: "italic", marginBottom: 3 }}>
+            In the event of any dispute, it shall be deemed that the merchant/party has accepted the following terms and conditions upon booking the parcel:
+          </Text>
           <Text>1. Receiver must show valid ID at destination office for parcel collection.</Text>
           <Text>2. Home Delivery is NOT available; collect from Destination Office.</Text>
           <Text>3. Goods transported at owner's risk under standard Pooja Travels & Cargo carriage policies.</Text>
+          <Text>4. Luggage delivery will be charged at Rs.20 per piece. After 3 days, an additional demurrage charge of Rs.10 per piece per day will apply.</Text>
+          <Text>5. The company shall bear no responsibility for any breakage, damage, or spoilage of goods inside the parcel. Such risk lies entirely with the party/sender.</Text>
+          <Text>6. If luggage is not collected by the party within 7 days, the company shall bear no liability whatsoever.</Text>
+          <Text>7. In case of loss of luggage, the maximum claim payable shall be limited to Rs.1,000 only.</Text>
+          <Text>8. All responsibilities regarding Sale Tax, GST, E-Way Bill, and related compliance shall lie solely with the party/sender.</Text>
+          <Text>9. Any dispute arising shall be subject to the jurisdiction of Jodhpur courts only.</Text>
+          <Text>10. Narcotic and illegal substances are strictly prohibited. If found, the party/sender shall be solely responsible.</Text>
         </View>
 
         {/* FOOTER */}

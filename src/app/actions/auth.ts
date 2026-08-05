@@ -9,7 +9,8 @@ import { Role } from "@prisma/client";
 export type AuthResponse = {
   success: boolean;
   message?: string;
-  userRole?: Role;
+  userRole?: Role | string;
+  userPhone?: string;
   redirectTo?: string;
   error?: string;
 };
@@ -168,12 +169,25 @@ export async function loginAction(formData: unknown): Promise<AuthResponse> {
       };
     }
 
-    // Role-based redirection path mapping
+    const cookieStore = await cookies();
+
+    // Role-based redirection path mapping & cookie session setup
     let redirectTo = "/customer";
     if (["COUNTER_EMPLOYEE", "ACCOUNTANT", "EMPLOYEE", "ADMIN", "SUPER_ADMIN", "MANAGER"].includes(user.role)) {
       redirectTo = "/employee";
+      cookieStore.set("shipkart_staff_id", user.id, { path: "/", httpOnly: true, maxAge: 60 * 60 * 24 * 7 });
+      cookieStore.set("shipkart_staff_name", user.name || user.username || "Staff", { path: "/", maxAge: 60 * 60 * 24 * 7 });
+      cookieStore.set("shipkart_staff_role", user.role, { path: "/", maxAge: 60 * 60 * 24 * 7 });
     } else if (user.role === "PARTNER_OFFICE") {
       redirectTo = "/partner";
+      cookieStore.set("shipkart_staff_id", user.id, { path: "/", httpOnly: true, maxAge: 60 * 60 * 24 * 7 });
+      cookieStore.set("shipkart_staff_name", user.name || user.username || "Partner", { path: "/", maxAge: 60 * 60 * 24 * 7 });
+      cookieStore.set("shipkart_staff_role", user.role, { path: "/", maxAge: 60 * 60 * 24 * 7 });
+    } else {
+      // CUSTOMER ROLE SESSION COOKIES
+      cookieStore.set("shipkart_customer_phone", user.phone, { path: "/", maxAge: 60 * 60 * 24 * 7 });
+      cookieStore.set("shipkart_customer_id", user.id, { path: "/", maxAge: 60 * 60 * 24 * 7 });
+      cookieStore.set("shipkart_customer_name", user.name || "Customer", { path: "/", maxAge: 60 * 60 * 24 * 7 });
     }
 
     // Log login activity safely
@@ -195,6 +209,7 @@ export async function loginAction(formData: unknown): Promise<AuthResponse> {
     return {
       success: true,
       userRole: user.role,
+      userPhone: user.phone,
       redirectTo,
       message: "Login successful!",
     };
@@ -246,6 +261,11 @@ export async function registerCustomerAction(formData: unknown): Promise<AuthRes
       },
     });
 
+    const cookieStore = await cookies();
+    cookieStore.set("shipkart_customer_phone", newUser.phone, { path: "/", maxAge: 60 * 60 * 24 * 7 });
+    cookieStore.set("shipkart_customer_id", newUser.id, { path: "/", maxAge: 60 * 60 * 24 * 7 });
+    cookieStore.set("shipkart_customer_name", newUser.name || "Customer", { path: "/", maxAge: 60 * 60 * 24 * 7 });
+
     await db.activityLog.create({
       data: {
         userId: newUser.id,
@@ -256,6 +276,7 @@ export async function registerCustomerAction(formData: unknown): Promise<AuthRes
     return {
       success: true,
       userRole: "CUSTOMER",
+      userPhone: newUser.phone,
       redirectTo: "/customer",
       message: "Account registered successfully!",
     };
@@ -308,6 +329,9 @@ export async function logoutAction(): Promise<AuthResponse> {
     cookieStore.delete("shipkart_staff_id");
     cookieStore.delete("shipkart_staff_name");
     cookieStore.delete("shipkart_staff_role");
+    cookieStore.delete("shipkart_customer_phone");
+    cookieStore.delete("shipkart_customer_id");
+    cookieStore.delete("shipkart_customer_name");
 
     return {
       success: true,

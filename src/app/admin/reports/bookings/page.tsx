@@ -104,7 +104,7 @@ export default async function BookingsReportPage() {
                     <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">
                       <div>{b.lrNumber}</div>
                       {b.pickupMethod === "TAXI_PICKUP" && (
-                        <div className="mt-1">
+                        <div className="mt-1 space-y-1">
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-amber-500 text-amber-950 border border-amber-600 inline-flex items-center space-x-1 shadow-xs">
                             <span>🚖 TAXI PICKUP</span>
                           </span>
@@ -113,6 +113,18 @@ export default async function BookingsReportPage() {
                               📍 {b.pickupAddress}
                             </p>
                           )}
+                        </div>
+                      )}
+                      {b.latitude && b.longitude && (
+                        <div className="mt-1">
+                          <a
+                            href={`https://www.google.com/maps?q=${b.latitude},${b.longitude}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center space-x-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
+                          >
+                            <span>📍 GPS Location ({b.latitude.toFixed(4)}, {b.longitude.toFixed(4)})</span>
+                          </a>
                         </div>
                       )}
                     </td>

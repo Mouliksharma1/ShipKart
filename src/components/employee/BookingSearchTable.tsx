@@ -177,6 +177,18 @@ export function BookingSearchTable({ initialBookings }: BookingSearchTableProps)
                           📍 Home: {b.pickupAddress}
                         </p>
                       )}
+                      {b.latitude && b.longitude && (
+                        <div className="mt-1">
+                          <a
+                            href={`https://www.google.com/maps?q=${b.latitude},${b.longitude}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center space-x-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
+                          >
+                            <span>📍 Open GPS in Google Maps ({b.latitude.toFixed(4)}, {b.longitude.toFixed(4)})</span>
+                          </a>
+                        </div>
+                      )}
                     </td>
                     <td className="py-3 px-3">
                       <p className="font-semibold text-slate-900 dark:text-white">{b.receiverName}</p>

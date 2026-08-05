@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   title: "ShipKart | Pooja Travels & Cargo - Logistics & Builty Platform",
   description: "Enterprise Logistics & Parcel Management Platform for Pooja Travels & Cargo.",
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/logo.png",
+    icon: "/shipkartLogo.png",
+    shortcut: "/shipkartLogo.png",
+    apple: "/shipkartLogo.png",
   },
 };
 

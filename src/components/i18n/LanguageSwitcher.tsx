@@ -19,9 +19,9 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const options: { code: Locale; label: string; flag: string }[] = [
-    { code: "en", label: "English", flag: "🇬🇧" },
-    { code: "hi", label: "हिन्दी", flag: "🇮🇳" },
+  const options: { code: Locale; short: string; label: string }[] = [
+    { code: "en", short: "EN", label: "English" },
+    { code: "hi", short: "HI", label: "हिन्दी" },
   ];
 
   const currentOption = options.find((o) => o.code === locale) || options[0];
@@ -31,20 +31,19 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800/90 text-slate-800 dark:text-neutral-100 hover:bg-slate-200 dark:hover:bg-neutral-700/90 border border-slate-200 dark:border-neutral-700/80 text-xs font-extrabold shadow-xs transition-all cursor-pointer"
+        className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800/90 text-slate-800 dark:text-neutral-100 hover:bg-slate-200 dark:hover:bg-neutral-700/90 border border-slate-200 dark:border-neutral-700/80 text-xs font-black shadow-xs transition-all cursor-pointer"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
         <Globe className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-        <span>{currentOption.flag}</span>
-        <span className="font-extrabold">{currentOption.label}</span>
+        <span className="font-black text-amber-600 dark:text-amber-400">{currentOption.short}</span>
         <ChevronDown className={`w-3.5 h-3.5 text-slate-400 dark:text-neutral-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1.5 w-36 rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 mt-1.5 w-32 rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
           <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-neutral-500 border-b border-slate-100 dark:border-neutral-800">
-            Select Language
+            Language
           </div>
           {options.map((opt) => (
             <button
@@ -54,16 +53,13 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
                 setLocale(opt.code);
                 setIsOpen(false);
               }}
-              className={`w-full flex items-center justify-between px-3 py-2 text-xs font-bold transition-colors cursor-pointer ${
+              className={`w-full flex items-center justify-between px-3 py-2 text-xs font-extrabold transition-colors cursor-pointer ${
                 locale === opt.code
                   ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
                   : "text-slate-700 dark:text-neutral-200 hover:bg-slate-50 dark:hover:bg-neutral-800/80"
               }`}
             >
-              <span className="flex items-center space-x-2">
-                <span>{opt.flag}</span>
-                <span>{opt.label}</span>
-              </span>
+              <span>{opt.label}</span>
               {locale === opt.code && <Check className="w-3.5 h-3.5 text-amber-500" />}
             </button>
           ))}

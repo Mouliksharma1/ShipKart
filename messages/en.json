@@ -21,6 +21,7 @@
     "search": "Search",
     "filter": "Filter",
     "apply": "Apply",
+    "reset": "Reset Filters",
     "loading": "Loading...",
     "actions": "Actions",
     "status": "Status",
@@ -32,7 +33,31 @@
     "share": "Share WhatsApp",
     "language": "Language",
     "english": "English",
-    "hindi": "हिन्दी"
+    "hindi": "हिन्दी",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "close": "Close",
+    "submit": "Submit",
+    "required": "Required",
+    "optional": "Optional",
+    "noData": "No Records Found",
+    "select": "Select Option"
+  },
+  "hero": {
+    "badge": "POOJA TRAVELS & CARGO • OFFICIAL LOGISTICS PLATFORM",
+    "titlePrefix": "Fast, Reliable",
+    "titleHighlight": "Bus Freight Management",
+    "description": "Direct parcel dispatches across Rajasthan & UP. Complete digitised LR generation, instant tracking, partner office collections, and zero-delay bus cargo management.",
+    "ctaBook": "Book Parcel Online",
+    "ctaStaff": "Staff Terminal Login",
+    "trackTabTitle": "Track Consignment Status",
+    "bookTabTitle": "Book Parcel Online",
+    "trackPlaceholder": "e.g. 0001 or 6350603414",
+    "trackButton": "Track Consignment Status",
+    "helplineLabel": "Head Office Helpline:",
+    "operatingLabel": "Operating Hours:"
   },
   "auth": {
     "signInTitle": "Customer Sign In",
@@ -56,7 +81,12 @@
     "title": "Book Parcel Online",
     "subtitle": "Direct bus cargo dispatches across Rajasthan & Interstate routes",
     "senderDetails": "Sender (Consignor) Details",
+    "senderName": "Sender Full Name",
+    "senderPhone": "Sender Mobile Number",
+    "senderEmail": "Sender Email (Optional)",
     "receiverDetails": "Receiver (Consignee) Details",
+    "receiverName": "Receiver Full Name",
+    "receiverPhone": "Receiver Mobile Number",
     "originBranch": "Origin Branch Office",
     "destinationBranch": "Destination Branch Office",
     "parcelType": "Parcel Package Type",
@@ -65,6 +95,7 @@
     "pickupMethod": "Pickup Method",
     "selfDrop": "Self Drop at Branch",
     "taxiPickup": "Taxi Home Pickup (+ Charges)",
+    "pickupAddress": "Home Pickup Address",
     "paymentType": "Payment Type",
     "paid": "PAID (Pay Now)",
     "toPay": "TO PAY (Pay at Destination)",
@@ -87,7 +118,12 @@
     "routeCorridor": "Route Corridor",
     "estimatedArrival": "Estimated Station Arrival",
     "pickupNote": "Station Pickup Only • Customer must present valid ID for collection at destination office.",
-    "notFound": "No consignment record found for this LR Number."
+    "notFound": "No consignment record found for this LR Number.",
+    "timelineBooked": "Consignment Booked",
+    "timelineDispatched": "Loaded on Bus Dispatch",
+    "timelineInTransit": "In-Transit to Destination",
+    "timelineArrived": "Arrived at Destination Station",
+    "timelineCollected": "Handed Over & Collected"
   },
   "dispatch": {
     "title": "Bus Cargo Dispatches",
@@ -98,7 +134,12 @@
     "parcelsLoaded": "Parcels Loaded Count",
     "departTrip": "Depart Bus Dispatch",
     "arriveTrip": "Receive & Mark Arrived",
-    "dispatchManifest": "Dispatch Manifest PDF"
+    "dispatchManifest": "Dispatch Manifest PDF",
+    "tripStatus": "Trip Dispatch Status",
+    "scheduled": "SCHEDULED",
+    "departed": "DEPARTED",
+    "arrived": "ARRIVED",
+    "completed": "COMPLETED"
   },
   "collection": {
     "title": "Destination Station Collections",
@@ -106,7 +147,43 @@
     "verifyOtp": "Verify Collection OTP",
     "enterOtp": "Enter 4-Digit Customer OTP",
     "markCollected": "Mark Parcel Handed Over",
-    "collectionSuccess": "Parcel handed over successfully!"
+    "collectionSuccess": "Parcel handed over successfully!",
+    "invalidOtp": "Invalid OTP code. Verification failed."
+  },
+  "customer": {
+    "dashboardTitle": "Customer Logistics Portal",
+    "myBookings": "My Bookings History",
+    "totalParcels": "Total Parcels Booked",
+    "activeShipments": "Active Shipments",
+    "completedDeliveries": "Completed Collections",
+    "downloadLr": "Download Digital LR",
+    "trackShipment": "Track Shipment",
+    "noBookingsFound": "No past bookings found for your account."
+  },
+  "employee": {
+    "terminalTitle": "Office Staff Terminal",
+    "createBooking": "New Counter Booking",
+    "manageDispatches": "Bus Dispatches",
+    "manageCollections": "Station Collections",
+    "cashbookTitle": "Daily Office Cash Ledger",
+    "openingBalance": "Opening Balance",
+    "closingBalance": "Closing Balance",
+    "todaysCollections": "Today's Collections",
+    "addExpense": "Record Expense Entry"
+  },
+  "admin": {
+    "dashboardTitle": "Master Management Console",
+    "systemAnalytics": "System Analytics & Performance",
+    "officeNetwork": "Branch Office Network",
+    "fleetVehicles": "Bus Fleet Vehicles",
+    "routeCorridors": "Route Corridors",
+    "pricingRules": "Freight Pricing Rules",
+    "staffAccounts": "Staff & Employee Accounts",
+    "activityLogs": "Audit Activity Logs",
+    "addOffice": "Add Branch Office",
+    "addVehicle": "Register New Bus",
+    "addRoute": "Create Route",
+    "addEmployee": "Add Employee"
   },
   "dashboard": {
     "welcome": "Welcome back",
@@ -133,5 +210,11 @@
     "profileSettings": "Account Profile & Preferences",
     "preferredLanguage": "Preferred Interface Language",
     "savedSuccessfully": "Preferences updated successfully."
+  },
+  "errors": {
+    "pageNotFound": "404 - Page Not Found",
+    "serverError": "500 - Internal Server Error",
+    "unauthorized": "401 - Unauthorized Access",
+    "networkError": "Network error. Please check internet connection."
   }
 }

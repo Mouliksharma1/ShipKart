@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, ArrowRight, Package, Truck, Sparkles } from "lucide-react";
+import { Search, ArrowRight, Package, Sparkles } from "lucide-react";
+import { useLanguage } from "@/components/i18n/LanguageContext";
 
 export function InstantTrackerForm() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"track" | "book">("track");
   const [query, setQuery] = useState("");
 
@@ -34,7 +36,7 @@ export function InstantTrackerForm() {
           }`}
         >
           <Search className="h-3.5 w-3.5 stroke-[2.5]" />
-          <span>Track LR</span>
+          <span>{t("common.trackLr")}</span>
         </button>
 
         <button
@@ -47,7 +49,7 @@ export function InstantTrackerForm() {
           }`}
         >
           <Package className="h-3.5 w-3.5 stroke-[2.5]" />
-          <span>Book Parcel</span>
+          <span>{t("common.bookParcel")}</span>
         </button>
       </div>
 
@@ -56,12 +58,12 @@ export function InstantTrackerForm() {
         <form onSubmit={handleTrackSubmit} className="space-y-4 animate-in fade-in duration-200">
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">
-              Enter LR Number or Sender Mobile
+              {t("tracking.enterLrOrPhone")}
             </label>
             <input
               type="text"
               required
-              placeholder="e.g. 0001 or 6350603414"
+              placeholder={t("hero.trackPlaceholder")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="w-full rounded-xl border border-slate-300 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-950 py-3 px-4 text-xs font-mono font-bold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
@@ -72,7 +74,7 @@ export function InstantTrackerForm() {
             type="submit"
             className="w-full flex items-center justify-center space-x-2 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-[0.99] py-3 text-xs font-black text-amber-950 shadow-md transition-all cursor-pointer"
           >
-            <span>Track Consignment Status</span>
+            <span>{t("tracking.trackNow")}</span>
             <ArrowRight className="h-4 w-4 stroke-[3]" />
           </button>
         </form>
@@ -92,7 +94,7 @@ export function InstantTrackerForm() {
               </span>
             </div>
             <p className="text-xs text-slate-600 dark:text-neutral-300 leading-snug">
-              Direct bus freight across Rajasthan & interstate. Instant digital LR generation and safe station pickups.
+              {t("hero.description")}
             </p>
           </div>
 
@@ -102,7 +104,7 @@ export function InstantTrackerForm() {
             className="w-full flex items-center justify-center space-x-2 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-[0.99] py-3 text-xs font-black text-amber-950 shadow-md transition-all cursor-pointer"
           >
             <Package className="h-4 w-4 stroke-[2.5]" />
-            <span>Proceed to Online Booking</span>
+            <span>{t("booking.title")}</span>
             <ArrowRight className="h-4 w-4 stroke-[3]" />
           </button>
         </div>

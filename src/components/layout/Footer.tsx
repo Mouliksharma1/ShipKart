@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Phone, MapPin, Truck, ShieldCheck, ArrowUpRight, Compass } from "lucide-react";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 
 export function Footer() {
   return (
@@ -119,6 +120,7 @@ export function Footer() {
             © {new Date().getFullYear()} <span className="text-slate-800 dark:text-neutral-300 font-semibold">Pooja Travels & Cargo</span>. All rights reserved.
           </div>
           <div className="flex items-center space-x-4 text-[11px]">
+            <LanguageSwitcher />
             <span>Sequential LR Engine</span>
             <span>•</span>
             <span>Next.js 16 Production Ready</span>

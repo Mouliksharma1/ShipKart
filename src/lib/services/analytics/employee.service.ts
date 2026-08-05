@@ -40,7 +40,7 @@ export async function getEmployeeAnalytics(officeId?: string) {
 
         const bookingsCount = userBookings.length;
         const collectionsAmount = userBookings
-          .filter((b) => b.paymentStatus === 'PAID')
+          .filter((b) => b.paymentStatus === true)
           .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
 
         return {

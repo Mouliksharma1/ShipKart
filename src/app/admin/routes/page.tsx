@@ -9,11 +9,11 @@ export const dynamic = 'force-dynamic';
 export default async function AdminRoutesPage() {
   const routesRes = await getRoutesAction({ includeArchived: true });
   const officesRes = await getOfficesAction({ includeArchived: false });
-  const pricingGroupsRes = await getPricingGroupsAction({ includeArchived: false });
+  const pricingGroupsRes = await getPricingGroupsAction();
 
-  const routes = routesRes.routes || [];
-  const offices = officesRes.offices || [];
-  const pricingGroups = pricingGroupsRes.pricingGroups || [];
+  const routes = (routesRes.routes || []) as any[];
+  const offices = (officesRes.offices || []) as any[];
+  const pricingGroups = (pricingGroupsRes.data || []) as any[];
 
   return (
     <AdminRoutesClient

@@ -73,7 +73,7 @@ export async function enqueueNotification(params: EnqueueNotificationParams) {
   const channel = params.channel || eventDef.defaultChannel;
   const priority = params.priority || eventDef.defaultPriority;
   const recipientType = params.recipientType || eventDef.defaultRecipients[0] || NotificationRecipientType.SENDER;
-  const lang = params.languageCode || NOTIFICATION_CONFIG.DEFAULT_LANGUAGE;
+  let lang = params.languageCode || NOTIFICATION_CONFIG.DEFAULT_LANGUAGE;
 
   // 1. Generate unique deduplication key
   const deduplicationKey =
@@ -88,13 +88,16 @@ export async function enqueueNotification(params: EnqueueNotificationParams) {
     return existing; // Skip duplicate creation silently
   }
 
-  // 2. Check Customer Preferences if recipientId / user is known
+  // 2. Check Customer Preferences & Preferred Language if recipientId / user is known
   if (params.recipientId) {
     const user = await db.user.findUnique({
       where: { id: params.recipientId },
-      select: { allowSMS: true, allowEmail: true, allowPush: true },
+      select: { allowSMS: true, allowEmail: true, allowPush: true, preferredLanguage: true },
     });
     if (user) {
+      if (user.preferredLanguage) {
+        lang = user.preferredLanguage.toLowerCase() === 'hi' ? 'hi' : 'en';
+      }
       if (channel === NotificationChannel.SMS && !user.allowSMS) {
         console.log(`[Notification] Skipping SMS for user ${params.recipientId} per settings`);
       }

@@ -5,9 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Phone, MapPin, Shield, Search, PackageCheck, User, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { useLanguage } from "@/components/i18n/LanguageContext";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
 export function Header() {
+  const { t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -58,20 +61,21 @@ export function Header() {
             <nav className="hidden md:flex items-center space-x-6 text-xs font-bold">
               <Link href="/track" className="flex items-center space-x-1.5 text-slate-600 dark:text-neutral-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
                 <Search className="h-4 w-4 text-amber-500" />
-                <span>Track LR</span>
+                <span>{t("common.trackLr")}</span>
               </Link>
               <Link href="/customer/book" className="flex items-center space-x-1.5 text-slate-600 dark:text-neutral-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
                 <PackageCheck className="h-4 w-4 text-amber-500" />
-                <span>Book Parcel</span>
+                <span>{t("common.bookParcel")}</span>
               </Link>
               <Link href="/offices" className="flex items-center space-x-1.5 text-slate-600 dark:text-neutral-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
                 <MapPin className="h-4 w-4 text-amber-500" />
-                <span>Offices</span>
+                <span>{t("common.offices")}</span>
               </Link>
             </nav>
 
             {/* Desktop Action Buttons & Contact */}
             <div className="hidden md:flex items-center space-x-2 sm:space-x-3">
+              <LanguageSwitcher />
               <ThemeToggle />
               <LogoutButton />
               <a href="tel:6350603414" className="hidden lg:flex items-center space-x-2 text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20 hover:bg-amber-500/20 transition-colors">
@@ -83,19 +87,13 @@ export function Header() {
                 className="flex items-center space-x-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 px-3.5 py-2 text-xs font-black shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 hover:shadow-amber-500/10 active:scale-95 transition-all border border-slate-800 dark:border-slate-200"
               >
                 <User className="h-3.5 w-3.5 text-amber-400 dark:text-amber-600 stroke-[2.5]" />
-                <span>Customer Login</span>
-              </Link>
-              <Link
-                href="/employee/login"
-                className="flex items-center space-x-1.5 rounded-xl bg-amber-500 px-3.5 py-2 text-xs font-black text-amber-950 shadow-md hover:bg-amber-400 active:scale-95 transition-all"
-              >
-                <Shield className="h-3.5 w-3.5 stroke-[2.5]" />
-                <span>Staff Terminal</span>
+                <span>{t("common.customerLogin")}</span>
               </Link>
             </div>
 
-            {/* Mobile Controls: Theme Toggle, Logout Button & Hamburger Button */}
+            {/* Mobile Controls: Theme Toggle, Language Switcher, Logout Button & Hamburger Button */}
             <div className="flex md:hidden items-center space-x-1.5">
+              <LanguageSwitcher />
               <ThemeToggle />
               <LogoutButton />
               <button
@@ -153,23 +151,14 @@ export function Header() {
               </div>
 
               {/* Portal & Login Buttons */}
-              <div className="pt-2 border-t border-slate-200/60 dark:border-neutral-800/60 grid grid-cols-2 gap-2">
+              <div className="pt-2 border-t border-slate-200/60 dark:border-neutral-800/60">
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center space-x-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 px-3 py-2.5 text-xs font-black shadow-sm active:scale-95 transition-all text-center"
+                  className="flex items-center justify-center space-x-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 px-3 py-2.5 text-xs font-black shadow-sm active:scale-95 transition-all text-center w-full"
                 >
                   <User className="h-3.5 w-3.5 text-amber-400 dark:text-amber-600 stroke-[2.5]" />
-                  <span>Customer Login</span>
-                </Link>
-
-                <Link
-                  href="/employee/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center space-x-1.5 rounded-xl bg-amber-500 text-amber-950 px-3 py-2.5 text-xs font-black shadow-sm active:scale-95 transition-all text-center"
-                >
-                  <Shield className="h-3.5 w-3.5 stroke-[2.5]" />
-                  <span>Staff Terminal</span>
+                  <span>{t("common.customerLogin")}</span>
                 </Link>
               </div>
 

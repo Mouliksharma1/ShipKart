@@ -84,9 +84,9 @@ export function Header() {
               </a>
               <Link
                 href="/login"
-                className="flex items-center space-x-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 px-3.5 py-2 text-xs font-black shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 hover:shadow-amber-500/10 active:scale-95 transition-all border border-slate-800 dark:border-slate-200"
+                className="flex items-center space-x-1.5 rounded-xl bg-amber-500 px-3.5 py-2 text-xs font-black text-amber-950 shadow-md shadow-amber-500/20 hover:bg-amber-400 active:scale-95 transition-all"
               >
-                <User className="h-3.5 w-3.5 text-amber-400 dark:text-amber-600 stroke-[2.5]" />
+                <User className="h-3.5 w-3.5 stroke-[2.5]" />
                 <span>{t("common.customerLogin")}</span>
               </Link>
             </div>
@@ -155,9 +155,9 @@ export function Header() {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center space-x-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 px-3 py-2.5 text-xs font-black shadow-sm active:scale-95 transition-all text-center w-full"
+                  className="flex items-center justify-center space-x-1.5 rounded-xl bg-amber-500 text-amber-950 px-3 py-2.5 text-xs font-black shadow-md shadow-amber-500/20 hover:bg-amber-400 active:scale-95 transition-all text-center w-full"
                 >
-                  <User className="h-3.5 w-3.5 text-amber-400 dark:text-amber-600 stroke-[2.5]" />
+                  <User className="h-3.5 w-3.5 stroke-[2.5]" />
                   <span>{t("common.customerLogin")}</span>
                 </Link>
               </div>

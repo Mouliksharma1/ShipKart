@@ -94,7 +94,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>ion>
+      </section>
 
       {/* QUICK RATE CARDS */}
       <section className="py-16 bg-slate-100/60 dark:bg-neutral-900/50 border-b border-slate-200 dark:border-neutral-800/80">

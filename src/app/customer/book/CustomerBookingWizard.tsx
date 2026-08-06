@@ -792,6 +792,23 @@ export default function CustomerBookingWizard({ offices }: { offices: OfficeOpti
                 </div>
               </div>
 
+              {/* Paytm Digital UPI QR Display (Shown when UPI is selected) */}
+              {paymentMode === PaymentMode.UPI && (
+                <div className="p-4 rounded-2xl border-2 border-amber-500/40 bg-slate-900 text-white space-y-3 text-center shadow-xl animate-in fade-in zoom-in-95 duration-200">
+                  <div className="bg-white p-4 rounded-2xl max-w-[260px] mx-auto shadow-2xl border-4 border-amber-400">
+                    <img
+                      src="/BuisnessQR.jpeg"
+                      alt="Paytm UPI QR Code"
+                      className="w-full h-auto object-contain rounded-lg"
+                    />
+                  </div>
+
+                  <div className="text-xs text-emerald-400 font-bold">
+                    Amount to Pay: <span className="text-sm text-white font-mono font-black">₹{grandTotal}</span>
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-neutral-300 mb-1">Special Handling Notes (Optional)</label>
                 <input

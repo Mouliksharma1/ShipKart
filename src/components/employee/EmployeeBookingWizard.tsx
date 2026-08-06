@@ -918,6 +918,23 @@ export function EmployeeBookingWizard({ offices, defaultOriginId }: EmployeeBook
                       UPI
                     </button>
                   </div>
+
+                  {/* Paytm UPI QR Code Card Display */}
+                  {paymentMode === PaymentMode.UPI && (
+                    <div className="mt-3 p-3 rounded-2xl border-2 border-amber-500/40 bg-slate-900 text-white space-y-2 text-center shadow-xl animate-in fade-in zoom-in-95 duration-200">
+                      <div className="bg-white p-3 rounded-2xl max-w-[200px] mx-auto shadow-2xl border-2 border-amber-400">
+                        <img
+                          src="/EmployeeQR.png"
+                          alt="Paytm UPI QR Code"
+                          className="w-full h-auto object-contain rounded-lg"
+                        />
+                      </div>
+
+                      <div className="text-[11px] text-emerald-400 font-bold pt-0.5">
+                        Amount to Pay: <span className="text-xs text-white font-mono font-black">₹{useCustomPrice && customPrice ? parseFloat(customPrice) || 0 : totalPrice}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

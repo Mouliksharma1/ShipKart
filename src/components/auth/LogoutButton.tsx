@@ -9,9 +9,10 @@ import { useRouter } from "next/navigation";
 interface LogoutButtonProps {
   className?: string;
   redirectTo?: string;
+  showText?: boolean;
 }
 
-export function LogoutButton({ className, redirectTo = "/" }: LogoutButtonProps) {
+export function LogoutButton({ className, redirectTo = "/", showText = false }: LogoutButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -56,6 +57,14 @@ export function LogoutButton({ className, redirectTo = "/" }: LogoutButtonProps)
   const confirmAndLogout = async () => {
     setLoading(true);
     try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("shipkart_customer_phone");
+        localStorage.removeItem("shipkart_customer_id");
+        localStorage.removeItem("shipkart_customer_name");
+        localStorage.removeItem("shipkart_staff_id");
+        localStorage.removeItem("shipkart_staff_name");
+        localStorage.removeItem("shipkart_staff_role");
+      }
       const res = await logoutAction();
       if (res.success) {
         setShowConfirmModal(false);
@@ -156,15 +165,18 @@ export function LogoutButton({ className, redirectTo = "/" }: LogoutButtonProps)
         disabled={loading}
         title="Sign Out / Leave Session"
         aria-label="Sign Out"
-        className={`p-2 rounded-xl border border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white transition-all shadow-xs active:scale-95 cursor-pointer disabled:opacity-50 flex items-center justify-center ${
-          className || ""
-        }`}
+        className={
+          className
+            ? className
+            : `p-2 rounded-xl border border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white transition-all shadow-xs active:scale-95 cursor-pointer disabled:opacity-50 flex items-center justify-center space-x-2 font-bold text-xs`
+        }
       >
         {loading ? (
           <Loader2 className="h-4 w-4 animate-spin text-red-500" />
         ) : (
           <LogOut className="h-4 w-4 stroke-[2.2]" />
         )}
+        {showText && <span>Logout</span>}
       </button>
 
       {/* CONFIRMATION POPUP MODAL VIA PORTAL TO BODY */}

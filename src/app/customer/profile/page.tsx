@@ -26,6 +26,9 @@ export default function CustomerProfilePage() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
+
   const fetchProfile = async (searchPhone?: string) => {
     if (!searchPhone) return;
     setLoading(true);
@@ -41,11 +44,59 @@ export default function CustomerProfilePage() {
       setCity(u.city || '');
       setState(u.state || '');
       setPincode(u.pincode || '');
+      const pic = (u as any).photo || (u as any).profilePhoto || (u as any).avatarUrl;
+      if (pic) {
+        setAvatarUrl(pic);
+        setAvatarPreview(pic);
+        localStorage.setItem(`shipkart_avatar_${searchPhone}`, pic);
+      }
     } else {
       setPhone(searchPhone);
       setInputPhone(searchPhone);
     }
     setLoading(false);
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 250;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height *= maxDim / width;
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width *= maxDim / height;
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+          setAvatarPreview(compressedBase64);
+          setAvatarUrl(compressedBase64);
+          if (phone) {
+            localStorage.setItem(`shipkart_avatar_${phone}`, compressedBase64);
+          }
+        };
+        img.src = event.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   useEffect(() => {
@@ -57,6 +108,11 @@ export default function CustomerProfilePage() {
       const activePhone = queryPhone || storedPhone || '6378507160';
       setPhone(activePhone);
       setInputPhone(activePhone);
+      const cachedAvatar = localStorage.getItem(`shipkart_avatar_${activePhone}`);
+      if (cachedAvatar) {
+        setAvatarPreview(cachedAvatar);
+        setAvatarUrl(cachedAvatar);
+      }
       fetchProfile(activePhone);
     }
   }, []);
@@ -75,6 +131,9 @@ export default function CustomerProfilePage() {
       return;
     }
     setLoading(true);
+    if (avatarUrl) {
+      localStorage.setItem(`shipkart_avatar_${phone}`, avatarUrl);
+    }
     const res = await updateProfileAction(phone, {
       name,
       phone,
@@ -83,7 +142,8 @@ export default function CustomerProfilePage() {
       address,
       city,
       state,
-      pincode
+      pincode,
+      avatarUrl
     });
     if (res.success) {
       setSavedSuccess(true);
@@ -123,11 +183,68 @@ export default function CustomerProfilePage() {
       <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-3xl p-8 max-w-3xl mx-auto shadow-xs">
         {savedSuccess && (
           <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center text-emerald-600 text-xs font-bold">
-            <CheckCircle2 className="w-4 h-4 mr-2" /> Profile information updated & saved to PostgreSQL database!
+            <CheckCircle2 className="w-4 h-4 mr-2" /> Profile picture & information updated & saved!
           </div>
         )}
 
         <form onSubmit={handleSave} className="space-y-6">
+          {/* Profile Picture Upload Section */}
+          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 p-4 bg-slate-50 dark:bg-zinc-950 rounded-2xl border border-slate-200/80 dark:border-zinc-800">
+            <div className="relative group">
+              <div className="p-1 rounded-full bg-gradient-to-tr from-amber-400 via-rose-500 to-purple-600 shadow-md">
+                <div className="w-24 h-24 rounded-full bg-slate-900 flex items-center justify-center border-4 border-white dark:border-neutral-900 overflow-hidden relative">
+                  {avatarPreview ? (
+                    <img src={avatarPreview} alt="Profile Picture" className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-12 h-12 text-slate-400 stroke-[1.8]" />
+                  )}
+                </div>
+              </div>
+              <label
+                htmlFor="avatar-upload"
+                className="absolute bottom-0 right-0 p-2 bg-amber-500 text-amber-950 hover:bg-amber-400 rounded-full shadow-lg cursor-pointer transition-transform hover:scale-110 active:scale-95 border-2 border-white dark:border-neutral-900"
+                title="Upload Profile Picture"
+              >
+                <Sparkles className="w-4 h-4 stroke-[2.5]" />
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+            </div>
+
+            <div className="space-y-1 text-center sm:text-left flex-1">
+              <h4 className="text-sm font-extrabold text-slate-900 dark:text-white">Profile Photo</h4>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
+                Upload your avatar picture (PNG, JPG, WebP). Displays with your Instagram-style ring badge across ShipKart.
+              </p>
+              <div className="pt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
+                <label
+                  htmlFor="avatar-upload"
+                  className="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold rounded-xl cursor-pointer transition inline-flex items-center"
+                >
+                  Choose Image File
+                </label>
+                {avatarPreview && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAvatarPreview('');
+                      setAvatarUrl('');
+                      localStorage.removeItem(`shipkart_avatar_${phone}`);
+                    }}
+                    className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold rounded-xl transition"
+                  >
+                    Remove Photo
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="border-b border-slate-200/60 dark:border-zinc-800 pb-4 flex items-center justify-between">
             <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Personal Contact Details</h3>
             <span className="text-xs font-bold text-amber-600 dark:text-amber-400">Editing Profile: #{phone}</span>

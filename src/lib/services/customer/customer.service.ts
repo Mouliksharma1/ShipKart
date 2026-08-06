@@ -23,13 +23,32 @@ export async function updateCustomerProfile(phoneOrEmail: string, data: {
   state?: string;
   pincode?: string;
   profilePhoto?: string;
+  photo?: string;
+  avatarUrl?: string;
 }) {
   const user = await getCustomerProfile(phoneOrEmail);
+  const photoVal = data.photo || data.profilePhoto || data.avatarUrl || null;
+
+  const updateData: any = {
+    name: data.name,
+    phone: data.phone,
+    email: data.email,
+    alternatePhone: data.alternatePhone,
+    address: data.address,
+    city: data.city,
+    state: data.state,
+    pincode: data.pincode,
+  };
+
+  if (photoVal !== undefined) {
+    updateData.photo = photoVal;
+    updateData.profilePhoto = photoVal;
+  }
 
   if (user) {
     return prisma.user.update({
       where: { id: user.id },
-      data
+      data: updateData
     });
   } else {
     // Create new customer profile record automatically
@@ -43,7 +62,9 @@ export async function updateCustomerProfile(phoneOrEmail: string, data: {
         address: data.address,
         city: data.city,
         state: data.state,
-        pincode: data.pincode
+        pincode: data.pincode,
+        photo: photoVal,
+        profilePhoto: photoVal,
       }
     });
   }

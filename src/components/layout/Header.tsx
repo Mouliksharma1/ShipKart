@@ -9,10 +9,21 @@ import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { useLanguage } from "@/components/i18n/LanguageContext";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
+function getCookie(name: string): string {
+  if (typeof document === "undefined") return "";
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || "";
+  return "";
+}
+
 export function Header() {
   const { t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userAvatar, setUserAvatar] = useState<string>("");
+  const [isHydrated, setIsHydrated] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -24,6 +35,25 @@ export function Header() {
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Check login status on mount & route change
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const custPhone = localStorage.getItem("shipkart_customer_phone") || getCookie("shipkart_customer_phone") || getCookie("shipkart_customer_id");
+      const staffId = getCookie("shipkart_staff_id");
+      const loggedInState = Boolean(custPhone || staffId);
+      setIsLoggedIn(loggedInState);
+
+      if (custPhone && loggedInState) {
+        const cachedImg = localStorage.getItem(`shipkart_avatar_${custPhone}`);
+        if (cachedImg) setUserAvatar(cachedImg);
+        else setUserAvatar("");
+      } else {
+        setUserAvatar("");
+      }
+      setIsHydrated(true);
+    }
+  }, [pathname]);
 
   // Close mobile menu on route navigation
   useEffect(() => {
@@ -77,21 +107,41 @@ export function Header() {
             <div className="hidden md:flex items-center space-x-2 sm:space-x-3">
               <LanguageSwitcher />
               <ThemeToggle />
-              <LogoutButton />
-              <Link
-                href="/login"
-                className="flex items-center space-x-1.5 rounded-xl bg-amber-500 px-3.5 py-2 text-xs font-black text-amber-950 shadow-md shadow-amber-500/20 hover:bg-amber-400 active:scale-95 transition-all"
-              >
-                <User className="h-3.5 w-3.5 stroke-[2.5]" />
-                <span>{t("common.customerLogin")}</span>
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <LogoutButton />
+                  <Link
+                    href="/customer/profile"
+                    className="flex items-center justify-center p-0.5 rounded-full hover:scale-105 active:scale-95 transition-all group"
+                    title="Account Profile & Settings"
+                  >
+                    {/* Insta/YouTube style story ring avatar */}
+                    <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-amber-400 via-rose-500 to-purple-600 shadow-md shadow-rose-500/20">
+                      <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center border-2 border-white dark:border-neutral-900 overflow-hidden">
+                        {userAvatar ? (
+                          <img src={userAvatar} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="h-4.5 w-4.5 text-white stroke-[2.5]" />
+                        )}
+                      </div>
+                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-neutral-900 rounded-full" />
+                    </div>
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 shadow-md shadow-amber-500/20 active:scale-95 transition-all text-xs font-black"
+                >
+                  <span>{t("common.customerLogin")}</span>
+                </Link>
+              )}
             </div>
 
-            {/* Mobile Controls: Theme Toggle, Language Switcher, Logout Button & Hamburger Button */}
+            {/* Mobile Controls: Theme Toggle, Language Switcher & Hamburger Button */}
             <div className="flex md:hidden items-center space-x-1.5">
               <LanguageSwitcher />
               <ThemeToggle />
-              <LogoutButton />
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -146,16 +196,44 @@ export function Header() {
                 </Link>
               </div>
 
-              {/* Portal & Login Buttons */}
-              <div className="pt-2 border-t border-slate-200/60 dark:border-neutral-800/60">
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center space-x-1.5 rounded-xl bg-amber-500 text-amber-950 px-3 py-2.5 text-xs font-black shadow-md shadow-amber-500/20 hover:bg-amber-400 active:scale-95 transition-all text-center w-full"
-                >
-                  <User className="h-3.5 w-3.5 stroke-[2.5]" />
-                  <span>{t("common.customerLogin")}</span>
-                </Link>
+              {/* Portal & Login / Profile Buttons */}
+              <div className="pt-2 border-t border-slate-200/60 dark:border-neutral-800/60 space-y-2">
+                {isLoggedIn ? (
+                  <>
+                    <div className="pt-1">
+                      <LogoutButton
+                        showText={true}
+                        className="w-full py-2.5 px-4 rounded-xl bg-red-500/10 hover:bg-red-600 border border-red-500/20 text-red-600 dark:text-red-400 hover:text-white font-black text-xs transition-all flex items-center justify-center space-x-2 shadow-xs active:scale-95 cursor-pointer mb-2"
+                      />
+                    </div>
+                    <Link
+                      href="/customer/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-between p-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white font-black text-xs shadow-lg shadow-amber-500/20 active:scale-95 transition-all w-full"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-amber-300 via-rose-400 to-purple-500">
+                          <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center border-2 border-white">
+                            <User className="h-4 w-4 text-white stroke-[2.5]" />
+                          </div>
+                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-white rounded-full" />
+                        </div>
+                        <div className="text-left leading-tight">
+                          <div className="text-xs font-black">My Profile</div>
+                          <div className="text-[10px] text-amber-100 font-medium">Manage account & settings</div>
+                        </div>
+                      </div>
+                    </Link>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center space-x-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 px-3 py-2.5 text-xs font-black shadow-md active:scale-95 transition-all text-center w-full"
+                  >
+                    <span>{t("common.customerLogin")}</span>
+                  </Link>
+                )}
               </div>
             </div>
           )}

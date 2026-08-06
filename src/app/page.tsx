@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Truck, Search, ShieldCheck, ArrowRight, CheckCircle, Package } from "lucide-react";
+import { Truck, Search, ShieldCheck, ArrowRight, CheckCircle, Package, Clock } from "lucide-react";
 import { Typewriter } from "@/components/ui/typewriter";
 import { InstantTrackerForm } from "@/components/tracking/InstantTrackerForm";
 import { useLanguage } from "@/components/i18n/LanguageContext";
@@ -101,7 +101,9 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center space-y-2 max-w-xl mx-auto">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Transparent Freight Pricing</h2>
-            <p className="text-xs text-slate-600 dark:text-neutral-400">Standardized rate card for Rajasthan and Outside destinations.</p>
+            <p className="text-xs text-slate-600 dark:text-neutral-400">
+              Standardized rate card for Rajasthan and Outside destinations. Amount of parcel may change depending upon the size and type.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -154,6 +156,77 @@ export default function Home() {
                   <span className="text-[11px] text-slate-500 dark:text-neutral-400 block">Large Bundle</span>
                   <span className="text-lg font-bold text-slate-900 dark:text-white">Configurable</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DELIVERY SLA GUARANTEE TIMELINES */}
+      <section className="py-16 bg-white dark:bg-neutral-950 border-b border-slate-200 dark:border-neutral-800/80">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center space-y-2 max-w-xl mx-auto">
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase tracking-widest">
+              SUPER-FAST DISPATCH TIMELINES
+            </span>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Estimated Delivery Timeframe</h2>
+            <p className="text-xs text-slate-600 dark:text-neutral-400">
+              Daily bus freight network ensures high-speed transit and express station office delivery.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Within Rajasthan */}
+            <div className="relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/5 via-white to-amber-500/10 dark:from-amber-500/10 dark:via-neutral-900 dark:to-amber-500/5 p-7 space-y-4 shadow-xl group hover:border-amber-500/60 transition-all">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 rounded-2xl bg-amber-500 text-amber-950 font-black shadow-md">
+                    ⚡
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Within Rajasthan</h3>
+                    <p className="text-xs font-bold text-amber-600 dark:text-amber-400">Express Local Transit</p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-black border border-emerald-500/20">
+                  90% Next-Day
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-600 dark:text-neutral-300 leading-relaxed font-medium">
+                In Rajasthan, <strong className="text-amber-600 dark:text-amber-400 font-extrabold">90% of parcels are delivered just the next day</strong> of booking via our direct overnight bus cargo network.
+              </p>
+
+              <div className="pt-2 flex items-center text-[11px] font-bold text-slate-500 dark:text-neutral-400 space-x-2 border-t border-amber-500/10">
+                <Clock className="w-4 h-4 text-amber-500" />
+                <span>Next-Day Arrival Guaranteed at Branch Office</span>
+              </div>
+            </div>
+
+            {/* Outside Rajasthan */}
+            <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-neutral-800 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-950 p-7 space-y-4 shadow-xl group hover:border-slate-400 dark:hover:border-neutral-700 transition-all">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black shadow-md">
+                    🚛
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Outside Rajasthan</h3>
+                    <p className="text-xs font-bold text-slate-500 dark:text-neutral-400">Interstate Cargo Route</p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-black border border-blue-500/20">
+                  2 Days Transit
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-600 dark:text-neutral-300 leading-relaxed font-medium">
+                Outside Rajasthan, parcels take <strong className="text-slate-900 dark:text-white font-extrabold">2 days after booking</strong> to reach the destination branch office safely.
+              </p>
+
+              <div className="pt-2 flex items-center text-[11px] font-bold text-slate-500 dark:text-neutral-400 space-x-2 border-t border-slate-200 dark:border-neutral-800">
+                <ShieldCheck className="w-4 h-4 text-blue-500" />
+                <span>2-Day Delivery Commitment to Destination Branch</span>
               </div>
             </div>
           </div>

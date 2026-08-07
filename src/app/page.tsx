@@ -244,7 +244,7 @@ export default function Home() {
               <span>LOGISTICS NETWORK COVERAGE</span>
             </div>
             <h2 className="text-3xl font-black text-slate-900 dark:text-white sm:text-4xl lg:text-5xl leading-tight">
-              Currently Serving Here in <span className="bg-amber-500/20 dark:bg-amber-500/30 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-xl inline-block border border-amber-500/40">Rajasthan</span>
+              Currently Serving Here in <span className="text-amber-600 dark:text-amber-400">Rajasthan</span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300 leading-relaxed font-semibold max-w-xl mx-auto">
               Connecting major commercial hubs, industrial centers, and all district branch offices with guaranteed daily express overnight bus cargo transit.
@@ -334,38 +334,66 @@ export default function Home() {
             </div>
           </div>
 
-          {/* SOLID CRISP CARGO OWNER COLLABORATION BANNER (NO BLURS) */}
-          <div className="mt-12 rounded-3xl border-2 border-amber-500 bg-amber-500/10 dark:bg-neutral-900 p-6 sm:p-8 shadow-xl max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-4 sm:space-y-0 sm:space-x-5">
-              <div className="p-4 rounded-2xl bg-amber-500 text-amber-950 font-black shrink-0 shadow-md">
-                <Handshake className="w-8 h-8" />
-              </div>
+          {/* HIGH-IMPACT CARGO COLLABORATION HERO BANNER */}
+          <div className="mt-14 relative overflow-hidden rounded-[2.5rem] bg-slate-900 dark:bg-neutral-900 border-2 border-amber-500/40 p-8 sm:p-12 shadow-2xl text-white max-w-6xl mx-auto">
+            {/* Background Decorative Pattern */}
+            <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-amber-500/10 rounded-full pointer-events-none" />
 
-              <div className="space-y-2">
-                <div className="inline-flex items-center space-x-2 rounded-md bg-amber-500 text-amber-950 px-3 py-1 text-[11px] font-black uppercase tracking-wider">
-                  <Sparkles className="w-3.5 h-3.5" />
+            <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+              
+              {/* Left Content Column */}
+              <div className="space-y-5 max-w-2xl text-left">
+                <div className="inline-flex items-center space-x-2 rounded-full border border-amber-500/40 bg-amber-500/15 px-4 py-1.5 text-xs font-black text-amber-400 uppercase tracking-widest">
+                  <Handshake className="w-4 h-4 text-amber-400" />
                   <span>PARTNER & CARGO COLLABORATION</span>
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-                  Own a Cargo Service in Rajasthan?
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight text-white">
+                  Own a Cargo Service in <span className="text-amber-400">Rajasthan?</span>
                 </h3>
 
-                <p className="text-xs sm:text-sm text-slate-700 dark:text-neutral-300 max-w-2xl leading-relaxed font-semibold">
-                  If you own a cargo service in Rajasthan and want to collaborate and work with us, contact us today and become a proud family member of <span className="bg-amber-500 text-amber-950 px-2 py-0.5 rounded font-black">ShipKart</span>!
+                <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed">
+                  If you own a cargo service in Rajasthan and want to collaborate and work with us, contact us today and become a proud family member of <strong className="text-amber-400 font-black">ShipKart</strong>!
                 </p>
-              </div>
-            </div>
 
-            <div className="shrink-0 w-full sm:w-auto">
-              <Link
-                href="/partner-contact"
-                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 px-8 py-4 text-sm font-black shadow-md hover:shadow-lg transition-transform active:scale-95"
-              >
-                <PhoneCall className="w-4.5 h-4.5 fill-amber-950" />
-                <span>Contact Us</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+                {/* Quick Feature Perks */}
+                <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-bold text-slate-300">
+                  <div className="flex items-center space-x-2 bg-slate-800/90 dark:bg-neutral-800/90 px-3.5 py-2 rounded-xl border border-slate-700">
+                    <CheckCircle className="w-4 h-4 text-amber-400" />
+                    <span>Statewide Fleet Integration</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-slate-800/90 dark:bg-neutral-800/90 px-3.5 py-2 rounded-xl border border-slate-700">
+                    <CheckCircle className="w-4 h-4 text-amber-400" />
+                    <span>Guaranteed Daily Freight</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-slate-800/90 dark:bg-neutral-800/90 px-3.5 py-2 rounded-xl border border-slate-700">
+                    <CheckCircle className="w-4 h-4 text-amber-400" />
+                    <span>Branch Office Franchising</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Action Button Group */}
+              <div className="shrink-0 w-full lg:w-auto flex flex-col sm:flex-row lg:flex-col gap-3.5">
+                <Link
+                  href="/partner-contact"
+                  className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-amber-950 px-8 py-4 text-base font-black shadow-xl shadow-amber-500/20 hover:scale-[1.03] active:scale-95 transition-all duration-300"
+                >
+                  <PhoneCall className="w-5 h-5 fill-amber-950" />
+                  <span>Contact Us</span>
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+
+                <a
+                  href="https://wa.me/917852091119?text=Hello%20ShipKart%20Team,%20I%20own%20a%20cargo%20service%20in%20Rajasthan%20and%20want%20to%20collaborate."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3.5 text-xs font-black shadow-md hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  <span>WhatsApp Inquiry (+91 7852091119)</span>
+                </a>
+              </div>
+
             </div>
           </div>
         </div>

@@ -5,6 +5,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
 
+import { SITE_URL } from "@/lib/seo/metadata";
+
 export async function generateMetadata({
   params,
 }: {
@@ -12,16 +14,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const lr = decodeURIComponent(resolvedParams.lrNumber).toUpperCase();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shipkart.in";
 
   return {
     title: `Digital LR – ${lr}`,
     description: `Official Digital Lorry Receipt (Builty) ${lr} issued by POOJA TRAVELS & CARGO via ShipKart.`,
-    alternates: { canonical: `${siteUrl}/lr/${resolvedParams.lrNumber}` },
+    alternates: { canonical: `${SITE_URL}/lr/${resolvedParams.lrNumber}` },
     openGraph: {
       title: `Digital LR – ${lr} | ShipKart`,
       description: `View official Lorry Receipt ${lr} on ShipKart.`,
-      url: `${siteUrl}/lr/${resolvedParams.lrNumber}`,
+      url: `${SITE_URL}/lr/${resolvedParams.lrNumber}`,
     },
     robots: { index: false, follow: true },
   };

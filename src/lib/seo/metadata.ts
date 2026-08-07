@@ -1,6 +1,21 @@
 import type { Metadata } from "next";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://shipkart.in";
+const getSiteUrl = () => {
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL.startsWith("http")
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : `https://${process.env.NEXT_PUBLIC_SITE_URL}`;
+  }
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+    return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "http://localhost:3000";
+};
+
+const SITE_URL = getSiteUrl();
 const SITE_NAME = "ShipKart – Powered by POOJA TRAVELS & CARGO";
 const DEFAULT_DESCRIPTION =
   "Fast, Secure & Reliable Parcel, Cargo and Logistics Management Platform across Rajasthan and India. Book parcels, track consignments & manage logistics with ShipKart by POOJA TRAVELS & CARGO.";

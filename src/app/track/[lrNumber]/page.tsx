@@ -19,6 +19,8 @@ import {
 
 import { redirect } from "next/navigation";
 
+import { SITE_URL } from "@/lib/seo/metadata";
+
 export async function generateMetadata({
   params,
 }: {
@@ -26,16 +28,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const lr = decodeURIComponent(resolvedParams.lrNumber).toUpperCase();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shipkart.in";
 
   return {
     title: `Track Parcel ${lr}`,
     description: `Track parcel ${lr} in real time with ShipKart – POOJA TRAVELS & CARGO. View current status, dispatch history, and estimated delivery.`,
-    alternates: { canonical: `${siteUrl}/track/${resolvedParams.lrNumber}` },
+    alternates: { canonical: `${SITE_URL}/track/${resolvedParams.lrNumber}` },
     openGraph: {
       title: `Track Parcel ${lr} | ShipKart`,
       description: `Live tracking for consignment ${lr} on ShipKart by POOJA TRAVELS & CARGO.`,
-      url: `${siteUrl}/track/${resolvedParams.lrNumber}`,
+      url: `${SITE_URL}/track/${resolvedParams.lrNumber}`,
     },
     robots: { index: false, follow: true },
   };

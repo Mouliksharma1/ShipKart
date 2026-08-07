@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Truck, Search, ShieldCheck, ArrowRight, CheckCircle, Package, Clock } from "lucide-react";
+import Image from "next/image";
+import { Truck, Search, ShieldCheck, ArrowRight, CheckCircle, Package, Clock, MapPin } from "lucide-react";
 import { Typewriter } from "@/components/ui/typewriter";
 import { InstantTrackerForm } from "@/components/tracking/InstantTrackerForm";
 import { useLanguage } from "@/components/i18n/LanguageContext";
@@ -227,6 +228,103 @@ export default function Home() {
               <div className="pt-2 flex items-center text-[11px] font-bold text-slate-500 dark:text-neutral-400 space-x-2 border-t border-slate-200 dark:border-neutral-800">
                 <ShieldCheck className="w-4 h-4 text-blue-500" />
                 <span>2-Day Delivery Commitment to Destination Branch</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* RAJASTHAN SERVICE COVERAGE MAP SECTION */}
+      <section className="py-16 bg-slate-50 dark:bg-neutral-900/40 border-b border-slate-200 dark:border-neutral-800/80 overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
+          <div className="text-center space-y-3 max-w-2xl mx-auto">
+            <div className="inline-flex items-center space-x-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400">
+              <MapPin className="h-4 w-4" />
+              <span>LOGISTICS NETWORK COVERAGE</span>
+            </div>
+            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight sm:text-4xl">
+              Currently Serving Here in Rajasthan
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-neutral-400">
+              Connecting major commercial hubs, industrial centers, and all district branches with daily express overnight bus cargo transit.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-6xl mx-auto">
+            {/* Map Image Display Card */}
+            <div className="lg:col-span-7">
+              <div className="group relative rounded-3xl border border-amber-500/30 bg-white dark:bg-neutral-950 p-3 sm:p-4 shadow-2xl transition-all duration-300 hover:border-amber-500/60 hover:shadow-amber-500/10">
+                <div className="relative overflow-hidden rounded-2xl bg-amber-950/10">
+                  <Image
+                    src="/rajasthanmap.jpeg"
+                    alt="Currently Serving Here in Rajasthan - ShipKart Network Map"
+                    width={1200}
+                    height={900}
+                    className="w-full h-auto object-cover rounded-2xl transition-transform duration-700 group-hover:scale-[1.02]"
+                    priority
+                  />
+                  <div className="absolute top-4 left-4 bg-slate-900/85 backdrop-blur-md border border-amber-500/30 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-full flex items-center space-x-2 shadow-lg">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span>Active Route Network</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Network Highlights */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="space-y-3">
+                <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
+                  Statewide Direct Bus Cargo Network
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-neutral-400 leading-relaxed">
+                  Pooja Travels & Cargo operates daily express routes across all key districts in Rajasthan, guaranteeing 90% next-day parcel delivery straight to destination branch offices.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3.5">
+                <div className="flex items-start space-x-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-4 shadow-sm">
+                  <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
+                    <Truck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">Overnight Express Bus Transit</h4>
+                    <p className="text-[11px] text-slate-500 dark:text-neutral-400">Daily dispatches ensuring 90% next-day delivery across Rajasthan.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-4 shadow-sm">
+                  <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                    <CheckCircle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">Branch Terminal Pickups</h4>
+                    <p className="text-[11px] text-slate-500 dark:text-neutral-400">Safe OTP-verified pickup directly from partner branch terminals.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-4 shadow-sm">
+                  <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">Interstate Cargo Route</h4>
+                    <p className="text-[11px] text-slate-500 dark:text-neutral-400">2-day transit commitment for routes extending outside Rajasthan (UP & Interstate).</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link
+                  href="/offices"
+                  className="inline-flex items-center space-x-2 text-xs font-bold text-amber-600 dark:text-amber-400 hover:text-amber-500 transition-colors"
+                >
+                  <span>View All Branch Offices & Station Locations</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </div>
           </div>

@@ -125,7 +125,7 @@ export function Footer() {
             © {new Date().getFullYear()} <span className="text-slate-800 dark:text-neutral-300 font-semibold">{t("common.companyName")}</span>. {t("footer.rightsReserved")}
           </div>
           <div className="flex items-center space-x-4 text-[11px]">
-            <LanguageSwitcher />
+            <LanguageSwitcher variant="toggle" />
             <span>{t("footer.lrEngine")}</span>
             <span>•</span>
             <span>{t("footer.nextReady")}</span>

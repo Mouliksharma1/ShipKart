@@ -181,8 +181,8 @@ export default function Home() {
             <div className="relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/5 via-white to-amber-500/10 dark:from-amber-500/10 dark:via-neutral-900 dark:to-amber-500/5 p-7 space-y-4 shadow-xl group hover:border-amber-500/60 transition-all">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="p-3 rounded-2xl bg-amber-500 text-amber-950 font-black shadow-md">
-                    ⚡
+                  <div className="p-3 rounded-2xl bg-amber-500 text-amber-950 shadow-md flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-amber-950 fill-amber-950/20" />
                   </div>
                   <div>
                     <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Within Rajasthan</h3>

@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
@@ -14,6 +14,10 @@ import { UpdatePrompt } from "@/components/pwa/UpdatePrompt";
 import { NetworkStatus } from "@/components/pwa/NetworkStatus";
 import { OfflineQueueIndicator } from "@/components/pwa/OfflineQueueIndicator";
 import { NotificationPermission } from "@/components/pwa/NotificationPermission";
+
+// SEO
+import { BASE_METADATA, organizationJsonLd, websiteJsonLd } from "@/lib/seo/metadata";
+import { StructuredData } from "@/components/seo/StructuredData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,27 +35,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  viewportFit: "cover"
+  viewportFit: "cover",
 };
 
-export const metadata: Metadata = {
-  title: "ShipKart | Pooja Travels & Cargo - Logistics & Builty Platform",
-  description: "Official Logistics & Parcel Management Platform for POOJA TRAVELS & CARGO",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "ShipKart"
-  },
-  icons: {
-    icon: [
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" }
-    ],
-    shortcut: "/icons/icon-192.png",
-    apple: "/apple-touch-icon.png"
-  }
-};
+export const metadata = BASE_METADATA;
 
 export default function RootLayout({
   children,
@@ -68,6 +55,10 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-slate-50 text-slate-900 dark:bg-neutral-950 dark:text-neutral-100 font-sans transition-colors duration-300 select-none sm:select-auto"
       >
+        {/* Global Structured Data (Organization + WebSite) */}
+        <StructuredData data={organizationJsonLd()} />
+        <StructuredData data={websiteJsonLd()} />
+
         <LanguageProvider>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             {/* PWA Lifecycle & Status Components */}

@@ -25,10 +25,19 @@ export async function generateMetadata({
   params: Promise<{ lrNumber: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const lrNumber = resolvedParams.lrNumber;
+  const lr = decodeURIComponent(resolvedParams.lrNumber).toUpperCase();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shipkart.in";
+
   return {
-    title: `Track Parcel | POOJA TRAVELS & CARGO`,
-    description: `Real-time consignment tracking powered by ShipKart.`,
+    title: `Track Parcel ${lr}`,
+    description: `Track parcel ${lr} in real time with ShipKart – POOJA TRAVELS & CARGO. View current status, dispatch history, and estimated delivery.`,
+    alternates: { canonical: `${siteUrl}/track/${resolvedParams.lrNumber}` },
+    openGraph: {
+      title: `Track Parcel ${lr} | ShipKart`,
+      description: `Live tracking for consignment ${lr} on ShipKart by POOJA TRAVELS & CARGO.`,
+      url: `${siteUrl}/track/${resolvedParams.lrNumber}`,
+    },
+    robots: { index: false, follow: true },
   };
 }
 

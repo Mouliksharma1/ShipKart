@@ -11,10 +11,19 @@ export async function generateMetadata({
   params: Promise<{ lrNumber: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const lrNumber = resolvedParams.lrNumber;
+  const lr = decodeURIComponent(resolvedParams.lrNumber).toUpperCase();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shipkart.in";
+
   return {
-    title: `Digital LR - ${lrNumber} | POOJA TRAVELS & CARGO`,
-    description: `Official Digital Lorry Receipt (Builty) ${lrNumber} powered by ShipKart & Pooja Travels & Cargo.`,
+    title: `Digital LR – ${lr}`,
+    description: `Official Digital Lorry Receipt (Builty) ${lr} issued by POOJA TRAVELS & CARGO via ShipKart.`,
+    alternates: { canonical: `${siteUrl}/lr/${resolvedParams.lrNumber}` },
+    openGraph: {
+      title: `Digital LR – ${lr} | ShipKart`,
+      description: `View official Lorry Receipt ${lr} on ShipKart.`,
+      url: `${siteUrl}/lr/${resolvedParams.lrNumber}`,
+    },
+    robots: { index: false, follow: true },
   };
 }
 

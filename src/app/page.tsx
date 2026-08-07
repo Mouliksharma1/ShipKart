@@ -358,14 +358,14 @@ export default function Home() {
             </div>
 
             <div className="shrink-0 w-full sm:w-auto">
-              <a
-                href="tel:6350603414"
+              <Link
+                href="/partner-contact"
                 className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 px-8 py-4 text-sm font-black shadow-md hover:shadow-lg transition-transform active:scale-95"
               >
                 <PhoneCall className="w-4.5 h-4.5 fill-amber-950" />
-                <span>Contact Us Now</span>
+                <span>Contact Us</span>
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Truck, Search, ShieldCheck, ArrowRight, CheckCircle, Package, Clock, MapPin } from "lucide-react";
+import { Truck, Search, ShieldCheck, ArrowRight, CheckCircle, Package, Clock, MapPin, Handshake, Phone } from "lucide-react";
 import { Typewriter } from "@/components/ui/typewriter";
 import { InstantTrackerForm } from "@/components/tracking/InstantTrackerForm";
 import { useLanguage } from "@/components/i18n/LanguageContext";
@@ -326,6 +326,37 @@ export default function Home() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
+            </div>
+          </div>
+
+          {/* CARGO OWNER COLLABORATION BANNER */}
+          <div className="mt-10 rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-500/15 to-amber-500/5 dark:from-amber-500/15 dark:via-neutral-900 dark:to-neutral-950 p-6 sm:p-8 shadow-xl max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-start space-x-4 text-left">
+              <div className="p-3.5 rounded-2xl bg-amber-500 text-amber-950 font-bold shrink-0 shadow-md">
+                <Handshake className="w-7 h-7" />
+              </div>
+              <div className="space-y-1.5">
+                <div className="inline-flex items-center space-x-2 rounded-full bg-amber-500/20 px-3 py-0.5 text-[11px] font-extrabold text-amber-700 dark:text-amber-300 uppercase tracking-wide">
+                  Partner Opportunity
+                </div>
+                <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
+                  Own a Cargo Service in Rajasthan?
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300 max-w-2xl leading-relaxed font-medium">
+                  If you own a cargo in Rajasthan and want to collaborate and work with us, you can contact us and become a family of ShipKart!
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-3 shrink-0 w-full md:w-auto justify-end">
+              <a
+                href="tel:6350603414"
+                className="w-full md:w-auto inline-flex items-center justify-center space-x-2 rounded-2xl bg-amber-500 px-6 py-3.5 text-sm font-extrabold text-amber-950 shadow-lg shadow-amber-500/20 hover:bg-amber-400 transition-transform active:scale-95"
+              >
+                <Phone className="w-4 h-4 fill-amber-950" />
+                <span>Contact Us</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
             </div>
           </div>
         </div>

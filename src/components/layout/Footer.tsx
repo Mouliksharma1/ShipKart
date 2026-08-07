@@ -75,7 +75,7 @@ export function Footer() {
             <div className="pt-3 border-t border-slate-200 dark:border-neutral-900">
               <h5 className="text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider mb-2">{t("footer.staffPortals")}</h5>
               <div className="flex flex-wrap gap-2 text-xs">
-                <Link href="/login" className="text-slate-600 dark:text-neutral-400 hover:text-amber-600 dark:hover:text-amber-400 flex items-center space-x-1">
+                <Link href="/employee/login" className="text-slate-600 dark:text-neutral-400 hover:text-amber-600 dark:hover:text-amber-400 flex items-center space-x-1">
                   <span>{t("footer.employeeLogin")}</span>
                   <ArrowUpRight className="h-3 w-3" />
                 </Link>

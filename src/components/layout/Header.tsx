@@ -81,7 +81,7 @@ export function Header() {
                 <span className="text-lg sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                   Ship<span className="text-amber-500">Kart</span>
                 </span>
-                <span className="text-[9px] sm:text-[11px] font-bold text-amber-600 dark:text-amber-400 tracking-wider uppercase">
+                <span className="hidden sm:block text-[11px] font-bold text-amber-600 dark:text-amber-400 tracking-wider uppercase">
                   POOJA TRAVELS & CARGO
                 </span>
               </div>
